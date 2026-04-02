@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2026 중소기업 인재 키움 프리미엄 훈련</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>emailjs.init('tIXo1BYrDjw52bz-0');</script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Noto Sans KR', sans-serif; scroll-behavior: smooth; text-align: left; }
@@ -344,7 +346,7 @@
                 <p class="text-blue-100 text-sm mt-1 text-left">상담정보는 담당자에게 전송됩니다.</p>
                 <button onclick="closeModal()" class="absolute top-6 right-6 text-2xl font-bold text-left">✕</button>
             </div>
-<form action="https://formspree.io/f/pks@miraesol.kr" method="POST" class="p-8 space-y-4">
+<form id="contactForm" onsubmit="sendEmail(event)" class="p-8 space-y-4">
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-1">성함</label>
                     <input type="text" name="성함" placeholder="홍길동" required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-600">
@@ -365,7 +367,7 @@
                     <input type="text" id="modalCourseName" name="과정명" placeholder="과정을 선택하거나 직접 입력하세요" readonly class="w-full px-4 py-3 border rounded-xl outline-none bg-slate-100 text-slate-600 cursor-not-allowed select-none">
                 </div>
 
-                <button type="submit" class="w-full premium-gradient text-white py-4 rounded-xl font-bold shadow-lg">상담 신청 완료 (<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d1a1baa291bcb8a3b0b4a2bebdffbaa3">[email&#160;protected]</a>)</button>
+                <button type="submit" id="submitBtn" class="w-full premium-gradient text-white py-4 rounded-xl font-bold shadow-lg">상담 신청 완료</button>
             </form>
         </div>
     </div>
@@ -380,7 +382,7 @@
         </button>
     </div>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script>
         const rawData = [
   { cat: "리더십", title: "리더십 에센스 Fast Track", hours: 12, fee: 600000,
     target: "팀장 후보자, 팀장 승진자 및 팀장",
@@ -1227,6 +1229,27 @@
             document.body.style.overflow = 'hidden';
         }
         function closeModal() { modal.classList.add('hidden'); modal.classList.remove('flex'); document.body.style.overflow = ''; }
+
+        function sendEmail(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = '전송 중...';
+
+            emailjs.sendForm('tmzn95r', '6tsqceg', '#contactForm')
+                .then(() => {
+                    alert('상담 신청이 완료되었습니다!\n담당자가 확인 후 연락드리겠습니다.');
+                    closeModal();
+                    document.getElementById('contactForm').reset();
+                })
+                .catch((error) => {
+                    alert('전송에 실패했습니다. 잠시 후 다시 시도해 주세요.\n(' + error.text + ')');
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.textContent = '상담 신청 완료';
+                });
+        }
 
         function toggleFaq(btn) {
             const answer = btn.nextElementSibling;
