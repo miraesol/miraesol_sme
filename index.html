@@ -71,12 +71,24 @@
             transform: translateX(-6px);
             padding-right: 16px;
         }
+        .quick-menu-btn.calc-btn {
+            background: #475569;
+        }
+        .quick-menu-btn.calc-btn:hover {
+            background: #334155;
+        }
         .quick-menu-btn.contact-btn {
             background: #0f766e;
         }
         .quick-menu-btn.contact-btn:hover {
             background: #0d9488;
         }
+
+        /* 계산기 전용 스타일 */
+        .calc-input, .calc-select { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; color: #1e293b; outline: none; transition: all 0.2s; }
+        .calc-input:focus, .calc-select:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+        .calc-input[readonly] { background-color: #f1f5f9; color: #475569; font-weight: 700; border-color: transparent; }
+        #result_d18 { background: transparent; font-size: 1.5rem; text-align: right; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 overflow-x-hidden">
@@ -87,11 +99,12 @@
                 <div class="flex items-center">
                     <span class="text-blue-800 font-black text-2xl tracking-tight">인재키움 <span class="text-blue-500 font-light">PREMIUM</span></span>
                 </div>
-                <div class="hidden md:flex space-x-10 text-sm font-bold text-slate-600">
+                <div class="hidden md:flex space-x-8 text-sm font-bold text-slate-600">
                     <a href="#intro" class="hover:text-blue-600 transition">사업소개</a>
                     <a href="#target" class="hover:text-blue-600 transition">지원대상</a>
                     <a href="#benefits" class="hover:text-blue-600 transition">지원혜택</a>
                     <a href="#process" class="hover:text-blue-600 transition">참여절차</a>
+                    <a href="javascript:void(0)" onclick="openCalcModal()" class="hover:text-blue-600 transition text-blue-700">지원금 계산기</a>
                     <a href="#faq" class="hover:text-blue-600 transition">FAQ</a>
                 </div>
                 <div>
@@ -140,7 +153,7 @@
                 <span class="text-blue-600 font-bold tracking-widest uppercase text-sm mb-4 block">Overview</span>
                 <h2 class="text-4xl font-black text-slate-900 mb-8 leading-tight">국가가 인정하고 지원하는<br>격이 다른 직무 교육</h2>
                 <div class="text-slate-600 text-lg space-y-6">
-                    <p>"2026 중소기업 인재 키움 프리미엄 훈련"은 「고용보험법」 제114조 및 「사업주 직업능력개발훈련 지원규정」 제7조 제2호에 의거, <b>중소기업 재직근로자가 원하는 훈련과정에 참여할 수 있도록 기업이 훈련비를 지원하면, 사업주가 부담한 비용의 90% 이상을 지원</b>하는 제도입니다.</p>
+                    <p>"2026 중소기업 인재 키움 프리미엄 훈련"은 「고용보험법」 제114조 및 「사업주 직업능력개발훈련 지원규정」 제7조 제2호에 의거, <b>중소기업 재직근로자가 원하는 훈련과정에 참여할 수 있도록 기업이 훈련비를 지원하면, 사업주가 부담한 비용의 90% 이상을 지원</b>하는 제도입니다. <Br>기존의 범용적인 직무교육 체계에서 벗어나 중소기업 임직원들이 현업에서 바로 활용할 수 있는 <B>고품질 핵심인재 육성</B>을 목표로 합니다.</p>
                 </div>
                 <div class="mt-12 flex gap-8">
                     <div class="p-6 bg-slate-50 rounded-2xl flex-1 border border-slate-100">
@@ -212,7 +225,7 @@
                 </div>
             </div>
             <div class="bg-blue-600/20 border border-blue-500/30 p-8 rounded-2xl max-w-5xl mx-auto italic text-blue-300 text-lg text-center leading-relaxed">
-                “고용보험 우선지원대상기업에 해당하는 중소기업이라면, <Br>소속 재직 근로자가 본 사업을 통해 정부 지원 직무훈련에 참여할 수 있습니다.<Br>**훈련비 환급을 위해 해당 기업은 고용24 기업회원 가입 필수**”
+                “고용보험 우선지원대상기업에 해당하는 중소기업 소속 근로자라면 <Br>본 사업을 통해 정부 지원 직무훈련에 참여할 수 있습니다.”<Br>**훈련비 환급을 위해 해당 기업은 고용24 기업회원 가입 필수**
             </div>
         </div>
     </section>
@@ -224,12 +237,12 @@
                 <div class="bg-slate-50 p-12 rounded-3xl border border-slate-100 text-center text-center">
                     <div class="text-blue-600 font-black text-6xl mb-6 italic text-center text-center text-center">90%~</div>
                     <p class="text-2xl font-bold mb-4 text-slate-900 text-center">정부 환급 지원</p>
-                    <p class="text-slate-500 text-lg text-center">사업주가 부담한 훈련비의 90% 이상 정부 환급</p>
+                    <p class="text-slate-500 text-lg text-center">사업주가 부담한 훈련비의 90%이상 환급</p>
                 </div>
                 <div class="premium-gradient p-12 rounded-3xl text-white shadow-2xl scale-110 text-center text-center">
                     <div class="text-white font-black text-7xl mb-6 italic underline decoration-blue-300 text-center">95%</div>
                     <p class="text-2xl font-bold mb-4 text-center">비수도권 우대</p>
-                    <p class="text-blue-100 text-lg text-center text-center text-center">"찾아가는 훈련", "비수도권"의 경우 최대 95% 지원</p>
+                    <p class="text-blue-100 text-lg text-center text-center text-center">"찾아가는 훈련", "비수도권"의 경우 최대 95% 환급</p>
                 </div>
                 <div class="bg-slate-50 p-12 rounded-3xl border border-slate-100 text-center">
                     <div class="text-blue-600 font-black text-6xl mb-6 italic text-center">5~10%</div>
@@ -252,7 +265,7 @@
                 <div class="process-card bg-white p-10 rounded-3xl border border-slate-100 shadow-lg text-center">
                     <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-10 text-center">2</div>
                     <h4 class="text-xl font-bold mb-4 italic text-center">훈련과정 선택</h4>
-                    <p class="text-slate-500 text-sm text-center">미래솔에서 제공하는 나에게 적합한 우수 훈련과정 선택</p>
+                    <p class="text-slate-500 text-sm text-center">미래솔에서 제공하는 나에게 적합한 프리미엄 훈련과정 선택 후 '상담신청'</p>
                 </div>
                 <div class="process-card bg-white p-10 rounded-3xl border border-slate-100 shadow-lg text-center text-center">
                     <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-10 text-center">3</div>
@@ -262,13 +275,13 @@
                 <div class="process-card bg-white p-10 rounded-3xl border border-slate-100 shadow-lg text-center">
                     <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-10 text-center">4</div>
                     <h4 class="text-xl font-bold mb-4 italic text-center text-center text-center">훈련비 환급</h4>
-                    <p class="text-slate-500 text-sm text-center text-center text-center text-center">훈련 수료 후 훈련비 환급 신청(수료증, 훈련비 납입 서류 제출)</p>
+                    <p class="text-slate-500 text-sm text-center text-center text-center text-center">훈련 수료 후 훈련비 환급 신청<BR>(수료증, 훈련비 납입 서류 제출)</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="faq" class="py-24 px-4 bg-white text-left">
+    <section id="faq" class="py-24 px-4 bg-white text-left border-t border-slate-200">
         <div class="max-w-4xl mx-auto text-left text-left">
             <h2 class="text-3xl md:text-5xl font-black mb-12 text-center text-left">자주 묻는 질문</h2>
             <div class="space-y-4">
@@ -287,7 +300,7 @@
                         <svg class="w-5 h-5 text-slate-400 transform transition duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div class="px-6 pb-6 text-slate-600 hidden animate-fade-in">
-                        고용보험에 가입된 우선지원대상기업(중소기업)을 중심으로, 관련 공고에서 정한 요건을 충족하는 사업장이 참여할 수 있습니다. <br> [고용보험 우선지원대상기업 여부 확인 방법] <br>고용 · 산재보험 토탈서비스(total.comwel.or.kr) 접속 → 상단 메뉴 "정보조회"  → 고용보험가입정보 조회  → "사업장 총괄카드 조회"  → 사업장관리번호 입력 후 "조회"
+                        고용보험에 가입된 우선지원대상기업(중소기업)을 중심으로, 관련 공고에서 정한 요건을 충족하는 사업장이 참여할 수 있습니다. <br> [고용보험 우선지원대상기업 여부 확인 방법] <br>고용 · 산재보험 토탈서비스(total.comwel.or.kr) 접속 → 상단 메뉴 "정보조회"  → 고용보험가입정보 조회  → "사업장 총괄카드 조회"  → 사업장관리번호 입력 후 "조회" → 대규모기업 "비해당"
                     </div>
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
@@ -337,7 +350,6 @@
         </div>
     </footer>
 
-
     <div id="contactModal" class="fixed inset-0 z-[100] hidden items-center justify-center px-4">
         <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeModal()"></div>
         <div class="relative bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden text-left">
@@ -346,7 +358,7 @@
                 <p class="text-blue-100 text-sm mt-1 text-left">상담정보는 담당자에게 전송됩니다.</p>
                 <button onclick="closeModal()" class="absolute top-6 right-6 text-2xl font-bold text-left">✕</button>
             </div>
-<form id="contactForm" onsubmit="sendEmail(event)" class="p-8 space-y-4">
+            <form id="contactForm" onsubmit="sendEmail(event)" class="p-8 space-y-4">
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-1">성함</label>
                     <input type="text" name="성함" placeholder="홍길동" required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-600">
@@ -372,10 +384,81 @@
         </div>
     </div>
 
-    <!-- 퀵메뉴 -->
+    <div id="calcModal" class="fixed inset-0 z-[100] hidden items-center justify-center px-4">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeCalcModal()"></div>
+        <div class="relative bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden text-left flex flex-col max-h-[90vh]">
+            <div class="premium-gradient p-6 text-white relative text-left shrink-0">
+                <h3 class="text-2xl font-bold text-left">사업주훈련지원금 계산기</h3>
+                <p class="text-blue-100 text-sm mt-1 text-left">우리 기업의 예상 지원금을 미리 확인해 보세요.</p>
+                <button onclick="closeCalcModal()" class="absolute top-6 right-6 text-2xl font-bold text-left">✕</button>
+            </div>
+            <div class="p-6 md:p-8 overflow-y-auto">
+                <table class="w-full border-collapse mb-6">
+                    <tr>
+                        <th class="bg-slate-50 border border-slate-200 p-4 font-bold w-2/5 text-slate-700 text-sm">① 인원 / 기업규모</th>
+                        <td class="border border-slate-200 p-4">
+                            <select id="company_size" onchange="calculate()" class="calc-select">
+                                <option value="0.0025" data-rate="2.4">150인 미만(우선지원 대상)</option>
+                                <option value="0.0045" data-rate="2.4">150인 이상(우선지원 대상)</option>
+                                <option value="0.0065" data-rate="1.0">150인 이상~1000인 미만 기업</option>
+                                <option value="0.0085" data-rate="1.0">1000인 이상 기업, 국가지방자치단체</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="bg-slate-50 border border-slate-200 p-4 font-bold text-slate-700 text-sm">② 기업규모별 지원율</th>
+                        <td class="border border-slate-200 p-4">
+                            <input type="text" id="rate_2" readonly class="calc-input">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="bg-slate-50 border border-slate-200 p-4 font-bold text-slate-700 text-sm">③ 기업 총인건비 (원)</th>
+                        <td class="border border-slate-200 p-4">
+                            <input type="number" id="cost_3" value="450000000" oninput="calculate()" placeholder="금액 입력" class="calc-input bg-white font-bold text-slate-900 shadow-inner">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="bg-slate-50 border border-slate-200 p-4 font-bold text-slate-700 text-sm">④ 보험료율</th>
+                        <td class="border border-slate-200 p-4">
+                            <input type="text" id="rate_4" readonly class="calc-input">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="bg-slate-50 border border-slate-200 p-4 font-bold text-slate-700 text-sm leading-relaxed">⑤ 고용안정, 직업능력개발사업 보험료 <br><span class="text-xs font-normal text-slate-400">(② × ③)</span></th>
+                        <td class="border border-slate-200 p-4">
+                            <input type="text" id="premium_5" readonly class="calc-input">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="bg-slate-50 border border-slate-200 p-4 font-bold text-slate-700 text-sm leading-relaxed">사업주훈련 지원금 <br><span class="text-xs font-normal text-slate-400">(④ × ⑤)</span></th>
+                        <td class="border border-slate-200 p-4">
+                            <input type="text" id="subsidy_raw" readonly class="calc-input">
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <th class="border border-blue-200 p-5 font-bold text-blue-900 text-base bg-blue-100/50 text-center align-middle">(예상) 사업주훈련 지원금</th>
+                        <td class="border border-blue-200 p-5 bg-blue-50/50 text-right">
+                            <input type="text" id="result_d18" readonly class="calc-input text-red-600 font-black border-none shadow-none text-right outline-none w-full p-0">
+                        </td>
+                    </tr>
+                </table>
+                
+                <div class="text-sm text-slate-400 space-y-1">
+                    <p>* 고용보험법 시행령</p>
+                    <p>* 사업주직업능력 개발훈련 지원규정</p>
+                    <p><B>* 정확한 사업주훈련 지원금은 고용24 홈페이지를 통해 확인하시기 바랍니다.</B></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="quick-menu">
         <button class="quick-menu-btn" onclick="toggleCourseList(true)" title="전체 과정 리스트 보기">
             📋 과정 리스트
+        </button>
+        <button class="quick-menu-btn calc-btn" onclick="openCalcModal()" title="지원금 계산기">
+            🧮 지원금 계산
         </button>
         <button class="quick-menu-btn contact-btn" onclick="openModal()" title="상담 신청">
             ✉ 상담 신청
@@ -384,7 +467,7 @@
 
     <script>
         const rawData = [
-  { cat: "리더십", title: "리더십 에센스 Fast Track", hours: 12, fee: 600000,
+  { cat: "리더십 > 공통", title: "리더십 에센스 Fast Track", hours: 12, fee: 600000,
     target: "팀장 후보자, 팀장 승진자 및 팀장",
     goal: "1. 경영환경의 변화에 따른 리더십의 진화, 구성원이 팀에서 느끼는 안정성(관계 공정성)\n2. 새로운 업무 도전에 대한 지지와 지원, 구성원의 성향에 맞춘 동기부여 전략\n3. 갈등의 순기능을 유지하고 역기능 방지(갈등관리), 팀의 행동 원칙 정립을 통한 일체성 확립",
     curriculum: [
@@ -396,7 +479,7 @@
     { unit: '액션플랜 수립', content: '팀원과 함께 하는 Team Rule(팀의 행동원칙) 정립' }
     ]
   },
-  { cat: "리더십", title: "리더십 스킬업 - 36.5°C 리더십", hours: 8, fee: 650000,
+  { cat: "리더십 > 공통", title: "리더십 스킬업 - 36.5°C 리더십", hours: 8, fee: 650000,
     target: "팀장 후보자, 팀장 승진자 및 팀장",
     goal: "1. 리더와 구성원의 관계에 대한 이해\n2. MZ세대의 업무몰입과 관계 촉진\n3. 팀 커뮤니케이션 최적화",
     curriculum: [
@@ -407,7 +490,7 @@
     { unit: '변화하는 리더', content: 'Action Plan 수립 / 리더 프로필 만들기' }
     ]
   },
-  { cat: "리더십", title: "중간관리자 리더십(Connection Leadership)", hours: 8, fee: 450000,
+  { cat: "리더십 > 공통", title: "중간관리자 리더십(Connection Leadership)", hours: 8, fee: 450000,
     target: "과장, 차장급 직원",
     goal: "1. 조직의 상부와 구성원을 연결하는 중간 관리자 역량강화\n2. 팀의 업무수행 과정을 관찰하고 탐색\n3. 후배 성장을 위한 피드백 코칭",
     curriculum: [
@@ -418,7 +501,7 @@
     { unit: 'Feedback', content: '조언과 잔소리의 차이 / 효과적인 결과 피드백 구성' }
     ]
   },
-  { cat: "리더십", title: "성과창출 리더십 역량과 스킬 배양을 위한 효과적 관리기법", hours: 8, fee: 450000,
+  { cat: "리더십 > 성과관리", title: "성과창출 리더십 역량과 스킬 배양을 위한 효과적 관리기법", hours: 8, fee: 450000,
     target: "성과관리에 관심있는 리더와 구성원",
     goal: "1. 효과적인 성과창출을 위한 리더와 구성원의 역할과 성과 관리의 핵심요소 파악\n2. 목표와 KPI설정, 실행 및 평가까지 관리 프로세스 각 단계별 관리기법 체득\n3. 성과목표 수립·실행·평가 단계에서의 동기부여 방법 내재화",
     curriculum: [
@@ -428,7 +511,7 @@
     { unit: '성과평가', content: '성과평가 프로세스와 척도 설정법 / 평가면담 준비 / 저성과자 유형별 관리방안' }
     ]
   },
-  { cat: "리더십", title: "중간관리자 역할 수행과 마인드셋", hours: 8, fee: 450000,
+  { cat: "리더십 > 공통", title: "중간관리자 역할 수행과 마인드셋", hours: 8, fee: 450000,
     target: "대리~과장급, 중간관리자, 조직내 중간 계층의 직급",
     goal: "1. 팀 액티비티와 피드백을 통해 팀 성과를 위한 중간관리자로서의 역할 정립\n2. 중간관리자로서 자기 성장의 동기유발을 통해 변화관리를 주도",
     curriculum: [
@@ -439,7 +522,7 @@
     { unit: '자기 변화관리', content: '린치핀 되기 / 존재감의 축 형성 / 나다움 찾기' }
     ]
   },
-  { cat: "직무", title: "한 번에 통하는 One Page 보고서 작성", hours: 12, fee: 500000,
+  { cat: "직무 > 보고서", title: "한 번에 통하는 One Page 보고서 작성", hours: 12, fee: 500000,
     target: "신입사원~사원, 대리, 과장급 등 문서작성이 필요한 누구나",
     goal: "1. 문서작성의 기본원칙을 이해하고 다양한 목적의 문서를 작성하기 위한 기본 지식 습득\n2. 문서에 의한 커뮤니케이션의 의의, 문서의 중요성, 종류 및 양식 학습\n3. 1page 보고서의 설득력 높은 보고스토리 구성법 및 보고방법 습득",
     curriculum: [
@@ -449,7 +532,7 @@
     { unit: '문서작성 능력 강화', content: '논리적인 문장 전개 방법 / 문서의 종류에 따른 적절한 작성 / 공문서 구성과 일반사항 점검' }
     ]
   },
-  { cat: "DX/AI", title: "빅데이터 분석을 통한 기획력 향상", hours: 24, fee: 920000,
+  { cat: "DX/AI > 빅데이터 분석", title: "빅데이터 분석을 통한 기획력 향상", hours: 24, fee: 920000,
     target: "기획 및 전략수립과 개선안 도출을 위해 기획력을 향상시키고자 하는 희망자",
     goal: "1. 합리적이고 체계적인 기획을 위한 기본적인 기획 스킬 습득\n2. 빅데이터 분석을 위한 10가지의 기획 인사이트 도출방법과 분석방법 습득 및 기획으로 변환하는 방법 습득",
     curriculum: [
@@ -459,7 +542,7 @@
     { unit: 'R/Rstudio 활용한 빅데이터 분석', content: 'R/Rstudio 기본 활용법 / 데이터 전처리 / 탐색적 데이터 분석 / 시각화' }
     ]
   },
-  { cat: "DX/AI", title: "생성형 AI로 업무 효율화와 창의력 UP", hours: 8, fee: 500000,
+  { cat: "DX/AI > 생성형 AI", title: "생성형 AI로 업무 효율화와 창의력 UP", hours: 8, fee: 500000,
     target: "전사원 및 팀장급",
     goal: "1. 생성형 AI의 개요와 활용방법에 대한 이해\n2. 생성형 AI를 비즈니스에 적용할 수 있는 인사이트 습득\n3. 생성형 AI와의 협업을 통해 비즈니스를 확장하고 업무능력 향상",
     curriculum: [
@@ -469,7 +552,7 @@
     { unit: 'AI의 윤리적 문제', content: '책임감 있는 생성형 AI 활용을 위한 윤리적 원칙 및 가이드라인' }
     ]
   },
-  { cat: "DX/AI", title: "생성AI로 세상을 바꾸다", hours: 8, fee: 500000,
+  { cat: "DX/AI > 생성형 AI", title: "생성AI로 세상을 바꾸다", hours: 8, fee: 500000,
     target: "전사원 및 팀장급",
     goal: "1. 생성형 AI의 핵심 개념과 기술에 대한 이해\n2. 프롬프트 기본 사용법 습득을 통한 생성형 AI활용능력 향상\n3. 다양한 비즈니스 분야에 생성형 AI를 접목하여 혁신을 이끄는 전략 수립",
     curriculum: [
@@ -479,7 +562,7 @@
     { unit: 'AI의 윤리적 문제', content: '책임감 있는 생성형 AI 활용을 위한 윤리적 원칙 및 가이드라인' }
     ]
   },
-  { cat: "DX/AI", title: "AI 활용 능력 향상과 업무, 일상에 적용", hours: 4, fee: 250000,
+  { cat: "DX/AI > 생성형 AI", title: "AI 활용 능력 향상과 업무, 일상에 적용", hours: 4, fee: 250000,
     target: "전사원 및 팀장급",
     goal: "1. AI활용능력 향상의 필요성을 이해할 수 있다.\n2. 현재 업무와 관련하여 적절한 AI를 업무에 적용할 수 있다.",
     curriculum: [
@@ -490,7 +573,7 @@
     { unit: 'AI의 윤리적 문제', content: '책임감 있는 생성형 AI 활용을 위한 윤리적 원칙 및 가이드라인' }
     ]
   },
-  { cat: "리더십", title: "버크만 팀빌딩 - 인정과 이해를 통한 팀 활성화", hours: 5, fee: 350000,
+  { cat: "리더십 > 팀빌딩", title: "버크만 팀빌딩 - 인정과 이해를 통한 팀 활성화", hours: 5, fee: 350000,
     target: "팀내 소통오류와 갈등을 해소하고 싶은 직장인 누구나",
     goal: "1. 버크만 팀빌딩을 통해 팀원들의 성향과 업무 스타일 파악\n2. 팀원 간 인정과 이해를 통해 팀 업무를 활성화\n3. 오해와 갈등을 방지하며 팀원간의 원활한 소통법 만들기",
     curriculum: [
@@ -501,7 +584,7 @@
     { unit: '조직지향점', content: '업무방식의 차이점 인식 / 다양한 업무스타일과 조직 내 시너지 효과' }
     ]
   },
-  { cat: "DX/AI", title: "업무능력 향상을 위한 생성형 AI활용법", hours: 12, fee: 600000,
+  { cat: "DX/AI > 생성형 AI", title: "업무능력 향상을 위한 생성형 AI활용법", hours: 12, fee: 600000,
     target: "생성형 AI의 핵심 기능을 이해하고 AI툴 활용법을 학습하고자 하는 임직원",
     goal: "1. 생성형 AI의 핵심 기능을 이해할 수 있다.\n2. AI툴 활용법을 익혀 실무에 적용할 수 있다.",
     curriculum: [
@@ -512,7 +595,7 @@
     { unit: 'AI의 윤리적 문제', content: '책임감 있는 생성형 AI 활용을 위한 윤리적 원칙 및 가이드라인' }
     ]
   },
-  { cat: "DX/AI", title: "생성형 AI 업무활용과 AICE Basic 자격 대비 과정", hours: 16, fee: 600000,
+  { cat: "DX/AI > AI자격증", title: "생성형 AI 업무활용과 AICE Basic 자격 대비 과정", hours: 16, fee: 600000,
     target: "AI활용이 필요한 중소기업 재직자, AI비전공자",
     goal: "1. 생성형 AI의 개념과 활용 사례를 이해한다.\n2. AI 도구를 활용한 업무 자동화를 수행할 수 있다.\n3. AI 기반의 데이터 활용 습득 능력을 향상시킬 수 있다.",
     curriculum: [
@@ -524,7 +607,7 @@
     { unit: 'AICE Basic 문제유형', content: '시험구조 이해 / 주요출제영역 분석 / 문제 유형별 풀이전략 및 예상문제풀이' }
     ]
   },
-  { cat: "DX/AI", title: "데이터 기반 생성형 AI 활용과 AICE Associate 과정", hours: 24, fee: 920000,
+  { cat: "DX/AI > AI자격증", title: "데이터 기반 생성형 AI 활용과 AICE Associate 과정", hours: 24, fee: 920000,
     target: "파이썬 활용 가능자, AI활용 업무를 수행하는 중소기업 실무자, 데이터 분석 및 자동화에 관심있는 직원",
     goal: "1. AI데이터활용의 개념을 이해할 수 있다.\n2. 생성형 AI를 활용한 데이터 분석을 수행할 수 있다.\n3. AI기반으로 업무 자동화를 구현할 수 있다.",
     curriculum: [
@@ -536,7 +619,7 @@
     { unit: 'AICE Associate 시험 유형분석', content: '시험출제 영역 분석 / 문제유형 이해 및 핵심개념 정리 / 유형별 문제 풀이 전략' }
     ]
   },
-  { cat: "직무", title: "계약서 제대로 알고 쓰자", hours: 6, fee: 250000,
+  { cat: "직무 > 법무", title: "계약서 제대로 알고 쓰자", hours: 6, fee: 250000,
     target: "중소기업 및 기관의 법무/영업/구매/관리/총무/기획 등 계약서 업무담당 실무자",
     goal: "1. 계약담당자가 꼭 알아야 할 주요 계약조항에 대해 분석하고 정리할 수 있다.\n2. 표준계약서를 실무에서 활용하는 방식을 이해하고 설명할 수 있다.",
     curriculum: [
@@ -544,7 +627,7 @@
     { unit: '계약각론', content: '계약기간·위약금·손해배상·해제·해지 조항 / 책임제한·수익배분·납품·검수 조항 / 표준계약서 활용 및 실무적용 노하우' }
     ]
   },
-  { cat: "직무", title: "AI를 활용한 부실채권예방과 회수방법", hours: 7, fee: 320000,
+  { cat: "직무 > 채권관리", title: "AI를 활용한 부실채권예방과 회수방법", hours: 7, fee: 320000,
     target: "중소기업의 채권, 영업관리, 법무, 회계, 자금, 총무, 경영지원, 여신관리부서 등 채권관리 관련 실무자 등",
     goal: "1. 채권관리 업무의 전체 흐름을 이해하고, 부실을 사전에 예방하는 체계를 갖출 수 있다.\n2. 현장에서 반복되는 핵심 이슈를 사례기반으로 학습하며, 실제 업무에 활용 할 수 있는 업무노하우를 전수합니다.",
     curriculum: [
@@ -555,7 +638,7 @@
     { unit: 'AI를 활용한 강제집행 실무', content: '부동산 경매(배당절차) / 유체동산 강제집행의 활용 / AI를 활용한 채권압류 및 추심명령과 전부명령' }
     ]
   },
-  { cat: "직무", title: "기업법무 실무자를 위한 사건유형별 대응전략", hours: 6, fee: 250000,
+  { cat: "직무 > 법무", title: "기업법무 실무자를 위한 사건유형별 대응전략", hours: 6, fee: 250000,
     target: "중소기업 및 기관의 법무/영업/구매/관리/총무/기획 등 계약서 업무담당 실무자",
     goal: "1. 중소기업에서 주로 발생하는 법률분쟁 사건과 관련하여 법리와 판례분석을 통해 해결책 제시\n2. 기업에서 발생하는 주요 사건유형별 사례를 통해 각 사건유형별 대응전략 및 종합적 분쟁해결 노하우 제시",
     curriculum: [
@@ -564,7 +647,7 @@
     { unit: '주요분쟁 사례별 대응전략', content: '동업투자·채권추심·저작권·상표·부정경쟁·노무·임금·부동산·공사·세무·하도급·주주총회·윤리경영·형사 관련 분쟁 대응전략' }
     ]
   },
-  { cat: "DX/AI", title: "생성형 AI시대의 경영전략", hours: 6, fee: 250000,
+  { cat: "DX/AI > 생성형 AI", title: "생성형 AI시대의 경영전략", hours: 6, fee: 250000,
     target: "전략/기획/경영혁신 담당 임직원",
     goal: "1. AI기술 변화에 대응하는 경영전략 수립능력을 확보할 수 있다.\n2. 기업의 AI 도입 및 활용방향을 설계할 수 있다.",
     curriculum: [
@@ -575,7 +658,7 @@
     { unit: 'AI를 활용한 경영전략 설계', content: '기업의 AI도입 전략 설계 / 조직별 AI활용 방안 / AI프로젝트 기획' }
     ]
   },
-  { cat: "리더십", title: "신입사원의 비즈니스 마인드 강화와 문제해결", hours: 8, fee: 400000,
+  { cat: "리더십 > 신입사원", title: "신입사원의 비즈니스 마인드 강화와 문제해결", hours: 8, fee: 400000,
     target: "신규입사자, 사원, 경력입사자",
     goal: "1. 조직 구성원으로서 가져야 할 조직몰입과 업무몰입을 내재화\n2. 문제해결에 필요한 사고력을 강화\n3. 조직 구성원으로서 문제를 다루는 방법 확인",
     curriculum: [
@@ -585,7 +668,7 @@
     { unit: '변화관리 촉진자, 열정플러스', content: '일터에서의 성공의 개념 / 나의 팔로워십 유형 진단 및 Do & Dont' }
     ]
   },
-  { cat: "리더십", title: "핵심인재 로열티 강화", hours: 4, fee: 250000,
+  { cat: "리더십 > 핵심인재", title: "핵심인재 로열티 강화", hours: 4, fee: 250000,
     target: "신규입사자, 사원, 경력입사자",
     goal: "1. 신입 직원으로서 로열티를 강화할 수 있다.\n2. 상호이해와 존중의 중요성을 이해하고 혁신과 브랜딩을 통한 소속감을 강화할 수 있다.",
     curriculum: [
@@ -595,7 +678,7 @@
     { unit: '혁신 플러스', content: '개인과 조직의 동반 성장을 위한 동기부여 / 자기 혁신을 위한 주도적 행동 스위치 만들기' }
     ]
   },
-  { cat: "리더십", title: "계층별 필수교육(사원~주임)", hours: 8, fee: 400000,
+  { cat: "리더십 > 계층별", title: "계층별 필수교육(사원~주임)", hours: 8, fee: 400000,
     target: "신규입사자, 사원~주임/주니어",
     goal: "1. 조직 목표달성을 위한 Linker의 관계관리 역량을 강화하여 현업에 활용할 수 있다.\n2. 자신의 문제와 조직 문제의 영향력을 이해하고, 자신의 성장개발을 통한 조직성과 달성원리를 이해할 수 있다.",
     curriculum: [
@@ -603,7 +686,7 @@
     { unit: 'Linker의 긍정적 영향력', content: '나의 관계성 이해 / 이타적리더와 목적경영 / 나의 학습습관 점검 / 자신의 영향력에 대한 이해' }
     ]
   },
-  { cat: "리더십", title: "계층별 필수교육(주임~대리)", hours: 8, fee: 400000,
+  { cat: "리더십 > 계층별", title: "계층별 필수교육(주임~대리)", hours: 8, fee: 400000,
     target: "주임~대리/주니어",
     goal: "1. 단독과업수행이 가능한 대리역량이 조직에 필요한 이유를 이해하고 신뢰를 높이는 문제해결력을 실행할 수 있다.\n2. 협업을 전략적으로 수행하기 위한 필요역량과 기존 관습을 분리하여 전략적으로 협업하는 방법을 실천할 수 있다.",
     curriculum: [
@@ -611,7 +694,7 @@
     { unit: '성장과 협업', content: '협업의 성과와 저해요소 / 협업에 필요한 핵심요소 / 공감 페르소나 / 협업을 강화하는 핵심 질문 만들기' }
     ]
   },
-  { cat: "리더십", title: "계층별 필수교육(과장)", hours: 8, fee: 400000,
+  { cat: "리더십 > 계층별", title: "계층별 필수교육(과장)", hours: 8, fee: 400000,
     target: "과장급",
     goal: "1. 조직 목표달성을 위한 Linker의 전략적 역할을 수립할 수 있다.\n2. 부서원 조직비전 몰입과 과업이 조직 성과에 연계될 수 있게 하는 동기부여 전략을 수립할 수 있다.\n3. 고성과 조직을 위한 성과촉진의 방법 및 문제 해결력을 높일 수 있다.",
     curriculum: [
@@ -619,7 +702,7 @@
     { unit: '성과달성을 위한 Linker의 동기부여', content: '고성과 조직에 대한 이해와 성과촉진 / 협업에 필요한 핵심요소 / 사고확장을 위한 핵심성공요인 예측' }
     ]
   },
-  { cat: "리더십", title: "계층별 필수교육(차장)", hours: 8, fee: 400000,
+  { cat: "리더십 > 계층별", title: "계층별 필수교육(차장)", hours: 8, fee: 400000,
     target: "차장급",
     goal: "1. 조직관리에 필요한 리더의 역할과 변화의 비전을 수립할 수 있다.\n2. 팀 비전촉진을 위한 리더의 성과관리 노하우를 발휘할 수 있다.\n3. 비전과 업무를 일치시키고 임파워링 할 수 있다.",
     curriculum: [
@@ -627,7 +710,7 @@
     { unit: '비전수립과 비전촉진의 일', content: '의사결정단계 간소화 / 과업주도성의 중요성 / 부서원 관찰 인터뷰 및 Follow up 스킬' }
     ]
   },
-  { cat: "리더십", title: "계층별 필수교육(부장)", hours: 8, fee: 400000,
+  { cat: "리더십 > 계층별", title: "계층별 필수교육(부장)", hours: 8, fee: 400000,
     target: "부장급",
     goal: "1. 조직의 관리자로서 사업 비전을 공유하고 달성하기 위한 방법을 모색할 수 있다.\n2. 사업 부서의 전략 몰입에 대한 복잡성을 증가시키는 4S를 분석할 수 있다.\n3. 혁신적인 조직문화를 구축할 수 있다.",
     curriculum: [
@@ -635,7 +718,7 @@
     { unit: '조직변화를 위한 리더의 모델링', content: '혁신적 조직문화 구축 / 이타주의적 리더의 역할과 행동 / 영감을 주는 리더의 정체성 스토리' }
     ]
   },
-  { cat: "직무", title: "중소기업 마케팅 전략", hours: 16, fee: 620000,
+  { cat: "직무 > 영업/마케팅", title: "중소기업 마케팅 전략", hours: 16, fee: 620000,
     target: "중소기업 마케팅 담당자, 영업담당자",
     goal: "1. 중소기업에 적합한 마케팅 전략을 수립하고 활용할 수 있는 능력을 함양한다.\n2. 중소기업이 제한된 자원으로 효과적인 마케팅 전략을 수립하고 실행할 수 있도록 한다.",
     curriculum: [
@@ -645,7 +728,7 @@
     { unit: '마케팅 실행과 성과관리', content: '마케팅 실행전략 및 계획 / 마케팅 KPI 설정 / 데이터 기반 마케팅 / 성과측정과 마케팅 개선 전략' }
     ]
   },
-  { cat: "직무", title: "마음을 사로잡는 프레젠테이션", hours: 16, fee: 620000,
+  { cat: "직무 > 영업/마케팅", title: "마음을 사로잡는 프레젠테이션", hours: 16, fee: 620000,
     target: "중소기업 마케팅 담당자, 영업담당자 및 실무자",
     goal: "1. 다수의 수주 경험을 가진 전문 프레젠터를 통해 실전 PT스킬을 학습할 수 있다.\n2. 개개인의 제안서와 프레젠테이션 스킬에 대한 컨설팅을 통해 전문성을 높일 수 있다.\n3. 실제 사례를 학습에 활용하여 실전 PT능력을 키울 수 있다.",
     curriculum: [
@@ -656,7 +739,7 @@
     { unit: '실습 및 피드백', content: '발표실습 / 과정마무리 및 종합 피드백' }
     ]
   },
-  { cat: "직무", title: "실무에 바로 써먹는 회계와 세무지식", hours: 8, fee: 450000,
+  { cat: "직무 > 세무/회계", title: "실무에 바로 써먹는 회계와 세무지식", hours: 8, fee: 450000,
     target: "전사원 및 세무담당자",
     goal: "1. 기업운영에 필수적인 회계/세무관련 지식을 습득하고 이를 실무에 적용할 수 있다.\n2. 비용관리 및 이익개선 능력을 확보하고 재무제표를 읽고 의사결정에 활용할 수 있다.",
     curriculum: [
@@ -666,7 +749,7 @@
     { unit: '절세 전략과 세무 리스크 관리', content: '합법적 절세 전략 / 세무조사 대응 / 증빙관리' }
     ]
   },
-  { cat: "리더십", title: "핵심만 쏙! 리더십 스킬업 36.5°C 리더십", hours: 4, fee: 600000,
+  { cat: "리더십 > 공통", title: "핵심만 쏙! 리더십 스킬업 36.5°C 리더십", hours: 4, fee: 600000,
     target: "팀장 후보자, 팀장 승진자 및 팀장",
     goal: "1. 리더와 구성원의 관계에 대한 이해\n2. MZ세대의 업무몰입과 관계 촉진\n3. 팀 커뮤니케이션 최적화",
     curriculum: [
@@ -676,7 +759,7 @@
     { unit: '변화하는 리더', content: 'Action Plan 수립 / 리더 프로필 만들기' }
     ]
   },
-  { cat: "DX/AI", title: "핵심만 쏙! 생성형 AI활용법", hours: 6, fee: 600000,
+  { cat: "DX/AI > 생성형AI", title: "핵심만 쏙! 생성형 AI활용법", hours: 6, fee: 600000,
     target: "생성형 AI의 핵심 기능을 이해하고 AI툴 활용법을 학습하고자 하는 임직원",
     goal: "1. 생성형 AI의 핵심 기능을 이해할 수 있다.\n2. AI툴 활용법을 익혀 실무에 적용할 수 있다.",
     curriculum: [
@@ -686,7 +769,7 @@
     { unit: 'AI의 윤리적 문제', content: '책임감 있는 생성형 AI 활용을 위한 윤리적 원칙 및 가이드라인' }
     ]
   },
-  { cat: "리더십", title: "리더십 역량개발(고급) 영향력과 비전 리더십", hours: 7, fee: 450000,
+  { cat: "리더십 > 공통", title: "리더십 역량개발(고급) 영향력과 비전 리더십", hours: 7, fee: 450000,
     target: "관리자직 수행경력이 오래된 직책자 및 수석부장, 후배 관리자를 이끄는 위치에 있는 관리자",
     goal: "1. 비전추구에서 성과창출까지의 연계성을 도모하는 방법을 파악함.\n2. 조직내에서 후배 관리자들을 이끄는 리더십을 함양함.\n3. 강한 조직·고성과 조직·효율적 조직을 만들기 위한 변화추진 방안 마련함.",
     curriculum: [
@@ -695,7 +778,7 @@
     { unit: '구성원들을 한방향으로 이끄는 리더십', content: '비전 리더십 체험 / 자신만의 리더십 발휘 전략과 lessons learned 공유' }
     ]
   },
-  { cat: "리더십", title: "리더십 역량개발(중급) 코칭과 소통", hours: 7, fee: 450000,
+  { cat: "리더십 > 공통", title: "리더십 역량개발(중급) 코칭과 소통", hours: 7, fee: 450000,
     target: "중소기업에 재직중인 과장, 차장, 부장 직급 관리자",
     goal: "1. 중급 관리자의 필수 리더십 역량인 코칭, 성과관리, 변화관리 역량의 향상\n2. 직급별 리더십 파이프라인의 한 축을 형성하여 조직성과 창출에 기여함.\n3. 소통과 팀워크 스킬 함양으로 중급관리자의 역할을 훌륭히 수행하게 함.",
     curriculum: [
@@ -704,7 +787,7 @@
     { unit: '조율과 합의로 팀워크 향상하기', content: '합의를 통한 갈등해결 / 세대간 조율로 팀워크 향상하기' }
     ]
   },
-  { cat: "리더십", title: "리더십 역량개발(초급) 자기관리", hours: 7, fee: 450000,
+  { cat: "리더십 > 공통", title: "리더십 역량개발(초급) 자기관리", hours: 7, fee: 450000,
     target: "중소기업에 재직중인 과장, 차장, 부장 직급 관리자",
     goal: "1. 변화 시대가 요구하는 관리자의 조건과 역할을 재인식함.\n2. 조직이 필요로 하는 팔로워의 셀프리더십 개념을 정립하고 방법을 습득함.\n3. 끊임없는 자기개발과 리더십 발휘를 위한 실천방법을 이해함.",
     curriculum: [
@@ -713,7 +796,7 @@
     { unit: '팀활성화로 윈윈하기', content: '팀 활성화를 위한 요소 / Best 팀 vs Worst 팀 / 팀 활성화 계획 수립' }
     ]
   },
-  { cat: "DX/AI", title: "전략 기획과 실행 역량개발: AI와 로지컬 씽킹", hours: 14, fee: 650000,
+  { cat: "DX/AI > 기획/전략", title: "전략 기획과 실행 역량개발: AI와 로지컬 씽킹", hours: 14, fee: 650000,
     target: "중소기업 전략·기획·사업·영업·마케팅 부서 담당자 및 예비 팀장급",
     goal: "1. 전략적 사고 프레임워크(MECE, Logic Tree, 피라미드, SCQ) 이해·적용\n2. 3C·SWOT·PESTLE 환경 분석으로 문제 구조화\n3. 생성형 AI(ChatGPT·Claude·Gemini 등)를 기획 전 단계에 활용하여 기획 효율 극대화",
     curriculum: [
@@ -723,7 +806,7 @@
     { unit: '실전! One-Page 기획서 완성', content: '논리적 설득을 위한 One-Page 구조화 / AI 워크플로우 기반 최종 결과물 완성 / 팀별 발표 및 피드백' }
     ]
   },
-  { cat: "직무", title: "구매관리기본(실전편)", hours: 16, fee: 600000,
+  { cat: "직무 > 구매", title: "구매관리기본(실전편)", hours: 16, fee: 600000,
     target: "구매 및 협력업체 관리 담당자, 협상 및 계약·원가절감을 원하는 분",
     goal: "1. 구매관련 전반적인 구매 프로세스 과정을 습득하고 업무능력 배양.\n2. 구매직무에 관련된 핵심 요소를 이해하고 기초 사례중심의 교육을 통한 현업 대응력 증대.\n3. 구매담당자의 기초적인 역량향상과 구매윤리의식 증대.",
     curriculum: [
@@ -733,7 +816,7 @@
     { unit: '구매프로세스 이해(Ⅱ)', content: '납기 중요성 및 리스크 관리 / 구매협상 및 계약관리 / 협력사 소싱 및 발굴 방법' }
     ]
   },
-  { cat: "DX/AI", title: "일잘러의 AI 무기 장착하기: 리서치 자동화", hours: 14, fee: 650000,
+  { cat: "DX/AI > 생성형 AI", title: "일잘러의 AI 무기 장착하기: 리서치 자동화", hours: 14, fee: 650000,
     target: "보고서·기획서·제안서 등 비즈니스 문서 작성이 잦은 실무자, 사원·대리·과장급",
     goal: "1. 보고 관점 전환: 문서와 구두보고를 상사의 판단과 의사결정을 돕는 도구로 명확히 인식\n2. AI 실무 적용: 생성형 AI를 활용해 자료 조사 및 문서 초안 작성 시간을 단축\n3. 핵심 요약 기술: TNOREO 구조 및 구름-비-우산 기법을 활용한 30초 내외의 간결한 구두보고로 변환",
     curriculum: [
@@ -743,7 +826,7 @@
     { unit: '상황별 대응 및 상사 맞춤형 실전 보고', content: '중간·문제·긴급 상황별 보고 실무 / 상사 성향 분석 및 맞춤형 롤플레이' }
     ]
   },
-  { cat: "직무", title: "프로의 제안서 작성과 PT 스킬업", hours: 7, fee: 500000,
+  { cat: "직무 > 영업/마케팅", title: "프로의 제안서 작성과 PT 스킬업", hours: 7, fee: 500000,
     target: "제안서 작성·보고·프레젠테이션 업무를 수행하는 재직자 및 실무자",
     goal: "1. 제안서의 구조와 평가 기준을 이해하고 논리적인 스토리라인을 설계할 수 있다.\n2. 핵심 메시지와 근거를 기반으로 설득력 있는 제안서 문서를 작성할 수 있다.\n3. 슬라이드 구성과 발표 전달 스킬을 활용하여 제안 내용을 효과적으로 PT할 수 있다.",
     curriculum: [
@@ -754,7 +837,7 @@
     { unit: '프레젠테이션 실습 및 피드백', content: '미니 프레젠테이션 실습 / 발표 녹화 및 자가 피드백 / 개인별 개선 전략 수립' }
     ]
   },
-  { cat: "직무", title: "원가 계산 및 분석실무", hours: 18, fee: 700000,
+  { cat: "직무 > 구매", title: "원가 계산 및 분석실무", hours: 18, fee: 700000,
     target: "재무/회계/기획/생산/제조/구매/영업/마케팅 부서 담당자 및 경영진",
     goal: "1. 원가의 기초 개념을 이해하고 실무에 바로 적용\n2. 요소별 원가계산·부문별 원가계산·제품별 원가계산 방법 습득\n3. CVP 분석 등 원가 자료를 바탕으로 한 손익분석 및 관리기법 습득",
     curriculum: [
@@ -765,7 +848,7 @@
     { unit: '원가-조업도-이익(CVP) 분석 기초', content: '공헌이익의 이해 / 손익분기점(BEP) 계산 / 안전한계와 영업레버리지도(DOL) 기초' }
     ]
   },
-  { cat: "직무", title: "견적 원가계산 및 절감", hours: 14, fee: 650000,
+  { cat: "직무 > 구매", title: "견적 원가계산 및 절감", hours: 14, fee: 650000,
     target: "영업/마케팅, 구매/조달, 생산기술/R&D, 원가/기획 부서 담당자",
     goal: "1. 제품을 만드는 데 투입되는 원가 요소를 측정하고 계산하는 방법 습득\n2. 원가행태 구분을 통해 견적의 유연성을 확보\n3. 가치공학(VE/VA)과 목표원가계산을 통한 원가절감 방법 습득",
     curriculum: [
@@ -777,7 +860,7 @@
     { unit: '전부원가계산 vs 변동원가계산의 비교', content: '고정제조간접비 포함 여부에 따른 이익 왜곡 현상 이해 및 방지' }
     ]
   },
-  { cat: "직무", title: "프로젝트 일정관리 기본 과정", hours: 14, fee: 650000,
+  { cat: "직무 > PM", title: "프로젝트 일정관리 기본 과정", hours: 14, fee: 650000,
     target: "프로젝트 관리자(PM), 프로젝트 리더(PL), 일정 관리 및 공정 관리 담당자",
     goal: "1. 프로젝트 일정관리의 개념과 중요성을 이해하고 역할을 설명할 수 있다.\n2. WBS를 기반으로 활동을 정의하고 일정 네트워크를 구성할 수 있다.\n3. 임계경로(Critical Path) 분석과 일정 압축 기법을 활용하여 프로젝트 일정을 최적화할 수 있다.",
     curriculum: [
@@ -788,7 +871,7 @@
     { unit: '일정의 감시 및 통제', content: 'Earned Value Management / SPI / 일정 변경관리 / WBS·Activity·Gantt Chart 종합 실습' }
     ]
   },
-  { cat: "직무", title: "임베디드 프로그래밍-8-bit AVR 코딩", hours: 16, fee: 650000,
+  { cat: "직무 > 개발", title: "임베디드 프로그래밍-8-bit AVR 코딩", hours: 16, fee: 650000,
     target: "마이크로컨트롤러·임베디드 시스템 입문/초급 개발자, AI를 하드웨어 제어에 접목하고 싶은 개발자",
     goal: "1. 8-bit AVR(ATmega 계열)의 GPIO, 타이머, PWM, ADC, UART를 C 언어로 직접 제어할 수 있는 역량 습득\n2. 펌웨어를 코딩·디버깅하는 기본 능력을 기른다.\n3. AI-in-the-loop 제어 구조를 설계·구현하는 것을 목표로 한다.",
     curriculum: [
@@ -800,7 +883,7 @@
     { unit: '생성형 AI 기반 제어 및 종합 프로젝트', content: '자연어 → 제어 명령 매핑 / AI-in-the-loop 통합 제어 구현 / 종합 프로젝트 설계·구현·발표' }
     ]
   },
-  { cat: "DX/AI", title: "AI시대 PM의 필수역량", hours: 14, fee: 650000,
+  { cat: "DX/AI > 프로젝트관리", title: "AI시대 PM의 필수역량", hours: 14, fee: 650000,
     target: "AI 활용 역량을 강화하고 싶은 중소기업 재직자, 업무 생산성을 높이고 싶은 기업 실무자",
     goal: "1. 생성형 AI의 개념과 활용 방법을 이해하고 업무에 적용할 수 있다.\n2. ChatGPT, Gemini 등 생성형 AI 도구를 활용하여 문서 작성, 정보 탐색, 콘텐츠 제작 등 업무 생산성을 향상시킬 수 있다.\n3. AI 기반 협업 도구와 디지털 업무 환경을 활용하여 조직 내 협업과 업무 효율화를 실현할 수 있다.",
     curriculum: [
@@ -811,7 +894,7 @@
     { unit: 'AI 협업 및 스마트워크 역량', content: '클로바노트를 활용한 회의 녹음 및 자동 요약 / 구글 드라이브·캘린더·챗을 활용한 스마트워크 환경 구축' }
     ]
   },
-  { cat: "직무", title: "제조현장 원가절감 추진실무", hours: 14, fee: 650000,
+  { cat: "직무 > 현장관리", title: "제조현장 원가절감 추진실무", hours: 14, fee: 650000,
     target: "현장 개선 리더, 생산 및 공정기술, 원가 및 회계 부서, 현장 관리자",
     goal: "1. 낭비요소와 비부가가치 활동을 제거하고 JIT 및 카이젠(Kaizen) 기법을 적용하여 원가 경쟁력을 극대화\n2. 기업의 실질적인 수익 구조 개선을 목적으로 한다.",
     curriculum: [
@@ -822,7 +905,7 @@
     { unit: '카이젠 원가계산(Kaizen Costing)과 지속적 원가 절감', content: '카이젠 원가 vs 표준 원가 / 현장 중심의 원가 절감 / 원가 절감 목표 배분' }
     ]
   },
-  { cat: "리더십", title: "중소기업 신규입사자 온보딩 교육", hours: 6, fee: 400000,
+  { cat: "리더십 > 신입사원", title: "중소기업 신규입사자 온보딩 교육", hours: 6, fee: 400000,
     target: "중소기업 신규입사자(과장 이하 전 직군), 입사 후 OJT를 수료한 직원",
     goal: "1. 조직 구성원으로서의 경영이해·업무수행·대인관계·자기계발·업무기초 5대 역량을 체계적으로 함양\n2. 보고·연락·상담(호·연·상) 원칙을 이해하고 실전 두괄식 보고와 비즈니스 이메일을 작성할 수 있다\n3. 셀프리더십과 팔로워십을 바탕으로 주도적·협력적 업무 자세를 실천할 수 있다",
     curriculum: [
@@ -834,7 +917,7 @@
     { unit: '자기계발과 셀프리더십', content: '자기이해와 강점 발견 / 셀프리더십과 적극적 행동 / 비전 수립과 SMART 목표 관리' }
     ]
   },
-  { cat: "리더십", title: "승격자를 위한 특급 노하우", hours: 16, fee: 600000,
+  { cat: "리더십 > 공통", title: "승격자를 위한 특급 노하우", hours: 16, fee: 600000,
     target: "202X년 상반기 직급 승격(예정)자 전원 - 신임 관리자, 중추적 실무자, 차세대 리더",
     goal: "1. 승격에 따른 역할 변화를 인식하고 새로운 직책에 맞는 주도적 태도를 갖춘다.\n2. 디자인 씽킹 프로세스를 통해 실무 문제를 창의적으로 해결하는 관점을 습득한다.\n3. 게이미피케이션 활동을 통해 협력적 소통의 중요성을 체득하고 팀 시너지를 극대화한다.",
     curriculum: [
@@ -846,7 +929,7 @@
     { unit: '성과면담과 피드백', content: '성장을 이끄는 피드백 스킬 / 성과면담 구조와 준비 요령 / 실전 면담 시뮬레이션' }
     ]
   },
-  { cat: "DX/AI", title: "AI와 함께 하는 업무 활용 실전 비기", hours: 6, fee: 500000,
+  { cat: "DX/AI > 생성형AI", title: "AI와 함께 하는 업무 활용 실전 비기", hours: 6, fee: 500000,
     target: "AI를 활용하여 업무 생산성을 높이고 싶은 구성원",
     goal: "1. 생성형 AI 기술의 이해와 다양한 AI 도구 활용 방법을 학습하여 업무 생산성과 창의성을 향상\n2. 문서 작성, 기획, 콘텐츠 제작 등 다양한 업무 영역에서 AI를 활용하여 업무 효율을 높임",
     curriculum: [
@@ -858,7 +941,7 @@
     { unit: 'AI 활용 전략', content: '생성형 AI 업무 적용 방법 / 조직 내 AI 활용 방법 / AI 시대 직무 변화 이해' }
     ]
   },
-  { cat: "리더십", title: "신입사원 역량강화 일 잘하는 직장인", hours: 8, fee: 550000,
+  { cat: "리더십 > 신입사원", title: "신입사원 역량강화 일 잘하는 직장인", hours: 8, fee: 550000,
     target: "신입사원 및 입사 1~2년차 사원",
     goal: "1. 학생에서 직장인으로의 관점을 전환하고 조직 내 역할을 인식한다.\n2. 신뢰를 축적하는 직업인의 태도와 원칙을 체득한다.\n3. 업무 파악, 우선순위 설정, 보고의 기본 구조를 습득한다.\n4. 자기 주도적 성장 계획을 수립하고 실행 의지를 다진다.",
     curriculum: [
@@ -868,7 +951,7 @@
     { unit: '성장하는 직장인의 자기관리', content: '업무 기록 습관과 자기 매뉴얼 구축 / 조직 내 성장 기회를 포착하는 방법 / 1년차 성장 로드맵 수립' }
     ]
   },
-  { cat: "DX/AI", title: "AI 시대 업무 역량강화 생성AI 실무 적용", hours: 8, fee: 550000,
+  { cat: "DX/AI > 생성형AI", title: "AI 시대 업무 역량강화 생성AI 실무 적용", hours: 8, fee: 550000,
     target: "전 직급 실무자, AI 도구를 업무에 활용하고자 하는 구성원",
     goal: "1. AI의 기본 개념과 업무 활용 원리를 이해한다.\n2. AI를 활용하여 실제 업무(보고서, 기획, 분석)의 생산성을 높일 수 있다.\n3. AI 시대 실무자에게 필요한 프롬프트 설계와 결과 검증 역량을 체득한다.",
     curriculum: [
@@ -877,7 +960,7 @@
     { unit: 'AI 기반 업무 프로세스 혁신', content: '나만의 AI 업무 워크플로우 설계 / AI 활용 실전 프로젝트 / AI 활용 업무 개선 계획서 작성 및 발표' }
     ]
   },
-  { cat: "직무", title: "분석적 사고와 전략적 기획", hours: 8, fee: 550000,
+  { cat: "직무 > 기획", title: "분석적 사고와 전략적 기획", hours: 8, fee: 550000,
     target: "대리급~과장급 실무자 및 차세대 리더, 업무 기획력과 분석적 사고력 강화가 필요한 구성원",
     goal: "1. 복잡한 상황에서 본질을 파악하고 핵심 질문을 도출하는 사고력을 강화한다.\n2. 제한된 정보 속에서 근거 있는 판단을 내리는 분석 역량을 체득한다.\n3. 실행 가능한 수준의 전략적 기획을 수립하고 구조화할 수 있다.",
     curriculum: [
@@ -886,7 +969,7 @@
     { unit: '실행 중심의 전략적 기획', content: '결론 중심의 기획 구조화 / 실행 가능한 수준의 기획 / So What? 테스트로 기획 검증하기 / 팀별 케이스 기획 발표 및 피드백' }
     ]
   },
-  { cat: "리더십", title: "MBTI를 활용한 팀 커뮤니케이션", hours: 4, fee: 400000,
+  { cat: "리더십 > 커뮤니케이션", title: "MBTI를 활용한 팀 커뮤니케이션", hours: 4, fee: 400000,
     target: "전 직급(팀 단위 참여 권장), 팀 내 소통 개선 및 협업 강화가 필요한 조직",
     goal: "1. MBTI를 통해 자신의 소통 성향과 강점·약점을 객관적으로 인식한다.\n2. 상대 유형별 효과적인 소통 전략을 수립하고 적용할 수 있다.\n3. 유형 다양성을 팀 시너지로 전환하는 협업 역량을 체득한다.",
     curriculum: [
@@ -895,7 +978,7 @@
     { unit: '팀 시너지 워크숍', content: '우리 팀 유형 맵 분석 / 팀 소통 규칙 수립 / 팀 소통 규칙 발표 및 상호 피드백' }
     ]
   },
-  { cat: "리더십", title: "세대공감 조직 커뮤니케이션", hours: 4, fee: 400000,
+  { cat: "리더십 > 커뮤니케이션", title: "세대공감 조직 커뮤니케이션", hours: 4, fee: 400000,
     target: "전 직급(팀장급 관리자 및 실무자), 세대 간 소통 갈등 해소 및 조직 내 협업 강화가 필요한 조직",
     goal: "1. 세대별 가치관과 일에 대한 관점 차이를 구조적으로 이해한다.\n2. 세대 간 갈등의 원인을 분석하고 조직 성과에 미치는 영향을 인식한다.\n3. 세대를 넘는 소통 전략을 수립하고 세대공감 조직문화를 만들어갈 수 있다.",
     curriculum: [
@@ -903,7 +986,7 @@
     { unit: '세대를 넘는 소통 전략과 조직문화 만들기', content: '세대별 소통 특성과 선호 방식 / 리더와 실무자, 각자의 소통 전환 포인트 / 세대 다양성을 팀 강점으로 전환하는 방법' }
     ]
   },
-  { cat: "리더십", title: "코칭형 리더십 : 1:1 미팅과 피드백", hours: 8, fee: 550000,
+  { cat: "리더십 > 공통", title: "코칭형 리더십 : 1:1 미팅과 피드백", hours: 8, fee: 550000,
     target: "팀장급 관리자 및 리더 후보자, 구성원 육성과 팀 성과 향상을 위한 리더십 전환이 필요한 관리자",
     goal: "1. 지시형 리더십에서 코칭형 리더십으로의 전환 필요성을 인식한다.\n2. 1:1 미팅을 설계하고 효과적으로 운영할 수 있다.\n3. 구성원의 성장과 몰입을 이끄는 피드백 스킬을 체득한다.",
     curriculum: [
@@ -912,7 +995,7 @@
     { unit: '피드백과 동기부여', content: '성장을 이끄는 피드백 스킬 / 코칭형 리더십 실전 종합 연습 / 1:1 미팅 롤플레이' }
     ]
   },
-  { cat: "직무", title: "업무보고서 작성과 논리적 사고", hours: 8, fee: 550000,
+  { cat: "직무 > 보고서", title: "업무보고서 작성과 논리적 사고", hours: 8, fee: 550000,
     target: "사원~대리급 실무자, 보고서 작성 역량 강화가 필요한 구성원",
     goal: "1. 논리적 사고를 기반으로 보고서의 핵심 메시지를 구조화할 수 있다.\n2. 읽는 사람 관점에서 설득력 있는 보고서를 작성할 수 있다.\n3. 실전 보고서 작성과 피드백을 통해 즉시 활용 가능한 작성 역량을 체득한다.",
     curriculum: [
@@ -921,7 +1004,7 @@
     { unit: '보고서 실습과 피드백', content: '실전 보고서 작성(AI 활용) / 동료 리뷰를 통한 1차 개선 / 보고서 발표 및 피드백 세션' }
     ]
   },
-  { cat: "직무", title: "성과관리 및 인사평가 컨설팅", hours: 8, fee: 550000,
+  { cat: "직무 > 성과관리", title: "성과관리 및 인사평가 컨설팅", hours: 8, fee: 550000,
     target: "경영진, 인사/교육 담당자, 성과관리·인사평가 체계의 신규 구축 또는 개선이 필요한 조직",
     goal: "1. 우리 회사의 성과관리·인사평가 현황을 객관적으로 진단할 수 있다.\n2. 공정성과 수용성을 갖춘 인사평가제도를 설계할 수 있다.\n3. 성과관리 체계 개선을 위한 실행 로드맵을 수립할 수 있다.",
     curriculum: [
@@ -930,7 +1013,7 @@
     { unit: '실행 로드맵 수립', content: '단계별 실행 로드맵 설계 / 변화관리와 정착 전략 / 실행 계획 발표 및 상호 피드백' }
     ]
   },
-  { cat: "직무", title: "현장 관리감독자 역량개발 교육", hours: 7, fee: 500000,
+  { cat: "직무 > 현장 관리", title: "현장 관리감독자 역량개발 교육", hours: 7, fee: 500000,
     target: "현장 관리 감독자(조장, 반장, 직장, 주임, 선임기사, 계장, 파트장, 라인장) 및 후보자",
     goal: "1. 환경변화에 따른 새로운 현장관리자의 역할을 인식함.\n2. 주어진 목표의 달성과 성과를 관리할 수 있는 능력을 습득함.\n3. 조직 내 상호관계에서 효과적인 대화 기술을 활용할 수 있음.",
     curriculum: [
@@ -939,7 +1022,7 @@
     { unit: '현장관리와 리더십 발휘', content: '전통적인 통제중심의 관리와 새로운 리더십 / 두 가지 파워(Position Power vs Human Power) / 리더십 발휘 계획 수립' }
     ]
   },
-  { cat: "직무", title: "제조현장 문제해결 역량개발 교육", hours: 14, fee: 600000,
+  { cat: "직무 > 현장 관리 ", title: "제조현장 문제해결 역량개발 교육", hours: 14, fee: 600000,
     target: "현장감독자, 품질혁신분야 사원, 설비운전 및 유지보수 담당자",
     goal: "1. 각종 현장문제에 대하여 효과적인 해결과 접근방법을 제시함.\n2. 트러블을 신속하고 시행착오를 최소화하며 해결하도록 이끔.\n3. 고질적인 문제의 원인을 찾고 새로운 문제의 방지대책을 수립함.",
     curriculum: [
@@ -950,7 +1033,7 @@
     { unit: '대책수립과 예방조치', content: '대책의 3가지 유형(잠정/시정/적응대책) / 예방 조치하기 / 현장 적용계획 정리' }
     ]
   },
-  { cat: "DX/AI", title: "칼퇴를 부르는 AI 실무 : 생성형 AI 완전정복", hours: 14, fee: 650000,
+  { cat: "DX/AI > 생성형AI", title: "칼퇴를 부르는 AI 실무 : 생성형 AI 완전정복", hours: 14, fee: 650000,
     target: "중소기업 재직자 전 직무(총무·인사, 영업·마케팅, 구매·물류, 고객지원, 기획·홍보 담당자), 비코딩 실무자",
     goal: "1. AI 기술 변화의 속도와 방향을 거시적으로 이해하고 중소기업 실무자로서 AI 시대 대응 방향 설정\n2. PROMPT 프레임워크를 활용하여 원하는 결과물을 즉시 생성하는 프롬프트를 직접 설계\n3. 본인 직무에 맞는 AI 업무 루틴 SOP를 직접 설계하고 교육 종료 즉시 현업에 적용",
     curriculum: [
@@ -960,7 +1043,7 @@
     { unit: 'AI와 함께 매일 칼퇴: 나만의 AI 업무 루틴 완성', content: '직무 반복 업무 목록화 및 AI 전환 가능 업무 분류 / 개인 맞춤형 AI 업무 루틴 설계 워크숍 / 나만의 AI 업무 SOP 초안 작성 및 발표' }
     ]
   },
-  { cat: "직무", title: "채용에서 퇴직까지 : 인사담당자 HR A to Z", hours: 14, fee: 650000,
+  { cat: "직무 > 인사/노무", title: "채용에서 퇴직까지 : 인사담당자 HR A to Z", hours: 14, fee: 650000,
     target: "중소기업 인사·총무·경영지원 담당자(경력 1~10년), 인사 업무를 처음 맡은 신규 담당자",
     goal: "1. 인사관리의 체계를 이해하고 중소기업 규모에 맞는 인사 운영 방향을 설정\n2. 핵심 인사노무 행정 업무를 노동법에 맞게 정확히 처리\n3. 직무분석을 기반으로 공정한 성과관리 체계 수립\n4. AI 도구를 활용하여 인사 문서 작성·관리 업무를 효율화",
     curriculum: [
@@ -970,7 +1053,7 @@
     { unit: '교육훈련 체계와 중소기업 복지제도 설계', content: '연간 교육훈련 계획 수립 / 법정 의무교육 관리 / 중소기업 복리후생 제도 설계 / 인사노무 리스크 자가 진단' }
     ]
   },
-  { cat: "직무", title: "외국인 근로자 관리 실무", hours: 14, fee: 650000,
+  { cat: "직무 > 인사/노무", title: "외국인 근로자 관리 실무", hours: 14, fee: 650000,
     target: "외국인 근로자를 고용 중이거나 고용 예정인 중소기업 재직자, 현장 관리자, 인사·총무 담당자",
     goal: "1. 외국인 근로자의 심리적 특성과 주요 송출국별 문화적 특성을 이해하고 문화 차이를 배려한 소통·지도 방식을 적용\n2. 한국 직장 문화와 생활에 효과적으로 적응하도록 온보딩 전략과 학습 지도 방법을 설계·실행\n3. 정착 단계별 지원 방법을 수립하고 통합적인 지원 체계를 현장에 구축",
     curriculum: [
@@ -980,7 +1063,7 @@
     { unit: '정착 단계별 지원과 기관 연계 전략', content: '정착 5단계 모델과 위기 신호 / 사업장 맞춤 정착 지원 로드맵 설계 / 분야별 외국인 근로자 지원기관 연계 방법' }
     ]
   },
-  { cat: "직무", title: "노무관리 종합 진단개선", hours: 14, fee: 650000,
+  { cat: "직무 > 인사/노무", title: "노무관리 종합 진단개선", hours: 14, fee: 650000,
     target: "인사/노무관리자, 현장 관리자, 임원",
     goal: "1. 고용노동부 사업장 근로감독 확대에 대비한 예방적 진단개선\n2. 급변하는 노동관계법과 판례 변화에 대응한 적법한 노무관리\n3. 고용노동부 및 노동위원회 사건 등 분쟁 예방과 갈등관리\n4. 개별적 근로관계 전반에 대한 인사노무관리 역량 강화",
     curriculum: [
@@ -991,7 +1074,7 @@
     { unit: '기타 실무 쟁점', content: '직장 내 괴롭힘 / 모성보호제도 / 저성과자 관리 / 연령차별금지와 임금피크제' }
     ]
   },
-  { cat: "리더십", title: "팀의 성장을 설계하고 성과로 증명하라", hours: 16, fee: 850000,
+  { cat: "리더십 > 공통", title: "팀의 성장을 설계하고 성과로 증명하라", hours: 16, fee: 850000,
     target: "팀장, 팀장 후보자, 차세대 리더",
     goal: "1. 실무전문성을 바탕으로 팀 업무를 주도하며 팀 성과 촉진을 위해 팀업무와 구성원을 균형적으로 관리하는 초급관리자로서 역할을 이해한다.\n2. 팀 성장단계를 파악하고 이에 따른 리더십/관리 활동을 구상할 수 있다.\n3. 팀원의 업무성과 향상을 위한 리더의 업무/성과관리 방법을 습득한다.",
     curriculum: [
@@ -1002,7 +1085,7 @@
     { unit: '팀 성과/업무관리', content: '성과/목표관리 필요성, 팀/개인 목표설정 방법 / 업무 진척도관리 및 피드백 스킬(STAR-AR, AAR) / 리더의 업무수행 관리' }
     ]
   },
-  { cat: "리더십", title: "성과를 디자인하는 리더", hours: 16, fee: 850000,
+  { cat: "리더십 > 공통", title: "성과를 디자인하는 리더", hours: 16, fee: 850000,
     target: "팀장, 팀장 후보자, 차세대 리더",
     goal: "1. 성과촉진을 위한 팀 리더의 역할과 성과관리 리더십을 이해함.\n2. 목표 설정 방법 및 지도 Knowhow를 습득함.\n3. 중간 진척도 관리 및 팀원 코칭, 평가 스킬을 학습함.",
     curriculum: [
@@ -1013,7 +1096,7 @@
     { unit: '평가와 피드백/Value up', content: '성과평가 공정성과 오류 유형 / 평가면담/피드백 스킬 / 평가결과의 수용성을 높이는 방법 3가지' }
     ]
   },
-  { cat: "직무", title: "실전 문제해결 솔루션", hours: 8, fee: 550000,
+  { cat: "직무 > 문제해결", title: "실전 문제해결 솔루션", hours: 8, fee: 550000,
     target: "현업 문제해결을 필요로 하는 모든 직급, 핵심인재, 차세대 리더",
     goal: "1. 우리 조직 업무현장에서의 개선과제(문제) 도출 및 과제(문제) 정의 요령을 습득함.\n2. 논리적/분석적 사고를 이해하고 개선과제(문제) 및 원인분석을 위한 다양한 Tool을 학습함.\n3. 해결안 도출 및 실행계획 수립에 활용되는 Tool을 학습함.",
     curriculum: [
@@ -1023,7 +1106,7 @@
     { unit: '해결안 도출/실행계획 수립', content: '해결안 선정(준거평정법, Dotting Tech.) / Brain Storming·SCAMPER / Risk 예측 및 실행계획 수립(Gantt Chart)' }
     ]
   },
-  { cat: "직무", title: "ACE 사원의 스마트한 업무 실행/관리", hours: 8, fee: 550000,
+  { cat: "직무 > 문제해결", title: "ACE 사원의 스마트한 업무 실행/관리", hours: 8, fee: 550000,
     target: "스마트하게 일하는 방식의 습득을 필요로 하는 모든 실무자",
     goal: "1. 상사의 업무지시 파악 및 명확한 업무수명의 중요성과 노하우를 습득함.\n2. 체계적 업무계획 수립 업무 및 추진과정에서의 이해관계자 관리/문제해결 기법 등을 학습함.\n3. 업무 종결 시 관리해야 할 주요 Checkpoints를 파악하고 보고문서 작성 및 효과적 보고방법을 이해함.",
     curriculum: [
@@ -1033,7 +1116,7 @@
     { unit: '업무성과 보고하기', content: '효과적 구두보고 스킬 / 보고서 작성법 / 문서유형별 작성방법 / 보고서 작성 Tip' }
     ]
   },
-  { cat: "리더십", title: "승격자 통합 역량 과정", hours: 8, fee: 550000,
+  { cat: "리더십 > 공통", title: "승격자 통합 역량 과정", hours: 8, fee: 550000,
     target: "202X년 상반기 직급 승격(예정)자 전원 - 신임 관리자, 중추적 실무자, 차세대 리더",
     goal: "1. 승격에 따른 역할 변화를 인식하고 새로운 직책에 맞는 주도적 태도를 갖춘다.\n2. 디자인 씽킹 프로세스를 통해 실무 문제를 창의적으로 해결하는 관점을 습득한다.\n3. 게이미피케이션 활동을 통해 협력적 소통의 중요성을 체득하고 팀 시너지를 극대화한다.",
     curriculum: [
@@ -1042,7 +1125,7 @@
     { unit: 'Collaboration Game: 신뢰와 소통의 기술', content: '게이미피케이션 - 제한된 정보 속의 협력 / 정보 비대칭 해소 및 역할 최적화 / 현업 적용 아이디어 도출' }
     ]
   },
-  { cat: "리더십", title: "강점리더십", hours: 4, fee: 400000,
+  { cat: "리더십 > 공통", title: "강점리더십", hours: 4, fee: 400000,
     target: "팀원의 강점을 육성해야 하는 리더, 나의 강점을 진단하고 업무에 활용하고 싶은 실무자",
     goal: "1. 강점 인식 및 활용의 중요성을 이해한다.\n2. 나의 강점을 진단하고 강점의 특징을 안다.\n3. 잡크래프팅을 위한 강점 적용 방법을 확인하고 활용 계획을 세운다.",
     curriculum: [
@@ -1052,7 +1135,7 @@
     { unit: '목표하기', content: '퍼스널 브랜딩 문장 만들기 / 업무 적용 및 성장 계획 작성하기 / 강점 기반의 중장기 커리어 성장 로드맵 수립' }
     ]
   },
-  { cat: "리더십", title: "성장을 이끄는 대화의 기술", hours: 4, fee: 400000,
+  { cat: "리더십 > 커뮤니케이션", title: "성장을 이끄는 대화의 기술", hours: 4, fee: 400000,
     target: "성과 성장을 견인하고 싶은 팀 리더, 경청과 질문 역량이 필요한 중간 관리자",
     goal: "1. 명령과 지시 중심의 소통 방식에서 벗어나 코칭의 원리를 이해하고 코칭형 리더로 변화하기 위한 기초 체력을 기른다.\n2. 강력한 질문과 경청 등 핵심 코칭 스킬을 습득하여 구성원의 잠재력을 끌어내는 대화 역량을 확보한다.",
     curriculum: [
@@ -1062,7 +1145,7 @@
     { unit: '코칭의 협업 적용', content: '일상 속 5분 코칭 전략 / 나의 코칭 리더십 선언문 작성' }
     ]
   },
-  { cat: "리더십", title: "같이 일하고 싶은 팀장", hours: 8, fee: 550000,
+  { cat: "리더십 > 공통", title: "같이 일하고 싶은 팀장", hours: 8, fee: 550000,
     target: "팀장, 임원 등 리더 계층",
     goal: "1. 심리적 안정감을 기반으로 팀 몰입도를 높이는 리더십 역량 습득\n2. 신뢰 형성과 커뮤니케이션을 통한 팀 성과 창출 방법 체득\n3. 팀 운영의 갈등·성과·동기 문제를 해결하는 실전 리더십 확보",
     curriculum: [
@@ -1072,7 +1155,7 @@
     { unit: '현장 리더십 이슈 해결', content: '팀장 실무 이슈 해결 / 팀원 불만 및 갈등 상황 대응 / 리더십 발휘 전략' }
     ]
   },
-  { cat: "리더십", title: "어쩌다 중간 관리자", hours: 8, fee: 550000,
+  { cat: "리더십 > 공통", title: "어쩌다 중간 관리자", hours: 8, fee: 550000,
     target: "조직의 중간관리자(대리~차장)",
     goal: "1. 중간관리자의 구조적 역할과 딜레마 이해\n2. 상사 설득 및 보고 역량 강화\n3. 후배 동기부여 및 코칭 스킬 습득\n4. 갈등 상황에서 조직 균형을 유지하는 실행 전략 확보",
     curriculum: [
@@ -1082,7 +1165,7 @@
     { unit: '갈등관리', content: '중간관리자의 갈등관리 전략 / 갈등을 키우지 않는 완충·조정 기술 / 권한 없이 영향력 발휘하기' }
     ]
   },
-  { cat: "직무", title: "일잘러의 보고서 작성법", hours: 8, fee: 550000,
+  { cat: "직무 > 보고서", title: "일잘러의 보고서 작성법", hours: 8, fee: 550000,
     target: "실무자",
     goal: "1. 쉽게 이해되는 비즈니스 보고서 작성 역량 확보\n2. 논리적 구조(MECE) 기반 보고서 설계 능력 강화\n3. 명확하고 간결한 문장 표현 및 가독성 향상\n4. 생성형 AI를 활용한 보고서 작성으로 효율성 증대",
     curriculum: [
@@ -1092,7 +1175,7 @@
     { unit: '보고서 점검 및 AI활용', content: '보고서 완성도 향상 전략 / 오류 점검 및 완성도 검증 방법 / 생성형 AI를 활용한 보고서 작성 및 개선 방법' }
     ]
   },
-  { cat: "DX/AI", title: "워크스마트 : 생성형 AI 활용법", hours: 8, fee: 550000,
+  { cat: "DX/AI > 생성형AI", title: "워크스마트 : 생성형 AI 활용법", hours: 8, fee: 550000,
     target: "실무자",
     goal: "1. 생성형 AI의 원리와 한계를 이해하고 업무 활용\n2. 프롬프트 설계 역량을 통해 원하는 결과를 효과적으로 도출\n3. 문서 작성, 리서치, 기획, 의사결정 등 주요 업무에 생성형 AI 적용\n4. 조직 내 보안·윤리 기준을 준수하며 안전하게 AI 활용",
     curriculum: [
@@ -1102,7 +1185,7 @@
     { unit: 'AI를 활용한 보고서 완성', content: '보고서 완성도 향상 전략 / 생성형 AI를 활용한 보고서 작성 및 개선 방법 / 조직 내 AI 보안·윤리 기준 준수' }
     ]
   },
-  { cat: "DX/AI", title: "중소기업 팀장급을 위한 AI통합 리더십 과정", hours: 8, fee: 650000,
+  { cat: "DX/AI > 팀관리", title: "중소기업 팀장급을 위한 AI통합 리더십 과정", hours: 8, fee: 650000,
     target: "실무자",
     goal: "1. 급변하는 산업환경에 기민하게 대응하는 변화 관리 역량 발휘\n2. 데이터에 기반한 실질적이고 공정한 팀 성과 창출\n3. 팀 내 심리적 안정감 구축 및 구성원의 자발적 몰입을 견인",
     curriculum: [
@@ -1114,6 +1197,8 @@
   },
         ];
 
+        // 분류(cat) 기준으로 배열 정렬
+        rawData.sort((a, b) => a.cat.localeCompare(b.cat));
         
         function filterByTab(tabName, clickedBtn) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
@@ -1179,7 +1264,6 @@
             const btn = document.getElementById(btnId);
             if (!body || !btn) return;
 
-            // 이미 열려있는 다른 아코디언 닫기
             if (currentOpenAccordion && currentOpenAccordion.rowId !== rowId) {
                 const prevBody = document.getElementById('body-' + currentOpenAccordion.rowId);
                 const prevBtn = document.getElementById(currentOpenAccordion.btnId);
@@ -1210,7 +1294,6 @@
             const explorer = document.getElementById('courseExplorer');
             if (isOpen) {
                 explorer.classList.remove('hidden');
-                // 전체 탭 기본 활성화
                 const allBtn = document.querySelector('.tab-btn');
                 filterByTab('all', allBtn);
                 setTimeout(() => explorer.scrollIntoView({ behavior: 'smooth' }), 50);
@@ -1257,6 +1340,49 @@
             answer.classList.toggle('hidden');
             icon.style.transform = answer.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
         }
+
+        /* -------------------------------------------------------------
+           계산기 스크립트 기능 
+        ------------------------------------------------------------- */
+        function openCalcModal() {
+            const calcModal = document.getElementById('calcModal');
+            calcModal.classList.remove('hidden');
+            calcModal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+            calculate(); // 모달 열때마다 계산기 초기화
+        }
+
+        function closeCalcModal() {
+            const calcModal = document.getElementById('calcModal');
+            calcModal.classList.add('hidden');
+            calcModal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+
+        function calculate() {
+            const companySizeSelect = document.getElementById('company_size');
+            const selectedOption = companySizeSelect.options[companySizeSelect.selectedIndex];
+            
+            const insuranceRate = parseFloat(companySizeSelect.value); 
+            const cost3 = parseFloat(document.getElementById('cost_3').value) || 0; 
+            
+            const rate2 = parseFloat(selectedOption.getAttribute('data-rate')); 
+
+            const premium5 = rate2 * cost3;
+            const subsidyRaw = insuranceRate * premium5;
+            
+            let resultD18 = subsidyRaw;
+            if (resultD18 < 5000000) {
+                resultD18 = 5000000;
+            }
+
+            document.getElementById('rate_2').value = (rate2 * 100) + '%';
+            document.getElementById('rate_4').value = (insuranceRate * 100).toFixed(2) + '%';
+            document.getElementById('premium_5').value = premium5.toLocaleString() + ' 원';
+            document.getElementById('subsidy_raw').value = subsidyRaw.toLocaleString() + ' 원';
+            document.getElementById('result_d18').value = resultD18.toLocaleString() + ' 원';
+        }
+
     </script>
 </body>
 </html>
