@@ -6,6 +6,7 @@
     <title>2026 중소기업 인재 키움 프리미엄 훈련</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>emailjs.init('tIXo1BYrDjw52bz-0');</script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
@@ -83,34 +84,75 @@
         .quick-menu-btn.contact-btn:hover {
             background: #0d9488;
         }
+        .quick-menu-btn.survey-btn {
+            background: #8b5cf6;
+        }
+        .quick-menu-btn.survey-btn:hover {
+            background: #7c3aed;
+        }
 
         /* 계산기 전용 스타일 */
         .calc-input, .calc-select { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; color: #1e293b; outline: none; transition: all 0.2s; }
         .calc-input:focus, .calc-select:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
         .calc-input[readonly] { background-color: #f1f5f9; color: #475569; font-weight: 700; border-color: transparent; }
         #result_d18 { background: transparent; font-size: 1.5rem; text-align: right; }
+
+        /* 진단 설문 전용 스타일 */
+        .survey-radio-group { display: flex; justify-content: space-between; gap: 4px; margin-top: 10px; }
+        .survey-radio-label {
+            flex: 1; text-align: center; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 4px;
+            font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; color: #475569;
+        }
+        .survey-radio-label:hover { background: #e2e8f0; }
+        .survey-radio-input { display: none; }
+        .survey-radio-input:checked + .survey-radio-label { background: #3b82f6; color: white; border-color: #2563eb; font-weight: 700; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3); }
+        .survey-question-box { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 overflow-x-hidden">
 
-    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
                 <div class="flex items-center">
-                    <span class="text-blue-800 font-black text-2xl tracking-tight">인재키움 <span class="text-blue-500 font-light">PREMIUM</span></span>
+                    <span class="text-blue-800 font-black text-xl sm:text-2xl tracking-tight">인재키움 <span class="text-blue-500 font-light">PREMIUM</span></span>
                 </div>
-                <div class="hidden md:flex space-x-8 text-sm font-bold text-slate-600">
-                    <a href="#intro" class="hover:text-blue-600 transition">사업소개</a>
-                    <a href="#target" class="hover:text-blue-600 transition">지원대상</a>
-                    <a href="#benefits" class="hover:text-blue-600 transition">지원혜택</a>
-                    <a href="#process" class="hover:text-blue-600 transition">참여절차</a>
-                    <a href="javascript:void(0)" onclick="openCalcModal()" class="hover:text-blue-600 transition text-blue-700">지원금 계산기</a>
-                    <a href="#faq" class="hover:text-blue-600 transition">FAQ</a>
-                </div>
-                <div>
-                    <button onclick="openModal()" class="bg-blue-700 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-blue-800 transition">
-                        문의하기
-                    </button>
+                
+                <div class="flex space-x-4 sm:space-x-6 text-xs sm:text-sm font-bold text-slate-600 items-center h-full">
+                    <!-- 1. 사업소개 그룹 (드롭다운) -->
+                    <div class="relative group h-full flex items-center">
+                        <button class="hover:text-blue-600 transition flex items-center gap-1 h-full cursor-pointer outline-none">
+                            사업소개 
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="absolute top-[60px] left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <div class="w-32 bg-white border border-slate-200 shadow-xl rounded-xl flex flex-col overflow-hidden">
+                                <a href="#intro" class="px-4 py-3 hover:bg-slate-50 text-slate-700 transition border-b border-slate-100 text-center">사업소개</a>
+                                <a href="#target" class="px-4 py-3 hover:bg-slate-50 text-slate-700 transition border-b border-slate-100 text-center">지원대상</a>
+                                <a href="#benefits" class="px-4 py-3 hover:bg-slate-50 text-slate-700 transition border-b border-slate-100 text-center">지원혜택</a>
+                                <a href="#process" class="px-4 py-3 hover:bg-slate-50 text-slate-700 transition border-b border-slate-100 text-center">참여절차</a>
+                                <a href="#faq" class="px-4 py-3 hover:bg-slate-50 text-slate-700 transition text-center">FAQ</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. 역량진단 그룹 (드롭다운) -->
+                    <div class="relative group h-full flex items-center">
+                        <button class="hover:text-purple-700 text-purple-600 transition flex items-center gap-1 h-full cursor-pointer outline-none">
+                            역량진단 
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="absolute top-[60px] left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <div class="w-32 bg-white border border-slate-200 shadow-xl rounded-xl flex flex-col overflow-hidden">
+                                <a href="javascript:void(0)" onclick="openSurveyModal('pre')" class="px-4 py-3 hover:bg-purple-50 text-purple-700 transition border-b border-slate-100 text-center whitespace-nowrap">사전진단</a>
+                                <a href="javascript:void(0)" onclick="openSurveyModal('post')" class="px-4 py-3 hover:bg-purple-50 text-violet-700 transition border-b border-slate-100 text-center whitespace-nowrap">사후진단</a>
+                                <a href="javascript:void(0)" onclick="openAdminModal()" class="px-4 py-3 bg-violet-50 hover:bg-violet-100 text-violet-800 transition text-center whitespace-nowrap">HR관리자</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="javascript:void(0)" onclick="openCalcModal()" class="hover:text-blue-800 transition text-blue-700 whitespace-nowrap h-full flex items-center">지원금계산기</a>
+                    <a href="javascript:void(0)" onclick="openModal()" class="bg-blue-700 text-white px-4 py-2 rounded-full hover:bg-blue-800 transition whitespace-nowrap shadow-md">문의하기</a>
                 </div>
             </div>
         </div>
@@ -126,7 +168,7 @@
                 2026년 중소기업 인재 키움<br><span class="text-blue-200">프리미엄 훈련</span>
             </h1>
             <p class="text-xl md:text-2xl font-light mb-12 opacity-90 leading-relaxed max-w-4xl mx-auto text-center">
-                중소기업 재직자 직무교육, <strong class="text-white font-bold border-b-4 border-blue-400">교육비 최대 95% 정부지원</strong><br>
+                중소기업 재직자 직무교육, <strong class="text-white font-bold border-b-4 border-blue-400 underline">교육비 최대 95% 정부지원</strong><br>
                 성장의 한계를 넘는 혁신형 기업훈련을 통해 기업 경쟁력을 높여 보세요!!
             </p>
             
@@ -135,13 +177,7 @@
                     지원 대상·절차 자세히 보기
                 </a>
                 <button onclick="toggleCourseList(true)" class="bg-blue-900/40 border border-blue-300 px-8 py-4 rounded-2xl font-bold text-lg text-white hover:bg-blue-900/60 transition">
-                    전체 과정 리스트(00개)
-                </button>
-            </div>
-            
-            <div class="flex justify-center">
-                <button class="group flex items-center text-sm font-medium text-blue-100 italic">
-                    <span class="mr-2">↓</span> 중소기업 인재 키움 프리미엄 훈련 안내서 다운로드
+                    전체 과정 리스트 보기
                 </button>
             </div>
         </div>
@@ -153,7 +189,7 @@
                 <span class="text-blue-600 font-bold tracking-widest uppercase text-sm mb-4 block">Overview</span>
                 <h2 class="text-4xl font-black text-slate-900 mb-8 leading-tight">국가가 인정하고 지원하는<br>격이 다른 직무 교육</h2>
                 <div class="text-slate-600 text-lg space-y-6">
-                    <p>"2026 중소기업 인재 키움 프리미엄 훈련"은 「고용보험법」 제114조 및 「사업주 직업능력개발훈련 지원규정」 제7조 제2호에 의거, <b>중소기업 재직근로자가 원하는 훈련과정에 참여할 수 있도록 기업이 훈련비를 지원하면, 사업주가 부담한 비용의 90% 이상을 지원</b>하는 제도입니다. <Br>기존의 범용적인 직무교육 체계에서 벗어나 중소기업 임직원들이 현업에서 바로 활용할 수 있는 <B>고품질 핵심인재 육성</B>을 목표로 합니다.</p>
+                    <p>"2026 중소기업 인재 키움 프리미엄 훈련"은 「고용보험법」 제114조 및 「사업주 직업능력개발훈련 지원규정」 제7조 제2호에 의거, <b class="underline font-bold text-slate-900">중소기업 재직근로자가 원하는 훈련과정에 참여할 수 있도록 기업이 훈련비를 지원하면, 사업주가 부담한 비용의 90% 이상을 지원</b>하는 제도입니다. <Br>기존의 범용적인 직무교육 체계에서 벗어나 중소기업 임직원들이 현업에서 바로 활용할 수 있는 <b class="text-blue-700 underline font-extrabold">고품질 핵심인재 육성</b>을 목표로 합니다.</p>
                 </div>
                 <div class="mt-12 flex gap-8">
                     <div class="p-6 bg-slate-50 rounded-2xl flex-1 border border-slate-100">
@@ -169,16 +205,14 @@
             <div class="lg:w-2/5 w-full bg-white border border-slate-200 p-10 rounded-3xl shadow-xl relative text-left">
                 <h3 class="text-2xl font-bold mb-8 flex items-center text-slate-900"><span class="text-blue-500 mr-3">✔</span> 핵심 차별점</h3>
                 <ul class="space-y-8 text-left">
-                    <li class="flex items-start text-left"><div class="shrink-0 w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-bold mr-4">01</div><div class="text-left"><p class="font-bold text-lg text-slate-800 text-left">우수 과정 선정</p><p class="text-slate-500 text-sm">공단 심사를 통과한 고품질 교육과정만 엄선<Br>**고객사의 니즈에 따른 커스터마이징 가능**</p></div></li>
-                    <li class="flex items-start text-left"><div class="shrink-0 w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-bold mr-4">02</div><div class="text-left"><p class="font-bold text-lg text-slate-800 text-left">HR담당자의 '행정리소스 제로화'</p><p class="text-slate-500 text-sm">1. 교육 프로그램에 대한 철저한 학습자 출결관리 <Br>2. 훈련비 환급 및 인프라 지원</p></div></li>
-                    <li class="flex items-start text-left"><div class="shrink-0 w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-bold mr-4">03</div><div class="text-left"><p class="font-bold text-lg text-slate-800 text-left text-left">실무 중심 커리큘럼</p><p class="text-slate-500 text-sm text-left">현업에 바로 적용할 수 있도록 [실습]중심의 실무 밀착형 교육 설계</p></div></li>
-                    <li class="flex items-start text-left"><div class="shrink-0 w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-bold mr-4">04</div><div class="text-left"><p class="font-bold text-lg text-slate-800 text-left text-left">학습자 역량관리</p><p class="text-slate-500 text-sm text-left">1. 현장 밀착관리 및 학습성과를 입증하는 결과리포팅<Br>2. 과정종료후 복습용 이러닝 과정 제공을 통한 지속학습 지원(일부과정에 한함)</p></div></li>
-
+                    <li class="flex items-start text-left"><div class="shrink-0 w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-bold mr-4">01</div><div class="text-left"><p class="font-bold text-lg text-slate-800 text-left">우수 과정 선정</p><p class="text-slate-500 text-sm">공단 심사를 통과한 고품질 교육과정만 엄선<Br><b class="underline font-bold text-slate-700">고객사의 니즈에 따른 커스터마이징 가능</b></p></div></li>
+                    <li class="flex items-start text-left"><div class="shrink-0 w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-bold mr-4">02</div><div class="text-left"><p class="font-bold text-lg text-slate-800 text-left">HR담당자의 <b class="text-blue-600 underline">'행정리소스 제로화'</b></p><p class="text-slate-500 text-sm">1. 교육 프로그램에 대한 철저한 학습자 출결관리 <Br>2. 훈련비 환급 및 인프라 지원</p></div></li>
+                    <li class="flex items-start text-left"><div class="shrink-0 w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-bold mr-4">03</div><div class="text-left"><p class="font-bold text-lg text-slate-800 text-left text-left">실무 중심 커리큘럼</p><p class="text-slate-500 text-sm text-left">현업에 바로 적용할 수 있도록 <b class="underline text-slate-900">[실습]중심의 실무 밀착형 교육 설계</b></p></div></li>
+                    <li class="flex items-start text-left"><div class="shrink-0 w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-bold mr-4">04</div><div class="text-left"><p class="font-bold text-lg text-slate-800 text-left text-left">학습자 역량관리</p><p class="text-slate-500 text-sm text-left">1. 현장 밀착관리 및 학습성과를 입증하는 결과리포팅<Br><b class="underline font-bold text-slate-700">2. 과정종료후 복습용 이러닝 과정 제공을 통한 지속학습 지원</b>(일부과정에 한함)</p></div></li>
                 </ul>
             </div>
         </div>
     </section>
-
 
     <section id="courseExplorer" class="py-24 px-4 bg-slate-900 text-white hidden border-y border-white/10 text-center">
         <div class="max-w-7xl mx-auto">
@@ -195,7 +229,7 @@
             <div class="bg-slate-800 rounded-3xl shadow-xl overflow-hidden border border-slate-700 text-left">
                 <table class="w-full text-left" id="courseTable">
                     <thead class="bg-slate-700 text-blue-400 font-bold italic text-left text-left">
-                        <tr><th class="px-8 py-5 text-left">No.</th><th class="px-8 py-5 text-left">분류</th><th class="px-8 py-5 text-left">훈련 과정명 (71개 실제 데이터)</th><th class="px-6 py-5 text-center whitespace-nowrap">훈련시간</th><th class="px-6 py-5 text-center whitespace-nowrap">훈련비 단가</th><th class="px-8 py-5 text-center">상세보기</th></tr>
+                        <tr><th class="px-8 py-5 text-left">No.</th><th class="px-8 py-5 text-left">분류</th><th class="px-8 py-5 text-left">훈련 과정명 (71개)</th><th class="px-6 py-5 text-center whitespace-nowrap">훈련시간</th><th class="px-6 py-5 text-center whitespace-nowrap">훈련비 단가</th><th class="px-8 py-5 text-center">상세보기</th></tr>
                     </thead>
                     <tbody class="divide-y divide-slate-700 text-slate-300 text-left"></tbody>
                 </table>
@@ -212,20 +246,20 @@
                 <div class="bg-slate-800/50 p-10 rounded-3xl border border-slate-700 text-left">
                     <h3 class="text-2xl font-bold mb-6 italic underline decoration-blue-500 underline-offset-8 text-left">지원 대상 사업장</h3>
                     <ul class="space-y-4 text-slate-300 text-lg text-left">
-                        <li>✔ 고용보험 가입 우선지원대상기업(중소기업)</li>
-                        <li>✔ 기업당 지원한도 ㅣ 개산보험료의 240%(최소 500만원)</li>
+                        <li>✔ <b class="text-white underline">고용보험 가입 우선지원대상기업(중소기업)</b></li>
+                        <li>✔ 기업당 지원한도 ㅣ 개산보험료의 240%(최소 <b class="text-white underline">500만원</b>)</li>
                     </ul>
                 </div>
                 <div class="bg-slate-800/50 p-10 rounded-3xl border border-slate-700 text-left">
                     <h3 class="text-2xl font-bold mb-6 italic underline decoration-blue-500 underline-offset-8 text-left">지원 대상 근로자</h3>
                     <ul class="space-y-4 text-slate-300 text-lg text-left">
-                        <li>✔ 우선지원대상기업 소속 근로자</li>
-                        <li>✔ 훈련개시일 기준 고용보험 취득 재직근로자 및 취득예정근로자</li>
+                        <li>✔ <b class="text-white underline">우선지원대상기업 소속 근로자</b></li>
+                        <li>✔ 훈련개시일 기준 <b class="text-white underline">고용보험 취득 재직근로자 및 취득예정근로자</b></li>
                     </ul>
                 </div>
             </div>
             <div class="bg-blue-600/20 border border-blue-500/30 p-8 rounded-2xl max-w-5xl mx-auto italic text-blue-300 text-lg text-center leading-relaxed">
-                “고용보험 우선지원대상기업에 해당하는 중소기업 소속 근로자라면 <Br>본 사업을 통해 정부 지원 직무훈련에 참여할 수 있습니다.”<Br>**훈련비 환급을 위해 해당 기업은 고용24 기업회원 가입 필수**
+                “고용보험 우선지원대상기업에 해당하는 중소기업 소속 근로자라면 <Br>본 사업을 통해 정부 지원 직무훈련에 참여할 수 있습니다.”<Br><b class="text-white underline font-bold">**훈련비 환급을 위해 해당 기업은 고용24 기업회원 가입 필수**</b>
             </div>
         </div>
     </section>
@@ -237,17 +271,17 @@
                 <div class="bg-slate-50 p-12 rounded-3xl border border-slate-100 text-center text-center">
                     <div class="text-blue-600 font-black text-6xl mb-6 italic text-center text-center text-center">90%~</div>
                     <p class="text-2xl font-bold mb-4 text-slate-900 text-center">정부 환급 지원</p>
-                    <p class="text-slate-500 text-lg text-center">사업주가 부담한 훈련비의 90%이상 환급</p>
+                    <p class="text-slate-500 text-lg text-center">사업주가 부담한 훈련비의 <b class="text-slate-900 underline font-bold">90%이상 환급</b></p>
                 </div>
                 <div class="premium-gradient p-12 rounded-3xl text-white shadow-2xl scale-110 text-center text-center">
                     <div class="text-white font-black text-7xl mb-6 italic underline decoration-blue-300 text-center">95%</div>
                     <p class="text-2xl font-bold mb-4 text-center">비수도권 우대</p>
-                    <p class="text-blue-100 text-lg text-center text-center text-center">"찾아가는 훈련", "비수도권"의 경우 최대 95% 환급</p>
+                    <p class="text-blue-100 text-lg text-center text-center text-center"><b class="text-white underline">"찾아가는 훈련", "비수도권"</b>의 경우 <b class="text-white underline font-bold">최대 95% 환급</b></p>
                 </div>
                 <div class="bg-slate-50 p-12 rounded-3xl border border-slate-100 text-center">
                     <div class="text-blue-600 font-black text-6xl mb-6 italic text-center">5~10%</div>
                     <p class="text-2xl font-bold mb-4 text-slate-900 text-center">낮은 기업 부담</p>
-                    <p class="text-slate-500 text-lg text-center">기업은 훈련비의 5~10% 수준만 부담</p>
+                    <p class="text-slate-500 text-lg text-center">기업은 훈련비의 <b class="text-slate-900 underline font-bold">5~10% 수준만 부담</b></p>
                 </div>
             </div>
         </div>
@@ -260,22 +294,22 @@
                 <div class="process-card bg-white p-10 rounded-3xl border border-slate-100 shadow-lg text-center text-center">
                     <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-10 text-center text-center">1</div>
                     <h4 class="text-xl font-bold mb-4 italic">지원 자격 확인</h4>
-                    <p class="text-slate-500 text-sm">고용보험 우선지원대상기업 여부 확인ㅣ 고용 · 산재보험 토탈서비스(total.comwel.or.kr)</p>
+                    <p class="text-slate-500 text-sm">고용보험 우선지원대상기업 여부 확인ㅣ 고용 · 산재보험 토탈서비스(<b class="underline text-slate-700">total.comwel.or.kr</b>)</p>
                 </div>
                 <div class="process-card bg-white p-10 rounded-3xl border border-slate-100 shadow-lg text-center">
                     <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-10 text-center">2</div>
                     <h4 class="text-xl font-bold mb-4 italic text-center">훈련과정 선택</h4>
-                    <p class="text-slate-500 text-sm text-center">미래솔에서 제공하는 나에게 적합한 프리미엄 훈련과정 선택 후 '상담신청'</p>
+                    <p class="text-slate-500 text-sm text-center">미래솔에서 제공하는 나에게 적합한 프리미엄 훈련과정 선택 후 <b class="underline text-slate-700">'상담신청'</b></p>
                 </div>
                 <div class="process-card bg-white p-10 rounded-3xl border border-slate-100 shadow-lg text-center text-center">
                     <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-10 text-center">3</div>
                     <h4 class="text-xl font-bold mb-4 italic text-center">훈련 참여</h4>
-                    <p class="text-slate-500 text-sm text-center text-center text-center">교육 이수 및 수료 기준 충족</p>
+                    <p class="text-slate-500 text-sm text-center text-center text-center"><b class="underline text-slate-700">교육 이수 및 수료 기준 충족</b></p>
                 </div>
                 <div class="process-card bg-white p-10 rounded-3xl border border-slate-100 shadow-lg text-center">
                     <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-10 text-center">4</div>
                     <h4 class="text-xl font-bold mb-4 italic text-center text-center text-center">훈련비 환급</h4>
-                    <p class="text-slate-500 text-sm text-center text-center text-center text-center">훈련 수료 후 훈련비 환급 신청<BR>(수료증, 훈련비 납입 서류 제출)</p>
+                    <p class="text-slate-500 text-sm text-center text-center text-center text-center">훈련 수료 후 <b class="underline text-slate-700">훈련비 환급 신청</b><BR>(수료증, 훈련비 납입 서류 제출)</p>
                 </div>
             </div>
         </div>
@@ -291,7 +325,7 @@
                         <svg class="w-5 h-5 text-slate-400 transform transition duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div class="px-6 pb-6 text-slate-600 hidden animate-fade-in">
-                        2026년 사업주 직업능력개발훈련 사업의 일환으로 추진되는 중소기업 재직 근로자 대상 훈련비 지원 사업으로, 훈련비의 90% 이상(최대 95%)을 정부가 지원하는 고품질 프리미엄 직무훈련입니다.
+                        2026년 사업주 직업능력개발훈련 사업의 일환으로 추진되는 중소기업 재직 근로자 대상 훈련비 지원 사업으로, 훈련비의 <b class="underline font-bold text-slate-800">90% 이상(최대 95%)</b>을 정부가 지원하는 고품질 프리미엄 직무훈련입니다.
                     </div>
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
@@ -300,7 +334,7 @@
                         <svg class="w-5 h-5 text-slate-400 transform transition duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div class="px-6 pb-6 text-slate-600 hidden animate-fade-in">
-                        고용보험에 가입된 우선지원대상기업(중소기업)을 중심으로, 관련 공고에서 정한 요건을 충족하는 사업장이 참여할 수 있습니다. <br> [고용보험 우선지원대상기업 여부 확인 방법] <br>고용 · 산재보험 토탈서비스(total.comwel.or.kr) 접속 → 상단 메뉴 "정보조회"  → 고용보험가입정보 조회  → "사업장 총괄카드 조회"  → 사업장관리번호 입력 후 "조회" → 대규모기업 "비해당"
+                        고용보험에 가입된 <b class="underline font-bold text-slate-800">우선지원대상기업(중소기업)</b>을 중심으로, 관련 공고에서 정한 요건을 충족하는 사업장이 참여할 수 있습니다. <br> [<b class="text-slate-800">고용보험 우선지원대상기업 여부 확인 방법</b>] <br>고용 · 산재보험 토탈서비스(total.comwel.or.kr) 접속 → 상단 메뉴 "정보조회"  → 고용보험가입정보 조회  → "사업장 총괄카드 조회"  → 사업장관리번호 입력 후 "조회" → 대규모기업 "비해당"
                     </div>
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
@@ -309,7 +343,7 @@
                         <svg class="w-5 h-5 text-slate-400 transform transition duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div class="px-6 pb-6 text-slate-600 hidden animate-fade-in">
-                        한국산업인력공단이 엄격한 심사를 통해 선정한 지원과정 풀(Pool)에 포함된 과정입니다. 디지털 전환, AI·데이터 활용, 생산품질 혁신, 경영 리더십 등 중소기업 성장에 필수적인 전 분야가 포함되어 있습니다.
+                        한국산업인력공단이 엄격한 심사를 통해 선정한 지원과정 풀(Pool)에 포함된 과정입니다. <b class="underline font-bold text-slate-800">디지털 전환, AI·데이터 활용, 생산품질 혁신, 경영 리더십</b> 등 중소기업 성장에 필수적인 전 분야가 포함되어 있습니다.
                     </div>
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
@@ -318,7 +352,7 @@
                         <svg class="w-5 h-5 text-slate-400 transform transition duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div class="px-6 pb-6 text-slate-600 hidden animate-fade-in">
-                        고용24 홈페이지 로그인 후 메인페이지 상단 "직업 능력 개발" 메뉴 클릭 → 메뉴 내 "사업주훈련" 클릭 → 하단 탭 중 "지원한도 조회" 클릭하여 지원한도, 기지급액등 세부사항을 조회할 수 있습니다.
+                        고용24 홈페이지 로그인 후 메인페이지 상단 "직업 능력 개발" 메뉴 클릭 → 메뉴 내 "사업주훈련" 클릭 → 하단 탭 중 <b class="underline font-bold text-slate-800">"지원한도 조회"</b> 클릭하여 지원한도, 기지급액등 세부사항을 조회할 수 있습니다.
                     </div>
                 </div>
             </div>
@@ -343,13 +377,14 @@
                 </div>
                 <div class="flex space-x-6">
                     <a href="#" class="hover:text-white transition">이용약관</a>
-                    <a href="#" class="hover:text-white transition font-bold text-blue-400">개인정보처리방침</a>
+                    <a href="#" class="hover:text-white transition font-bold text-blue-400 underline">개인정보처리방침</a>
                     <a href="#" class="hover:text-white transition">문의하기</a>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- 상담 모달 -->
     <div id="contactModal" class="fixed inset-0 z-[100] hidden items-center justify-center px-4">
         <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeModal()"></div>
         <div class="relative bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden text-left">
@@ -373,17 +408,16 @@
                         <input type="email" name="이메일" placeholder="mail@example.com" required class="w-full px-4 py-3 border rounded-xl outline-none">
                     </div>
                 </div>
-                
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-1">과정명</label>
                     <input type="text" id="modalCourseName" name="과정명" placeholder="과정을 선택하거나 직접 입력하세요" readonly class="w-full px-4 py-3 border rounded-xl outline-none bg-slate-100 text-slate-600 cursor-not-allowed select-none">
                 </div>
-
                 <button type="submit" id="submitBtn" class="w-full premium-gradient text-white py-4 rounded-xl font-bold shadow-lg">상담 신청 완료</button>
             </form>
         </div>
     </div>
 
+    <!-- 계산기 모달 -->
     <div id="calcModal" class="fixed inset-0 z-[100] hidden items-center justify-center px-4">
         <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeCalcModal()"></div>
         <div class="relative bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden text-left flex flex-col max-h-[90vh]">
@@ -407,806 +441,341 @@
                     </tr>
                     <tr>
                         <th class="bg-slate-50 border border-slate-200 p-4 font-bold text-slate-700 text-sm">② 기업규모별 지원율</th>
-                        <td class="border border-slate-200 p-4">
-                            <input type="text" id="rate_2" readonly class="calc-input">
-                        </td>
+                        <td class="border border-slate-200 p-4"><input type="text" id="rate_2" readonly class="calc-input"></td>
                     </tr>
                     <tr>
                         <th class="bg-slate-50 border border-slate-200 p-4 font-bold text-slate-700 text-sm">③ 기업 총인건비 (원)</th>
-                        <td class="border border-slate-200 p-4">
-                            <input type="number" id="cost_3" value="450000000" oninput="calculate()" placeholder="금액 입력" class="calc-input bg-white font-bold text-slate-900 shadow-inner">
-                        </td>
+                        <td class="border border-slate-200 p-4"><input type="number" id="cost_3" value="450000000" oninput="calculate()" placeholder="금액 입력" class="calc-input bg-white font-bold text-slate-900 shadow-inner"></td>
                     </tr>
                     <tr>
                         <th class="bg-slate-50 border border-slate-200 p-4 font-bold text-slate-700 text-sm">④ 보험료율</th>
-                        <td class="border border-slate-200 p-4">
-                            <input type="text" id="rate_4" readonly class="calc-input">
-                        </td>
+                        <td class="border border-slate-200 p-4"><input type="text" id="rate_4" readonly class="calc-input"></td>
                     </tr>
                     <tr>
-                        <th class="bg-slate-50 border border-slate-200 p-4 font-bold text-slate-700 text-sm leading-relaxed">⑤ 고용안정, 직업능력개발사업 보험료 <br><span class="text-xs font-normal text-slate-400">(② × ③)</span></th>
-                        <td class="border border-slate-200 p-4">
-                            <input type="text" id="premium_5" readonly class="calc-input">
-                        </td>
+                        <th class="bg-slate-50 border border-slate-200 p-4 font-bold text-slate-700 text-sm leading-relaxed">⑤ 고용안정, 직업능력개발사업 보험료</th>
+                        <td class="border border-slate-200 p-4"><input type="text" id="premium_5" readonly class="calc-input"></td>
                     </tr>
-                    <tr>
-                        <th class="bg-slate-50 border border-slate-200 p-4 font-bold text-slate-700 text-sm leading-relaxed">사업주훈련 지원금 <br><span class="text-xs font-normal text-slate-400">(④ × ⑤)</span></th>
-                        <td class="border border-slate-200 p-4">
-                            <input type="text" id="subsidy_raw" readonly class="calc-input">
-                        </td>
-                    </tr>
-                    
                     <tr>
                         <th class="border border-blue-200 p-5 font-bold text-blue-900 text-base bg-blue-100/50 text-center align-middle">(예상) 사업주훈련 지원금</th>
-                        <td class="border border-blue-200 p-5 bg-blue-50/50 text-right">
-                            <input type="text" id="result_d18" readonly class="calc-input text-red-600 font-black border-none shadow-none text-right outline-none w-full p-0">
-                        </td>
+                        <td class="border border-blue-200 p-5 bg-blue-50/50 text-right"><input type="text" id="result_d18" readonly class="calc-input text-red-600 font-black border-none shadow-none text-right outline-none w-full p-0"></td>
                     </tr>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 사전/사후 역량진단(설문) 모달 -->
+    <div id="surveyModal" class="fixed inset-0 z-[100] hidden items-center justify-center px-4">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeSurveyModal()"></div>
+        <div class="relative bg-slate-50 w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden text-left flex flex-col max-h-[95vh]">
+            <div id="surveyHeaderBg" class="bg-purple-700 p-6 text-white relative text-left shrink-0">
+                <h3 class="text-2xl font-bold" id="surveyModalTitle">기업 역량 진단</h3>
+                <p class="text-purple-200 text-sm mt-1" id="surveyModalSubtitle">현재 역량을 진단해보고 최적의 과정을 추천받아보세요.</p>
+                <button onclick="closeSurveyModal()" class="absolute top-6 right-6 text-2xl font-bold text-white/80 hover:text-white">✕</button>
+            </div>
+            
+            <div class="p-6 md:p-8 overflow-y-auto flex-1 bg-slate-50" id="surveyContentArea">
+                <!-- 진행바 -->
+                <div id="surveyProgressContainer" class="mb-6 hidden">
+                    <div class="flex justify-between text-xs font-bold text-slate-500 mb-2">
+                        <span id="surveyStepTitle">직무 및 현장 전문성</span>
+                        <span id="surveyStepCount">1 / 4 단계</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div id="surveyProgressBar" class="bg-purple-600 h-2 rounded-full transition-all duration-300" style="width: 25%"></div>
+                    </div>
+                </div>
+
+                <!-- 질문 컨테이너 -->
+                <div id="surveyQuestionsBox" class="hidden"></div>
                 
-                <div class="text-sm text-slate-400 space-y-1">
-                    <p>* 고용보험법 시행령</p>
-                    <p>* 사업주직업능력 개발훈련 지원규정</p>
-                    <p><B>* 정확한 사업주훈련 지원금은 고용24 홈페이지를 통해 확인하시기 바랍니다.</B></p>
+                <!-- 결과 컨테이너 -->
+                <div id="surveyResultBox" class="hidden flex flex-col items-center">
+                    <h4 class="text-xl font-bold text-slate-800 mb-2" id="resultBoxHeading">📊 역량 진단 결과</h4>
+                    <p class="text-slate-500 text-sm mb-4 text-center" id="resultBoxSubHeading">진단 결과를 바탕으로 분석된 리포트입니다.</p>
+                    
+                    <div class="w-full max-w-md bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-2">
+                        <canvas id="surveyRadarChart" width="400" height="320"></canvas>
+                    </div>
+
+                    <!-- 체크박스형 범례 추가 -->
+                    <div class="flex justify-center items-center gap-6 mb-4 text-sm font-bold text-slate-700">
+                        <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm hover:bg-slate-50 transition select-none">
+                            <input type="checkbox" id="legendPre" checked onchange="toggleDataset(0)" class="w-4 h-4 text-slate-500 rounded border-slate-300 focus:ring-slate-400">
+                            <span class="w-3 h-3 rounded-full inline-block" style="background: rgba(148, 163, 184, 1);"></span>
+                            사전 진단 (Pre)
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm hover:bg-slate-50 transition select-none" id="legendPostWrapper">
+                            <input type="checkbox" id="legendPost" checked onchange="toggleDataset(1)" class="w-4 h-4 text-violet-600 rounded border-slate-300 focus:ring-violet-500">
+                            <span class="w-3 h-3 rounded-full inline-block" style="background: rgba(124, 58, 237, 1);"></span>
+                            사후 진단 (Post)
+                        </label>
+                    </div>
+
+                    <!-- 요약 수치 영역 -->
+                    <div id="growthSummary" class="w-full grid grid-cols-2 gap-3 mb-6 hidden"></div>
+
+                    <div class="w-full" id="recommendationContainer">
+                        <h5 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-200 pb-2"><span class="text-purple-600">💡</span> 맞춤 추천 과정</h5>
+                        <div id="recommendedCourses" class="space-y-3"></div>
+                    </div>
+                    
+                    <!-- 팀장 진단결과 파일 다운로드 버튼 -->
+                    <button onclick="exportSurveyResult()" class="mt-6 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl transition flex justify-center items-center shadow-md">
+                        <span class="mr-2 text-lg">💾</span> 진단 결과 파일로 저장하기 (제출용)
+                    </button>
+
+                    <div class="mt-8 pt-6 border-t border-slate-200 flex justify-center w-full">
+                        <button onclick="closeSurveyModal()" class="px-6 py-2.5 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-900 transition shadow-md">
+                            닫기
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 시작 화면 (업종 선택 포함) -->
+                <div id="surveyIntroBox" class="text-center py-8">
+                    <div class="text-5xl mb-5">📈</div>
+                    <h4 class="text-2xl font-black text-slate-800 mb-2" id="introTitle">역량 진단을 시작하시겠습니까?</h4>
+                    <p class="text-slate-600 mb-8 font-medium" id="introSubtitle">우리 조직의 현주소를 입체적으로 진단해 보세요.</p>
+                    
+                    <div class="max-w-md mx-auto text-left bg-slate-50 border border-slate-200 rounded-2xl p-5 mb-8 space-y-4">
+                        <div class="flex items-start">
+                            <span class="text-purple-600 mr-3 text-lg mt-0.5">✔️</span>
+                            <div>
+                                <p class="font-bold text-slate-800 text-sm" id="bullet1Title">4대 핵심 영역 심층 분석</p>
+                                <p class="text-xs text-slate-500 mt-1 break-keep" id="bullet1Desc">총 40개의 정밀 문항으로 우리 기업의 숨은 잠재력과 페인포인트(Pain Point)를 도출합니다.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-purple-600 mr-3 text-lg mt-0.5">✔️</span>
+                            <div>
+                                <p class="font-bold text-slate-800 text-sm" id="bullet2Title">맞춤형 오프라인 훈련 제안</p>
+                                <p class="text-xs text-slate-500 mt-1 break-keep" id="bullet2Desc">진단 결과를 바탕으로 현업 실무 경쟁력을 극대화할 최적의 현장 교육 솔루션을 매칭해 드립니다.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-purple-600 mr-3 text-lg mt-0.5">✔️</span>
+                            <div>
+                                <p class="font-bold text-slate-800 text-sm" id="bullet3Title">성과(ROI) 객관적 검증</p>
+                                <p class="text-xs text-slate-500 mt-1 break-keep" id="bullet3Desc">교육 수료 후 사후 진단과 연계하여, 실질적인 역량 향상 폭과 개선 성과를 투명하게 증명합니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 업종 선택 영역 -->
+                    <div class="max-w-md mx-auto mb-10 text-left bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <label class="block text-base font-bold text-slate-800 mb-4 text-center">진단할 업종을 선택해 주세요</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="industryType" value="manufacturing" class="peer hidden" checked>
+                                <div class="text-center py-3 px-2 border border-slate-200 rounded-xl peer-checked:bg-purple-600 peer-checked:text-white peer-checked:border-purple-600 transition font-bold text-sm text-slate-600 bg-slate-50">제조업</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="industryType" value="service" class="peer hidden">
+                                <div class="text-center py-3 px-2 border border-slate-200 rounded-xl peer-checked:bg-purple-600 peer-checked:text-white peer-checked:border-purple-600 transition font-bold text-sm text-slate-600 bg-slate-50">서비스업</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="industryType" value="office" class="peer hidden">
+                                <div class="text-center py-3 px-2 border border-slate-200 rounded-xl peer-checked:bg-purple-600 peer-checked:text-white peer-checked:border-purple-600 transition font-bold text-sm text-slate-600 bg-slate-50">사무/기획</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button onclick="startSurvey()" class="bg-purple-600 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-purple-700 transition shadow-lg w-full max-w-md mx-auto">진단 시작하기</button>
+                </div>
+            </div>
+
+            <!-- 하단 버튼 영역 -->
+            <div id="surveyFooter" class="p-6 border-t border-slate-200 bg-white hidden flex justify-between">
+                <button id="btnSurveyPrev" onclick="prevSurveyStep()" class="px-6 py-2.5 border border-slate-300 rounded-lg text-slate-600 font-bold hover:bg-slate-50 hidden transition">이전</button>
+                <button id="btnSurveyNext" onclick="nextSurveyStep()" class="px-6 py-2.5 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700 ml-auto transition shadow-md">다음</button>
+                <button id="btnSurveySubmit" onclick="submitSurvey()" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 ml-auto hidden transition shadow-md">결과 보기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 관리자용 대시보드 모달 -->
+    <div id="adminModal" class="fixed inset-0 bg-slate-900/70 z-50 hidden flex-col justify-center items-center p-4">
+        <div class="bg-white w-full max-w-5xl h-full max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            <div class="bg-slate-800 text-white p-5 flex justify-between items-center shrink-0">
+                <h2 class="text-xl font-black">HR 전문가 종합 성과 리포트 (Admin)</h2>
+                <button onclick="closeAdminModal()" class="text-slate-300 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto bg-slate-50 flex-1">
+                
+                <!-- 팀장 진단 결과 취합 (JSON 병합) 패널 -->
+                <div class="bg-indigo-50 border border-indigo-200 p-4 md:p-5 rounded-xl mb-5 shadow-sm">
+                    <h3 class="font-bold text-indigo-900 mb-2 flex items-center text-sm md:text-base">
+                        <span class="mr-2">📂</span> 복수 응답 데이터 취합 (Data Merge)
+                    </h3>
+                    <p class="text-xs text-indigo-700 mb-4 break-keep">팀장들이 전달한 결과 파일(.json)을 모두 선택하여 전사 평균 데이터를 산출합니다.</p>
+                    <div class="flex flex-col md:flex-row items-center gap-3">
+                        <input type="file" id="importFiles" multiple accept=".json" class="block w-full text-xs md:text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer bg-white border border-slate-200 rounded-lg">
+                        <button onclick="importAndMergeData()" class="bg-indigo-800 hover:bg-indigo-900 text-white font-bold px-6 py-2.5 rounded-lg text-sm transition shrink-0 w-full md:w-auto">
+                            평균 데이터 병합하기
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 핵심 성과 지표 입력 패널 -->
+                <div class="bg-white border border-slate-200 p-5 rounded-xl mb-6 flex flex-col md:flex-row gap-4 items-end shadow-sm">
+                    <div class="flex-1 w-full">
+                        <label for="adminCompletionRate" class="block text-xs font-bold text-slate-600 mb-1">총훈련 이수율 (%)</label>
+                        <div class="relative">
+                            <input type="number" id="adminCompletionRate" placeholder="예: 95" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500">
+                            <span class="absolute right-3 top-2.5 text-slate-400 text-sm">%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1 w-full">
+                        <label for="adminTotalCost" class="block text-xs font-bold text-slate-600 mb-1">총 훈련비용 / 환급액 (원)</label>
+                        <input type="text" id="adminTotalCost" placeholder="예: 15,000,000" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500">
+                    </div>
+                
+                    <button onclick="saveAdminMetrics()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-6 py-2.5 rounded-lg text-sm transition shrink-0 w-full md:w-auto">
+                        지표 적용하기
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-1 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center">
+                        <p class="text-sm font-bold text-slate-500 mb-2">전사 평균 역량 향상률</p>
+                        <p id="adminImprovement" class="text-3xl font-black text-blue-600 mt-2">사후 진단 대기중</p>
+                        <div class="w-full h-64 mt-4">
+                            <canvas id="adminChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <div id="adminConsultantReport" class="hidden">
+                            <!-- JS를 통해 리포트 생성됨 -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- 퀵메뉴 -->
     <div class="quick-menu">
-        <button class="quick-menu-btn" onclick="toggleCourseList(true)" title="전체 과정 리스트 보기">
-            📋 과정 리스트
+        <button class="quick-menu-btn survey-btn" onclick="openSurveyModal('pre')" title="사전 진단">
+            📈 사전진단
         </button>
-        <button class="quick-menu-btn calc-btn" onclick="openCalcModal()" title="지원금 계산기">
-            🧮 지원금 계산
+        <button class="quick-menu-btn" style="background: #7c3aed;" onclick="openSurveyModal('post')" title="사후 진단">
+            📊 사후진단
         </button>
-        <button class="quick-menu-btn contact-btn" onclick="openModal()" title="상담 신청">
-            ✉ 상담 신청
+        <button class="quick-menu-btn" onclick="toggleCourseList(true)" title="과정 리스트">
+            📋 과정목록
+        </button>
+        <button class="quick-menu-btn calc-btn" onclick="openCalcModal()" title="지원금 계산">
+            🧮 지원금계산
         </button>
     </div>
 
     <script>
+        // 원본 100% 유지: 71개 전체 과정 리스트
         const rawData = [
-  { cat: "리더십 > 공통", title: "리더십 에센스 Fast Track", hours: 12, fee: 600000,
-    target: "팀장 후보자, 팀장 승진자 및 팀장",
-    goal: "1. 경영환경의 변화에 따른 리더십의 진화, 구성원이 팀에서 느끼는 안정성(관계 공정성)\n2. 새로운 업무 도전에 대한 지지와 지원, 구성원의 성향에 맞춘 동기부여 전략\n3. 갈등의 순기능을 유지하고 역기능 방지(갈등관리), 팀의 행동 원칙 정립을 통한 일체성 확립",
-    curriculum: [
-    { unit: '리더의 모습', content: '새로운 환경이 원하는 리더의 모습 / VUCA 시대 대응법 / 러닝 커브가 빠른 인재 육성' },
-    { unit: '정서적 공감', content: '정서적 공감을 통한 팀빌딩 / 관심·배려를 통한 정서적 지원 / 관계성 진단 / 정서적 소통을 위한 질문 만들기' },
-    { unit: '임파워먼트', content: '임파워링을 통한 자율성과 책임 수준의 확대 / 임파워링 과제의 범위와 내용 / 차별적 임파워링 방법' },
-    { unit: '동기부여를 통한 몰입', content: '저성과자 다루기 / 동기부여 문제 판단을 위한 질문 / 6가지 근원적 동기요인' },
-    { unit: '갈등관리 커뮤니케이션', content: 'Nonviolent Communication Skill / 문제의 소유를 분리하다' },
-    { unit: '액션플랜 수립', content: '팀원과 함께 하는 Team Rule(팀의 행동원칙) 정립' }
-    ]
-  },
-  { cat: "리더십 > 공통", title: "리더십 스킬업 - 36.5°C 리더십", hours: 8, fee: 650000,
-    target: "팀장 후보자, 팀장 승진자 및 팀장",
-    goal: "1. 리더와 구성원의 관계에 대한 이해\n2. MZ세대의 업무몰입과 관계 촉진\n3. 팀 커뮤니케이션 최적화",
-    curriculum: [
-    { unit: '팀장의 역할과 함정', content: '리더의 필요역량과 리더십 스타일 진단 / 리더의 시각과 관성의 함정' },
-    { unit: '리더의 고민', content: '관계와 소통 / 갈등의 종류(과업·가치·관계 갈등) / 오해의 사다리를 내려오다' },
-    { unit: '리더와 조직', content: '조직 소통 현황 진단 / 나는 꼰대인가? / 요즘 세대와 소통하는 방법' },
-    { unit: '신뢰받는 리더', content: '말 잘 듣는 리더 / 말 가짐을 아는 리더 / 표현하는 리더' },
-    { unit: '변화하는 리더', content: 'Action Plan 수립 / 리더 프로필 만들기' }
-    ]
-  },
-  { cat: "리더십 > 공통", title: "중간관리자 리더십(Connection Leadership)", hours: 8, fee: 450000,
-    target: "과장, 차장급 직원",
-    goal: "1. 조직의 상부와 구성원을 연결하는 중간 관리자 역량강화\n2. 팀의 업무수행 과정을 관찰하고 탐색\n3. 후배 성장을 위한 피드백 코칭",
-    curriculum: [
-    { unit: '환경의 변화', content: '경영환경·조직 전략의 변화 / 초연결 사회 이해' },
-    { unit: '연결자(Top Down)', content: 'Cascading Sponsorship 발휘하기 / Why-How-Wow 기법' },
-    { unit: '연결자(Bottom Up)', content: '구성원 의견 수렴 / 이슈셀링 전략 / 상부에 정확히 전달하는 전략' },
-    { unit: 'Followership', content: '모범형 Followership 전략 / 상사의 머리에 꽈리를 틀어라' },
-    { unit: 'Feedback', content: '조언과 잔소리의 차이 / 효과적인 결과 피드백 구성' }
-    ]
-  },
-  { cat: "리더십 > 성과관리", title: "성과창출 리더십 역량과 스킬 배양을 위한 효과적 관리기법", hours: 8, fee: 450000,
-    target: "성과관리에 관심있는 리더와 구성원",
-    goal: "1. 효과적인 성과창출을 위한 리더와 구성원의 역할과 성과 관리의 핵심요소 파악\n2. 목표와 KPI설정, 실행 및 평가까지 관리 프로세스 각 단계별 관리기법 체득\n3. 성과목표 수립·실행·평가 단계에서의 동기부여 방법 내재화",
-    curriculum: [
-    { unit: '성과관리의 개요', content: '기업경영과 성과관리의 연관성 / 효과적 성과창출을 위한 리더의 역할' },
-    { unit: '성과목표 수립', content: '조직 비전·전략과 성과목표의 연계 / 핵심성공요인과 핵심성과지표 / 성과 동기부여 2가지 유형' },
-    { unit: '강점의 발휘와 활용', content: '목표 실행 관리 / 코칭스킬(경청·질문·인정·칭찬)' },
-    { unit: '성과평가', content: '성과평가 프로세스와 척도 설정법 / 평가면담 준비 / 저성과자 유형별 관리방안' }
-    ]
-  },
-  { cat: "리더십 > 공통", title: "중간관리자 역할 수행과 마인드셋", hours: 8, fee: 450000,
-    target: "대리~과장급, 중간관리자, 조직내 중간 계층의 직급",
-    goal: "1. 팀 액티비티와 피드백을 통해 팀 성과를 위한 중간관리자로서의 역할 정립\n2. 중간관리자로서 자기 성장의 동기유발을 통해 변화관리를 주도",
-    curriculum: [
-    { unit: '중간관리자 역할 공감', content: '조직내 중간관리자가 겪는 이슈와 어려움 / Keystone으로서의 인식' },
-    { unit: '브릿지 리더십', content: '기대 역할과 수행역량의 갭 / 브릿지 리더의 역할과 책임' },
-    { unit: '우호적 상사관계', content: '상사 의존반경모델 점검 / 상사 업무 스타일에 따른 업무수행 꿀팁' },
-    { unit: '후배 성과촉진', content: '인정받는 선배가 되는 방법 / 후배의 업무성과 지원하기' },
-    { unit: '자기 변화관리', content: '린치핀 되기 / 존재감의 축 형성 / 나다움 찾기' }
-    ]
-  },
-  { cat: "직무 > 보고서", title: "한 번에 통하는 One Page 보고서 작성", hours: 12, fee: 500000,
-    target: "신입사원~사원, 대리, 과장급 등 문서작성이 필요한 누구나",
-    goal: "1. 문서작성의 기본원칙을 이해하고 다양한 목적의 문서를 작성하기 위한 기본 지식 습득\n2. 문서에 의한 커뮤니케이션의 의의, 문서의 중요성, 종류 및 양식 학습\n3. 1page 보고서의 설득력 높은 보고스토리 구성법 및 보고방법 습득",
-    curriculum: [
-    { unit: '기획의 핵심요소와 기획프로세스 이해', content: '기획과 기획력 정의 / 기획의 5단계 핵심 프레임' },
-    { unit: '논리적인 기획보고서 작성', content: 'Logic Tree, MECE를 활용한 논리적 문서작성 / 기획보고서 작성 전 사전 준비' },
-    { unit: '1page 보고서 작성실습', content: '킬링 포인트 작성 실습과 코칭 피드백 / 비즈니스 문서 글쓰기 핵심과 인포그래픽' },
-    { unit: '문서작성 능력 강화', content: '논리적인 문장 전개 방법 / 문서의 종류에 따른 적절한 작성 / 공문서 구성과 일반사항 점검' }
-    ]
-  },
-  { cat: "DX/AI > 빅데이터 분석", title: "빅데이터 분석을 통한 기획력 향상", hours: 24, fee: 920000,
-    target: "기획 및 전략수립과 개선안 도출을 위해 기획력을 향상시키고자 하는 희망자",
-    goal: "1. 합리적이고 체계적인 기획을 위한 기본적인 기획 스킬 습득\n2. 빅데이터 분석을 위한 10가지의 기획 인사이트 도출방법과 분석방법 습득 및 기획으로 변환하는 방법 습득",
-    curriculum: [
-    { unit: '빅데이터 개념 및 기획 활용사례', content: '빅데이터를 이용해 기획에 활용하는 방법 / 빅데이터를 활용한 기획 사례' },
-    { unit: '성공하는 기획을 위한 마인드셋', content: '기획의 4가지 측면(창조성·논리성·수단성·현실성) / 좋은 기획서의 기본조건' },
-    { unit: '빅데이터 분석을 통한 기획 인사이트 도출', content: '빅데이터 수집 및 분석 절차 / 주요 기획 목적에 따른 분석 및 인사이트 도출 실습' },
-    { unit: 'R/Rstudio 활용한 빅데이터 분석', content: 'R/Rstudio 기본 활용법 / 데이터 전처리 / 탐색적 데이터 분석 / 시각화' }
-    ]
-  },
-  { cat: "DX/AI > 생성형 AI", title: "생성형 AI로 업무 효율화와 창의력 UP", hours: 8, fee: 500000,
-    target: "전사원 및 팀장급",
-    goal: "1. 생성형 AI의 개요와 활용방법에 대한 이해\n2. 생성형 AI를 비즈니스에 적용할 수 있는 인사이트 습득\n3. 생성형 AI와의 협업을 통해 비즈니스를 확장하고 업무능력 향상",
-    curriculum: [
-    { unit: '생성형 AI의 개요와 활용', content: '주요 생성형 AI 플랫폼 소개 및 활용방법 / 인간과 AI의 협업' },
-    { unit: '생성형 AI를 활용한 제품 아이디어 도출', content: 'AI 기반 브레인스토밍 / 시장분석 및 트렌드 예측 / 마케팅 전략' },
-    { unit: '생성형 AI를 활용한 비즈니스', content: '아이디어 구체화 / 비즈니스 실무 / 제품 디자인 및 프로토타입 제작' },
-    { unit: 'AI의 윤리적 문제', content: '책임감 있는 생성형 AI 활용을 위한 윤리적 원칙 및 가이드라인' }
-    ]
-  },
-  { cat: "DX/AI > 생성형 AI", title: "생성AI로 세상을 바꾸다", hours: 8, fee: 500000,
-    target: "전사원 및 팀장급",
-    goal: "1. 생성형 AI의 핵심 개념과 기술에 대한 이해\n2. 프롬프트 기본 사용법 습득을 통한 생성형 AI활용능력 향상\n3. 다양한 비즈니스 분야에 생성형 AI를 접목하여 혁신을 이끄는 전략 수립",
-    curriculum: [
-    { unit: '생성형 AI, 세상을 바꾸는 혁신기술', content: '생성형 AI의 핵심 기술과 이해 / 국내외 생성형 AI 도입현황과 성공사례 분석' },
-    { unit: '프롬프트 마스터하기', content: '프롬프트 개념 및 중요성 / 프롬프트 엔지니어링 미니체험' },
-    { unit: '생성형 AI, 비즈니스의 새로운 지평', content: '생성형 AI 도구소개 및 활용법 / 비즈니스 아이디어 구현' },
-    { unit: 'AI의 윤리적 문제', content: '책임감 있는 생성형 AI 활용을 위한 윤리적 원칙 및 가이드라인' }
-    ]
-  },
-  { cat: "DX/AI > 생성형 AI", title: "AI 활용 능력 향상과 업무, 일상에 적용", hours: 4, fee: 250000,
-    target: "전사원 및 팀장급",
-    goal: "1. AI활용능력 향상의 필요성을 이해할 수 있다.\n2. 현재 업무와 관련하여 적절한 AI를 업무에 적용할 수 있다.",
-    curriculum: [
-    { unit: 'AI활용능력', content: 'AI 시대에서 필요한 역량 / 사례로 접근하는 AI 활용능력의 가치' },
-    { unit: 'AI를 활용한 업무', content: '반복 작업·문서작성·자료수집 효율 높이기' },
-    { unit: 'AI를 활용한 일상', content: '질문으로 검색하기 / 개인 학습에 활용하기 / 소통에 활용하기' },
-    { unit: 'AI 지식 향상', content: '다양한 AI 정보 습득 / 업무 활용 인사이트 획득' },
-    { unit: 'AI의 윤리적 문제', content: '책임감 있는 생성형 AI 활용을 위한 윤리적 원칙 및 가이드라인' }
-    ]
-  },
-  { cat: "리더십 > 팀빌딩", title: "버크만 팀빌딩 - 인정과 이해를 통한 팀 활성화", hours: 5, fee: 350000,
-    target: "팀내 소통오류와 갈등을 해소하고 싶은 직장인 누구나",
-    goal: "1. 버크만 팀빌딩을 통해 팀원들의 성향과 업무 스타일 파악\n2. 팀원 간 인정과 이해를 통해 팀 업무를 활성화\n3. 오해와 갈등을 방지하며 팀원간의 원활한 소통법 만들기",
-    curriculum: [
-    { unit: '버크만 MAP', content: '버크만 진단 핵심 개념 / 버크만 성격지도 해석 / 팀리더와 구성원 특성 비교' },
-    { unit: '흥미와 가치관', content: '흥미 분석을 통한 동기부여 방식과 관점 비교' },
-    { unit: '평소행동과 강점', content: '대인관계에서 각자의 강점행동 발견 / 빛과 그림자 비교' },
-    { unit: '욕구와 스트레스 행동', content: '컬러별 숨은 욕구 파악 / 욕구 불충족시 스트레스 행동 대응방법' },
-    { unit: '조직지향점', content: '업무방식의 차이점 인식 / 다양한 업무스타일과 조직 내 시너지 효과' }
-    ]
-  },
-  { cat: "DX/AI > 생성형 AI", title: "업무능력 향상을 위한 생성형 AI활용법", hours: 12, fee: 600000,
-    target: "생성형 AI의 핵심 기능을 이해하고 AI툴 활용법을 학습하고자 하는 임직원",
-    goal: "1. 생성형 AI의 핵심 기능을 이해할 수 있다.\n2. AI툴 활용법을 익혀 실무에 적용할 수 있다.",
-    curriculum: [
-    { unit: '생성형 AI의 정의', content: '생성형 AI의 개념·종류·생성원리 / 다양한 업무상황에서의 활용사례' },
-    { unit: 'ChatGPT, Gemini, Perplexity 특징비교', content: '주요 생성형 AI도구들의 특징과 장단점 비교/분석' },
-    { unit: 'Claude, Wrtn, Clova-X 특징비교', content: '주요 생성형 AI도구들의 특징과 장단점 비교/분석' },
-    { unit: '실무활용법', content: '회의록 자동 작성 / 보고서 자동 작성 / PPT·이미지·영상·앱 개발 AI 도구' },
-    { unit: 'AI의 윤리적 문제', content: '책임감 있는 생성형 AI 활용을 위한 윤리적 원칙 및 가이드라인' }
-    ]
-  },
-  { cat: "DX/AI > AI자격증", title: "생성형 AI 업무활용과 AICE Basic 자격 대비 과정", hours: 16, fee: 600000,
-    target: "AI활용이 필요한 중소기업 재직자, AI비전공자",
-    goal: "1. 생성형 AI의 개념과 활용 사례를 이해한다.\n2. AI 도구를 활용한 업무 자동화를 수행할 수 있다.\n3. AI 기반의 데이터 활용 습득 능력을 향상시킬 수 있다.",
-    curriculum: [
-    { unit: 'AI와 생성형 AI의 이해', content: 'AI의 기본개념과 발전과정 / 생성형 AI 도구 종류 및 비교' },
-    { unit: '생성형 AI 도구 활용', content: '프롬프트 기본원리 / 효과적인 질문 작성 방법' },
-    { unit: 'AI기반 문서 작성', content: 'AI를 활용한 보고서 작성 / 기획서 초안 자동화 / 이메일·문서 작성 자동화' },
-    { unit: 'AI 활용 데이터 분석', content: '데이터의 이해 및 유형 / AI를 활용한 데이터 요약 / 데이터 기반 의사결정' },
-    { unit: 'AI 업무 자동화', content: '반복되는 업무 자동화 / 문서 자동생성 / 일정관리 및 업무 자동화' },
-    { unit: 'AICE Basic 문제유형', content: '시험구조 이해 / 주요출제영역 분석 / 문제 유형별 풀이전략 및 예상문제풀이' }
-    ]
-  },
-  { cat: "DX/AI > AI자격증", title: "데이터 기반 생성형 AI 활용과 AICE Associate 과정", hours: 24, fee: 920000,
-    target: "파이썬 활용 가능자, AI활용 업무를 수행하는 중소기업 실무자, 데이터 분석 및 자동화에 관심있는 직원",
-    goal: "1. AI데이터활용의 개념을 이해할 수 있다.\n2. 생성형 AI를 활용한 데이터 분석을 수행할 수 있다.\n3. AI기반으로 업무 자동화를 구현할 수 있다.",
-    curriculum: [
-    { unit: 'AI기술 이해', content: 'AI기술 개요 / 머신러닝과 딥러닝 이해' },
-    { unit: '데이터 이해', content: '데이터의 종류와 구조 / 데이터 수집방법 및 활용사례' },
-    { unit: '생성형 AI심화', content: '프롬프트 엔지니어링 개념 / 프롬프트 설계 전략과 다양한 AI도구 활용' },
-    { unit: '데이터 분석 기초', content: '데이터 정제 방법 / 데이터 분석 기초 실습 / 데이터 요약 및 시각화' },
-    { unit: 'AI기반 데이터 분석과 업무 자동화', content: 'AI활용 데이터 분석 / 데이터 인사이트 도출 / 업무 프로세스 자동화' },
-    { unit: 'AICE Associate 시험 유형분석', content: '시험출제 영역 분석 / 문제유형 이해 및 핵심개념 정리 / 유형별 문제 풀이 전략' }
-    ]
-  },
-  { cat: "직무 > 법무", title: "계약서 제대로 알고 쓰자", hours: 6, fee: 250000,
-    target: "중소기업 및 기관의 법무/영업/구매/관리/총무/기획 등 계약서 업무담당 실무자",
-    goal: "1. 계약담당자가 꼭 알아야 할 주요 계약조항에 대해 분석하고 정리할 수 있다.\n2. 표준계약서를 실무에서 활용하는 방식을 이해하고 설명할 수 있다.",
-    curriculum: [
-    { unit: '계약총론', content: '계약서 작성과 검토의 요령 / 계약의 구속력과 탈출 / MOU의 법적 구속력 / 구두계약의 효력 / 내용증명의 활용 / 관할 특약의 중요성' },
-    { unit: '계약각론', content: '계약기간·위약금·손해배상·해제·해지 조항 / 책임제한·수익배분·납품·검수 조항 / 표준계약서 활용 및 실무적용 노하우' }
-    ]
-  },
-  { cat: "직무 > 채권관리", title: "AI를 활용한 부실채권예방과 회수방법", hours: 7, fee: 320000,
-    target: "중소기업의 채권, 영업관리, 법무, 회계, 자금, 총무, 경영지원, 여신관리부서 등 채권관리 관련 실무자 등",
-    goal: "1. 채권관리 업무의 전체 흐름을 이해하고, 부실을 사전에 예방하는 체계를 갖출 수 있다.\n2. 현장에서 반복되는 핵심 이슈를 사례기반으로 학습하며, 실제 업무에 활용 할 수 있는 업무노하우를 전수합니다.",
-    curriculum: [
-    { unit: 'AI활용 신용조사와 부실화 징후 파악', content: '신용정보라인의 활용법 / AI를 활용한 재무분석 / AI를 활용한 비재무적 요인조사 / 부실화 징후 체크리스트' },
-    { unit: 'AI와 인터넷정보 활용한 임의회수', content: '심리기법을 활용한 채권회수 기법 / AI와 인터넷 정보활용 독촉(내용증명) / AI를 활용한 채권양도' },
-    { unit: 'AI를 활용한 가압류 방법', content: '강제회수의 흐름 / AI를 활용한 채권 가압류 / 채권 가압류 결정과 집행' },
-    { unit: 'AI를 활용한 집행권원 획득', content: '집행권원의 획득방법 / AI를 활용한 지급명령 / 지급명령의 확정과 효력' },
-    { unit: 'AI를 활용한 강제집행 실무', content: '부동산 경매(배당절차) / 유체동산 강제집행의 활용 / AI를 활용한 채권압류 및 추심명령과 전부명령' }
-    ]
-  },
-  { cat: "직무 > 법무", title: "기업법무 실무자를 위한 사건유형별 대응전략", hours: 6, fee: 250000,
-    target: "중소기업 및 기관의 법무/영업/구매/관리/총무/기획 등 계약서 업무담당 실무자",
-    goal: "1. 중소기업에서 주로 발생하는 법률분쟁 사건과 관련하여 법리와 판례분석을 통해 해결책 제시\n2. 기업에서 발생하는 주요 사건유형별 사례를 통해 각 사건유형별 대응전략 및 종합적 분쟁해결 노하우 제시",
-    curriculum: [
-    { unit: '계약서의 중요성', content: '계약서 작성 및 검토의 기본기 / 계약의 주체 및 목적 / MOU와의 관계' },
-    { unit: '물품구매의 법률관계', content: '목적물의 특정 / 계약기간·납품·하자담보책임·손해배상·위약금 / 계약의 해제·해지' },
-    { unit: '주요분쟁 사례별 대응전략', content: '동업투자·채권추심·저작권·상표·부정경쟁·노무·임금·부동산·공사·세무·하도급·주주총회·윤리경영·형사 관련 분쟁 대응전략' }
-    ]
-  },
-  { cat: "DX/AI > 생성형 AI", title: "생성형 AI시대의 경영전략", hours: 6, fee: 250000,
-    target: "전략/기획/경영혁신 담당 임직원",
-    goal: "1. AI기술 변화에 대응하는 경영전략 수립능력을 확보할 수 있다.\n2. 기업의 AI 도입 및 활용방향을 설계할 수 있다.",
-    curriculum: [
-    { unit: 'AI시대의 산업변화', content: 'AI기술의 발전과 산업구조의 변화 / 글로벌 기업의 AI전략 사례 / 산업별 AI도입 트렌드' },
-    { unit: 'AI기반 비즈니스 혁신전략', content: 'AI를 활용한 새로운 비즈니스 모델 / 데이터 기반 경영전략 / AI기반 서비스 혁신 사례' },
-    { unit: '생성형 AI의 경영활용', content: '경영 의사결정 지원 AI활용 / 시장분석 및 전략 수립 / 생성형 AI활용 사례' },
-    { unit: 'AI도입전략과 조직변화', content: '기업의 AI도입 단계 / 조직구조 변화 / AI인재 전략 / AI거버넌스' },
-    { unit: 'AI를 활용한 경영전략 설계', content: '기업의 AI도입 전략 설계 / 조직별 AI활용 방안 / AI프로젝트 기획' }
-    ]
-  },
-  { cat: "리더십 > 신입사원", title: "신입사원의 비즈니스 마인드 강화와 문제해결", hours: 8, fee: 400000,
-    target: "신규입사자, 사원, 경력입사자",
-    goal: "1. 조직 구성원으로서 가져야 할 조직몰입과 업무몰입을 내재화\n2. 문제해결에 필요한 사고력을 강화\n3. 조직 구성원으로서 문제를 다루는 방법 확인",
-    curriculum: [
-    { unit: '성공적 직장생활을 위한 가치', content: '로열티에 기초한 상생의 팔로워십 / 퍼스널 브랜딩을 위한 1년차 목표 설정' },
-    { unit: '직업인으로 조직에서 만나는 문제와 문제해결', content: '문제해결 프로세스와 사고 / 문제의 개념과 종류 / 창의적 사고를 통한 대안개발' },
-    { unit: '업무 우선순위를 활용한 문제해결', content: '조직의 협업과 소통의 중요성 / 집단지성의 중요성' },
-    { unit: '변화관리 촉진자, 열정플러스', content: '일터에서의 성공의 개념 / 나의 팔로워십 유형 진단 및 Do & Dont' }
-    ]
-  },
-  { cat: "리더십 > 핵심인재", title: "핵심인재 로열티 강화", hours: 4, fee: 250000,
-    target: "신규입사자, 사원, 경력입사자",
-    goal: "1. 신입 직원으로서 로열티를 강화할 수 있다.\n2. 상호이해와 존중의 중요성을 이해하고 혁신과 브랜딩을 통한 소속감을 강화할 수 있다.",
-    curriculum: [
-    { unit: '로열티 획득의 필요성', content: '고객 로열티와 직원 로열티의 개념 / 고객 로열티와 직원 로열티의 상관관계 / 성장의 선순환 이해' },
-    { unit: '브랜딩', content: '파타고니아 사례를 통한 브랜딩의 중요성 / 핵심인재로서의 퍼스널 브랜딩' },
-    { unit: '열정 플러스', content: '성공의 개념 재정립 / 작은 성공의 개념과 중요성 / 조직의 협업과 소통의 중요성 체험' },
-    { unit: '혁신 플러스', content: '개인과 조직의 동반 성장을 위한 동기부여 / 자기 혁신을 위한 주도적 행동 스위치 만들기' }
-    ]
-  },
-  { cat: "리더십 > 계층별", title: "계층별 필수교육(사원~주임)", hours: 8, fee: 400000,
-    target: "신규입사자, 사원~주임/주니어",
-    goal: "1. 조직 목표달성을 위한 Linker의 관계관리 역량을 강화하여 현업에 활용할 수 있다.\n2. 자신의 문제와 조직 문제의 영향력을 이해하고, 자신의 성장개발을 통한 조직성과 달성원리를 이해할 수 있다.",
-    curriculum: [
-    { unit: 'VUCA시대 Linker의 관계소통', content: 'Linker의 자질과 역량 / VUCA시대 Linker의 sense making / 목적의 중요성 인식 / 자기욕구와 가치관 점검' },
-    { unit: 'Linker의 긍정적 영향력', content: '나의 관계성 이해 / 이타적리더와 목적경영 / 나의 학습습관 점검 / 자신의 영향력에 대한 이해' }
-    ]
-  },
-  { cat: "리더십 > 계층별", title: "계층별 필수교육(주임~대리)", hours: 8, fee: 400000,
-    target: "주임~대리/주니어",
-    goal: "1. 단독과업수행이 가능한 대리역량이 조직에 필요한 이유를 이해하고 신뢰를 높이는 문제해결력을 실행할 수 있다.\n2. 협업을 전략적으로 수행하기 위한 필요역량과 기존 관습을 분리하여 전략적으로 협업하는 방법을 실천할 수 있다.",
-    curriculum: [
-    { unit: '신뢰와 문제해결', content: '조직내 대리가 안정성을 구성하는 요인 / 신뢰와 정의의 이익 구분 / 과업의 문제해결력 높이기' },
-    { unit: '성장과 협업', content: '협업의 성과와 저해요소 / 협업에 필요한 핵심요소 / 공감 페르소나 / 협업을 강화하는 핵심 질문 만들기' }
-    ]
-  },
-  { cat: "리더십 > 계층별", title: "계층별 필수교육(과장)", hours: 8, fee: 400000,
-    target: "과장급",
-    goal: "1. 조직 목표달성을 위한 Linker의 전략적 역할을 수립할 수 있다.\n2. 부서원 조직비전 몰입과 과업이 조직 성과에 연계될 수 있게 하는 동기부여 전략을 수립할 수 있다.\n3. 고성과 조직을 위한 성과촉진의 방법 및 문제 해결력을 높일 수 있다.",
-    curriculum: [
-    { unit: 'VUCA시대 Linker의 성과 몰입', content: 'Linker의 목표정의 / 회사의 비전과 연계하는 자기목표 검증요인 / 역할목적서 작성과 공유' },
-    { unit: '성과달성을 위한 Linker의 동기부여', content: '고성과 조직에 대한 이해와 성과촉진 / 협업에 필요한 핵심요소 / 사고확장을 위한 핵심성공요인 예측' }
-    ]
-  },
-  { cat: "리더십 > 계층별", title: "계층별 필수교육(차장)", hours: 8, fee: 400000,
-    target: "차장급",
-    goal: "1. 조직관리에 필요한 리더의 역할과 변화의 비전을 수립할 수 있다.\n2. 팀 비전촉진을 위한 리더의 성과관리 노하우를 발휘할 수 있다.\n3. 비전과 업무를 일치시키고 임파워링 할 수 있다.",
-    curriculum: [
-    { unit: '중간리더의 전략과 일', content: '조직 내 목표와 역할 / 변화관리 / 비전의 주요요소에 대한 이해와 비전몰입 전략' },
-    { unit: '비전수립과 비전촉진의 일', content: '의사결정단계 간소화 / 과업주도성의 중요성 / 부서원 관찰 인터뷰 및 Follow up 스킬' }
-    ]
-  },
-  { cat: "리더십 > 계층별", title: "계층별 필수교육(부장)", hours: 8, fee: 400000,
-    target: "부장급",
-    goal: "1. 조직의 관리자로서 사업 비전을 공유하고 달성하기 위한 방법을 모색할 수 있다.\n2. 사업 부서의 전략 몰입에 대한 복잡성을 증가시키는 4S를 분석할 수 있다.\n3. 혁신적인 조직문화를 구축할 수 있다.",
-    curriculum: [
-    { unit: '리더의 전략과 일', content: 'VUCA시대의 리더의 역할 / 조직관리 리더십 / 목표 실행 전략 공유와 피드백 / 부장의 변화관리' },
-    { unit: '조직변화를 위한 리더의 모델링', content: '혁신적 조직문화 구축 / 이타주의적 리더의 역할과 행동 / 영감을 주는 리더의 정체성 스토리' }
-    ]
-  },
-  { cat: "직무 > 영업/마케팅", title: "중소기업 마케팅 전략", hours: 16, fee: 620000,
-    target: "중소기업 마케팅 담당자, 영업담당자",
-    goal: "1. 중소기업에 적합한 마케팅 전략을 수립하고 활용할 수 있는 능력을 함양한다.\n2. 중소기업이 제한된 자원으로 효과적인 마케팅 전략을 수립하고 실행할 수 있도록 한다.",
-    curriculum: [
-    { unit: '중소기업의 마케팅 환경에 대한 이해', content: '마케팅 전략 프레임워크 / 시장환경 분석 / 고객 세분화' },
-    { unit: '시장분석 및 고객전략', content: '시장분석 방법 / 주요 고객군 / 고객의 특징과 니즈파악 / 경쟁사 분석 / 고객 페르소나 설계' },
-    { unit: '디지털 마케팅 전략', content: '온라인 마케팅 전략 / 콘텐츠 마케팅 전략 / SNS마케팅 전략 / 마케팅 채널 전략 설계' },
-    { unit: '마케팅 실행과 성과관리', content: '마케팅 실행전략 및 계획 / 마케팅 KPI 설정 / 데이터 기반 마케팅 / 성과측정과 마케팅 개선 전략' }
-    ]
-  },
-  { cat: "직무 > 영업/마케팅", title: "마음을 사로잡는 프레젠테이션", hours: 16, fee: 620000,
-    target: "중소기업 마케팅 담당자, 영업담당자 및 실무자",
-    goal: "1. 다수의 수주 경험을 가진 전문 프레젠터를 통해 실전 PT스킬을 학습할 수 있다.\n2. 개개인의 제안서와 프레젠테이션 스킬에 대한 컨설팅을 통해 전문성을 높일 수 있다.\n3. 실제 사례를 학습에 활용하여 실전 PT능력을 키울 수 있다.",
-    curriculum: [
-    { unit: 'PT의 핵심과 준비', content: '프레젠테이션 이해와 핵심포인트 / 성공적 PT를 위한 준비' },
-    { unit: '구조와 스킬', content: '핵심 메시지 구조화 / 스토리텔링' },
-    { unit: '스피치 기법', content: '효과적인 스피치 기법 / 설득력을 높이는 스피치 기법 / 키맨을 사로잡는 PT화법' },
-    { unit: '비주얼 PT', content: '멀티미디어의 활용 테크닉 / 시각자료 활용 / 프레젠테이션 통합 체크리스트' },
-    { unit: '실습 및 피드백', content: '발표실습 / 과정마무리 및 종합 피드백' }
-    ]
-  },
-  { cat: "직무 > 세무/회계", title: "실무에 바로 써먹는 회계와 세무지식", hours: 8, fee: 450000,
-    target: "전사원 및 세무담당자",
-    goal: "1. 기업운영에 필수적인 회계/세무관련 지식을 습득하고 이를 실무에 적용할 수 있다.\n2. 비용관리 및 이익개선 능력을 확보하고 재무제표를 읽고 의사결정에 활용할 수 있다.",
-    curriculum: [
-    { unit: '회계 기초와 재무제표 이해', content: '회계의 기본개념 / 재무제표 3종 이해(손익계산서·재무상태표·현금흐름표) / 손익분기점 개념과 현금흐름 관리' },
-    { unit: '비용관리와 수익성 개선전략', content: '고정비 vs 변동비 / 원가구조 분석 / 이익률 개선전략 / 가격전략' },
-    { unit: '세무기초와 세금구조 이해', content: '기업이 내는 주요 세금(부가가치세·법인세·소득세) / 세금 신고의 흐름 / 세무 리스크 유형' },
-    { unit: '절세 전략과 세무 리스크 관리', content: '합법적 절세 전략 / 세무조사 대응 / 증빙관리' }
-    ]
-  },
-  { cat: "리더십 > 공통", title: "핵심만 쏙! 리더십 스킬업 36.5°C 리더십", hours: 4, fee: 600000,
-    target: "팀장 후보자, 팀장 승진자 및 팀장",
-    goal: "1. 리더와 구성원의 관계에 대한 이해\n2. MZ세대의 업무몰입과 관계 촉진\n3. 팀 커뮤니케이션 최적화",
-    curriculum: [
-    { unit: '팀장의 역할과 함정', content: '리더의 필요역량과 리더십 스타일 진단 / 리더의 시각과 관성의 함정' },
-    { unit: '리더의 고민', content: '관계와 소통 / 갈등의 종류 / 오해의 사다리를 내려오다' },
-    { unit: '신뢰받는 리더', content: '말 잘 듣는 리더 / 말 가짐을 아는 리더 / 표현하는 리더' },
-    { unit: '변화하는 리더', content: 'Action Plan 수립 / 리더 프로필 만들기' }
-    ]
-  },
-  { cat: "DX/AI > 생성형AI", title: "핵심만 쏙! 생성형 AI활용법", hours: 6, fee: 600000,
-    target: "생성형 AI의 핵심 기능을 이해하고 AI툴 활용법을 학습하고자 하는 임직원",
-    goal: "1. 생성형 AI의 핵심 기능을 이해할 수 있다.\n2. AI툴 활용법을 익혀 실무에 적용할 수 있다.",
-    curriculum: [
-    { unit: 'ChatGPT, Gemini, Perplexity 특징비교', content: '주요 생성형 AI도구들의 특징과 장단점 비교/분석' },
-    { unit: 'Claude, Wrtn, Clova-X 특징비교', content: '주요 생성형 AI도구들의 특징과 장단점 비교/분석' },
-    { unit: '실무활용법', content: '회의록 자동 작성 / 보고서 자동 작성 / PPT·이미지·영상·앱 개발 AI 도구' },
-    { unit: 'AI의 윤리적 문제', content: '책임감 있는 생성형 AI 활용을 위한 윤리적 원칙 및 가이드라인' }
-    ]
-  },
-  { cat: "리더십 > 공통", title: "리더십 역량개발(고급) 영향력과 비전 리더십", hours: 7, fee: 450000,
-    target: "관리자직 수행경력이 오래된 직책자 및 수석부장, 후배 관리자를 이끄는 위치에 있는 관리자",
-    goal: "1. 비전추구에서 성과창출까지의 연계성을 도모하는 방법을 파악함.\n2. 조직내에서 후배 관리자들을 이끄는 리더십을 함양함.\n3. 강한 조직·고성과 조직·효율적 조직을 만들기 위한 변화추진 방안 마련함.",
-    curriculum: [
-    { unit: '고급 관리자 역할과 역량', content: '고급 관리자에게 기대되는 역할 정리 / 핵심역량 진단 / 영향력 발휘와 의사결정 능력' },
-    { unit: '소통의 기술로 갈등해결하기', content: '구성원의 이해와 존중 / 행동의 도식에 의거한 욕구·태도 파악 / 대인 문제해결과 소통 스킬' },
-    { unit: '구성원들을 한방향으로 이끄는 리더십', content: '비전 리더십 체험 / 자신만의 리더십 발휘 전략과 lessons learned 공유' }
-    ]
-  },
-  { cat: "리더십 > 공통", title: "리더십 역량개발(중급) 코칭과 소통", hours: 7, fee: 450000,
-    target: "중소기업에 재직중인 과장, 차장, 부장 직급 관리자",
-    goal: "1. 중급 관리자의 필수 리더십 역량인 코칭, 성과관리, 변화관리 역량의 향상\n2. 직급별 리더십 파이프라인의 한 축을 형성하여 조직성과 창출에 기여함.\n3. 소통과 팀워크 스킬 함양으로 중급관리자의 역할을 훌륭히 수행하게 함.",
-    curriculum: [
-    { unit: '코칭기반의 성과관리와 변화추진', content: '코칭 스킬과 프로세스 이해 / 성과로 말하기 / 변화 이끌기 / 회의의 생산적 진행스킬' },
-    { unit: '협업을 통한 소통의 기술', content: '성과창출 관리의 도구들 체험 / PDCA 방식의 업무진행 / 실행과정과 결과를 효율적으로 관리하는 소통 스킬' },
-    { unit: '조율과 합의로 팀워크 향상하기', content: '합의를 통한 갈등해결 / 세대간 조율로 팀워크 향상하기' }
-    ]
-  },
-  { cat: "리더십 > 공통", title: "리더십 역량개발(초급) 자기관리", hours: 7, fee: 450000,
-    target: "중소기업에 재직중인 과장, 차장, 부장 직급 관리자",
-    goal: "1. 변화 시대가 요구하는 관리자의 조건과 역할을 재인식함.\n2. 조직이 필요로 하는 팔로워의 셀프리더십 개념을 정립하고 방법을 습득함.\n3. 끊임없는 자기개발과 리더십 발휘를 위한 실천방법을 이해함.",
-    curriculum: [
-    { unit: '셀프리더의 자기관리', content: '팔로워의 셀프리더십 / 강점관리 / 자기주도적 도전 / 성공적 경력관리를 위한 Action Plan' },
-    { unit: '소통으로 갈등관리 하기', content: '업무 메시지 명확히 주고받기 / 감정 메시지 잘 주고받기' },
-    { unit: '팀활성화로 윈윈하기', content: '팀 활성화를 위한 요소 / Best 팀 vs Worst 팀 / 팀 활성화 계획 수립' }
-    ]
-  },
-  { cat: "DX/AI > 기획/전략", title: "전략 기획과 실행 역량개발: AI와 로지컬 씽킹", hours: 14, fee: 650000,
-    target: "중소기업 전략·기획·사업·영업·마케팅 부서 담당자 및 예비 팀장급",
-    goal: "1. 전략적 사고 프레임워크(MECE, Logic Tree, 피라미드, SCQ) 이해·적용\n2. 3C·SWOT·PESTLE 환경 분석으로 문제 구조화\n3. 생성형 AI(ChatGPT·Claude·Gemini 등)를 기획 전 단계에 활용하여 기획 효율 극대화",
-    curriculum: [
-    { unit: '기획의 이해와 마인드셋', content: '기획의 본질과 AI 시대의 변화 / 전략적 벤치마킹과 인사이트 도출 / AI를 활용한 산업군 최신 트렌드 서칭' },
-    { unit: '전략적 사고: MECE & Logic Tree', content: 'MECE 원칙을 활용한 논리적 구조화 / AI 협업형 로직 트리 설계 / 피라미드 구조와 SCQ 기법' },
-    { unit: '기획 프로세스 및 환경 분석', content: '8단계 기획 프로세스 / 3C·PESTLE·SWOT 분석 / 5Why 및 Fishbone 기법 / Pay-off Matrix' },
-    { unit: '실전! One-Page 기획서 완성', content: '논리적 설득을 위한 One-Page 구조화 / AI 워크플로우 기반 최종 결과물 완성 / 팀별 발표 및 피드백' }
-    ]
-  },
-  { cat: "직무 > 구매", title: "구매관리기본(실전편)", hours: 16, fee: 600000,
-    target: "구매 및 협력업체 관리 담당자, 협상 및 계약·원가절감을 원하는 분",
-    goal: "1. 구매관련 전반적인 구매 프로세스 과정을 습득하고 업무능력 배양.\n2. 구매직무에 관련된 핵심 요소를 이해하고 기초 사례중심의 교육을 통한 현업 대응력 증대.\n3. 구매담당자의 기초적인 역량향상과 구매윤리의식 증대.",
-    curriculum: [
-    { unit: '구매 환경의 변화', content: '기업경영과 구매관리의 연계 / 구매인의 역할과 기능 확대 / SCM의 효율적 운영 방법' },
-    { unit: '구매담당자의 역할', content: '구매윤리 의식을 바탕으로 한 기초 지식 / 원가분석 방법 / QCD 기본 업무 강화' },
-    { unit: '구매프로세스 이해(Ⅰ)', content: '구매원가의 개념 및 원가의 중요성 / 재료비·노무비·제조경비 개념 이해 / 자재 및 재고관리' },
-    { unit: '구매프로세스 이해(Ⅱ)', content: '납기 중요성 및 리스크 관리 / 구매협상 및 계약관리 / 협력사 소싱 및 발굴 방법' }
-    ]
-  },
-  { cat: "DX/AI > 생성형 AI", title: "일잘러의 AI 무기 장착하기: 리서치 자동화", hours: 14, fee: 650000,
-    target: "보고서·기획서·제안서 등 비즈니스 문서 작성이 잦은 실무자, 사원·대리·과장급",
-    goal: "1. 보고 관점 전환: 문서와 구두보고를 상사의 판단과 의사결정을 돕는 도구로 명확히 인식\n2. AI 실무 적용: 생성형 AI를 활용해 자료 조사 및 문서 초안 작성 시간을 단축\n3. 핵심 요약 기술: TNOREO 구조 및 구름-비-우산 기법을 활용한 30초 내외의 간결한 구두보고로 변환",
-    curriculum: [
-    { unit: 'AI 기반 문서 전략 및 구조 설계', content: '보고 관점 전환과 AI 워크플로우 / Why-What-How-If 기반 논리 설계 / Perplexity를 활용한 자료 조사 자동화' },
-    { unit: 'AI를 활용한 고품질 문서 완성 및 시각화', content: '일잘러의 문장 작성법과 AI 교정 / 한눈에 들어오는 데이터 시각화 / 원페이지 보고서 완성' },
-    { unit: '핵심 요약 구두보고 및 채널 전략', content: '상황별 소통 채널 및 보고 전략 / TNOREO 기반 30초 핵심 보고 / 30초·60초·2분 버전 스피치 실습' },
-    { unit: '상황별 대응 및 상사 맞춤형 실전 보고', content: '중간·문제·긴급 상황별 보고 실무 / 상사 성향 분석 및 맞춤형 롤플레이' }
-    ]
-  },
-  { cat: "직무 > 영업/마케팅", title: "프로의 제안서 작성과 PT 스킬업", hours: 7, fee: 500000,
-    target: "제안서 작성·보고·프레젠테이션 업무를 수행하는 재직자 및 실무자",
-    goal: "1. 제안서의 구조와 평가 기준을 이해하고 논리적인 스토리라인을 설계할 수 있다.\n2. 핵심 메시지와 근거를 기반으로 설득력 있는 제안서 문서를 작성할 수 있다.\n3. 슬라이드 구성과 발표 전달 스킬을 활용하여 제안 내용을 효과적으로 PT할 수 있다.",
-    curriculum: [
-    { unit: '제안 전략과 설득 구조 이해', content: '제안서의 이해와 설득 구조 / 고객 니즈 분석과 제안 전략 수립 / 제안서 구조와 논리 흐름 설계' },
-    { unit: '실무 제안서 작성 전략', content: '설득형 제안서 작성 기법 / 데이터와 근거 기반 설득 전략 / 시각적 요소 활용 방법' },
-    { unit: '프레젠테이션 전략과 슬라이드 구성', content: '발표 전략과 설득 구조 / 스토리텔링 기반 발표 전략 / PPT 슬라이드 설계 전략' },
-    { unit: '프레젠테이션 전달 스킬', content: '발표 표현 스킬 / 질의응답 대응 전략 / 돌발 상황 대처 방법' },
-    { unit: '프레젠테이션 실습 및 피드백', content: '미니 프레젠테이션 실습 / 발표 녹화 및 자가 피드백 / 개인별 개선 전략 수립' }
-    ]
-  },
-  { cat: "직무 > 구매", title: "원가 계산 및 분석실무", hours: 18, fee: 700000,
-    target: "재무/회계/기획/생산/제조/구매/영업/마케팅 부서 담당자 및 경영진",
-    goal: "1. 원가의 기초 개념을 이해하고 실무에 바로 적용\n2. 요소별 원가계산·부문별 원가계산·제품별 원가계산 방법 습득\n3. CVP 분석 등 원가 자료를 바탕으로 한 손익분석 및 관리기법 습득",
-    curriculum: [
-    { unit: '원가의 기초 개념 및 분류', content: '원가관리회계와 재무회계의 차이 / 재료비·노무비·제조경비 / 변동비·고정비·준변동비 / 제조원가명세서 구조' },
-    { unit: '요소별 원가계산(재료비/노무비/제조경비)', content: '직접·간접재료비 구분 / 재고자산 평가 방법 / 당기총제조원가와 당기제품제조원가 도출' },
-    { unit: '부문별 원가계산과 제조간접비 배부', content: '제조부문과 보조부문의 이해 / 직접·단계·상호배부법 비교 / 제조간접비 배부차이 분석' },
-    { unit: '제품별 원가계산', content: '개별원가계산(Job-Order Costing) / 종합원가계산(Process Costing) / 완성품환산량의 개념' },
-    { unit: '원가-조업도-이익(CVP) 분석 기초', content: '공헌이익의 이해 / 손익분기점(BEP) 계산 / 안전한계와 영업레버리지도(DOL) 기초' }
-    ]
-  },
-  { cat: "직무 > 구매", title: "견적 원가계산 및 절감", hours: 14, fee: 650000,
-    target: "영업/마케팅, 구매/조달, 생산기술/R&D, 원가/기획 부서 담당자",
-    goal: "1. 제품을 만드는 데 투입되는 원가 요소를 측정하고 계산하는 방법 습득\n2. 원가행태 구분을 통해 견적의 유연성을 확보\n3. 가치공학(VE/VA)과 목표원가계산을 통한 원가절감 방법 습득",
-    curriculum: [
-    { unit: '요소별 원가계산(재료비/노무비/제조경비)', content: '직접·간접 비용 구분 / 재고자산 평가 방법 / 당기총제조원가와 당기제품제조원가 도출' },
-    { unit: '원가행태(Cost Behavior) 구분과 견적 적용', content: '변동비·고정비·준변동비 분석 / 고정비 배부 전략' },
-    { unit: '견적 원가의 이해와 산출 프로세스', content: '사전원가와 사후원가 / 견적서의 기본 구조 / 고객의 견적 요청서 분석' },
-    { unit: '가치공학(VE/VA)과 목표원가계산', content: 'VE/VA의 이해 / 목표원가 관리(Target Costing) 개념' },
-    { unit: '이익 창출을 위한 가격 결정 전략', content: '원가 가산 방식 vs 시장 기준 방식 / 판관비 배부 및 적정 이윤 산정 기법' },
-    { unit: '전부원가계산 vs 변동원가계산의 비교', content: '고정제조간접비 포함 여부에 따른 이익 왜곡 현상 이해 및 방지' }
-    ]
-  },
-  { cat: "직무 > PM", title: "프로젝트 일정관리 기본 과정", hours: 14, fee: 650000,
-    target: "프로젝트 관리자(PM), 프로젝트 리더(PL), 일정 관리 및 공정 관리 담당자",
-    goal: "1. 프로젝트 일정관리의 개념과 중요성을 이해하고 역할을 설명할 수 있다.\n2. WBS를 기반으로 활동을 정의하고 일정 네트워크를 구성할 수 있다.\n3. 임계경로(Critical Path) 분석과 일정 압축 기법을 활용하여 프로젝트 일정을 최적화할 수 있다.",
-    curriculum: [
-    { unit: '프로젝트 일정관리 개요 및 프레임워크', content: 'Triple Constraint (범위·일정·비용) / 일정관리 프로세스 6단계 / 일정관리 산출물' },
-    { unit: 'WBS 기반 일정관리', content: 'WBS 개념과 작성 원칙 / 작업패키지 정의 / WBS → Activity 전환' },
-    { unit: '활동 정의 및 순서 결정', content: 'Activity List / Milestone / 선후행 관계 / 프로젝트 활동 네트워크 생성' },
-    { unit: '활동 기간 산정 및 일정개발 기법', content: '3점 추정 / PERT 계산 / Critical Path Method / 일정 단축 전략(Fast Tracking·Crashing)' },
-    { unit: '일정의 감시 및 통제', content: 'Earned Value Management / SPI / 일정 변경관리 / WBS·Activity·Gantt Chart 종합 실습' }
-    ]
-  },
-  { cat: "직무 > 개발", title: "임베디드 프로그래밍-8-bit AVR 코딩", hours: 16, fee: 650000,
-    target: "마이크로컨트롤러·임베디드 시스템 입문/초급 개발자, AI를 하드웨어 제어에 접목하고 싶은 개발자",
-    goal: "1. 8-bit AVR(ATmega 계열)의 GPIO, 타이머, PWM, ADC, UART를 C 언어로 직접 제어할 수 있는 역량 습득\n2. 펌웨어를 코딩·디버깅하는 기본 능력을 기른다.\n3. AI-in-the-loop 제어 구조를 설계·구현하는 것을 목표로 한다.",
-    curriculum: [
-    { unit: 'AVR 기본 입출력 이해', content: 'ATmega328P/128 구조 이해 / 레지스터·비트 연산 복습 / DDRx/PORTx/PINx 동작 원리 / 데이터시트 읽기' },
-    { unit: '디지털 출력·입력 실습', content: 'LED 켜기·끄기·토글 / 내부 풀업 스위치 입력 처리 / 노이즈·채터링 대응' },
-    { unit: '타이머·PWM·ADC 기초', content: '타이머 모드 설정과 주기 계산 / PWM으로 LED 밝기 제어 / ADC 설정 및 센서 값 읽기' },
-    { unit: 'UART 통신과 PC 연동', content: 'UART 보드레이트·프레임 포맷 설정 / 송수신 인터럽트 루틴 설계 / 명령어 기반 제어' },
-    { unit: 'Python 제어 스크립트 작성', content: 'Python pyserial로 포트 제어 / AVR 응답 파싱 및 상태 표시' },
-    { unit: '생성형 AI 기반 제어 및 종합 프로젝트', content: '자연어 → 제어 명령 매핑 / AI-in-the-loop 통합 제어 구현 / 종합 프로젝트 설계·구현·발표' }
-    ]
-  },
-  { cat: "DX/AI > 프로젝트관리", title: "AI시대 PM의 필수역량", hours: 14, fee: 650000,
-    target: "AI 활용 역량을 강화하고 싶은 중소기업 재직자, 업무 생산성을 높이고 싶은 기업 실무자",
-    goal: "1. 생성형 AI의 개념과 활용 방법을 이해하고 업무에 적용할 수 있다.\n2. ChatGPT, Gemini 등 생성형 AI 도구를 활용하여 문서 작성, 정보 탐색, 콘텐츠 제작 등 업무 생산성을 향상시킬 수 있다.\n3. AI 기반 협업 도구와 디지털 업무 환경을 활용하여 조직 내 협업과 업무 효율화를 실현할 수 있다.",
-    curriculum: [
-    { unit: 'AI 이해 역량(AI Literacy)', content: 'AI 시대 업무 변화와 생성형 AI 이해 / 주요 생성형 AI 도구 소개 / ChatGPT 기본 사용 방법 실습' },
-    { unit: 'AI 활용 역량(AI Productivity)', content: '프롬프트 설계와 생성형 AI 업무 활용 / AI를 활용한 실무 문서 작성 / 회의록·업무 보고서 초안 생성' },
-    { unit: 'AI 정보 탐색 역량(AI Research)', content: 'AI 기반 정보 탐색과 자료 수집 / NotebookLM을 활용한 문서 기반 지식 정리' },
-    { unit: 'AI 콘텐츠 제작 역량(AI Creation)', content: 'Gamma를 활용한 프레젠테이션 제작 / Canva·NanoBanana를 활용한 시각자료 및 콘텐츠 제작' },
-    { unit: 'AI 협업 및 스마트워크 역량', content: '클로바노트를 활용한 회의 녹음 및 자동 요약 / 구글 드라이브·캘린더·챗을 활용한 스마트워크 환경 구축' }
-    ]
-  },
-  { cat: "직무 > 현장관리", title: "제조현장 원가절감 추진실무", hours: 14, fee: 650000,
-    target: "현장 개선 리더, 생산 및 공정기술, 원가 및 회계 부서, 현장 관리자",
-    goal: "1. 낭비요소와 비부가가치 활동을 제거하고 JIT 및 카이젠(Kaizen) 기법을 적용하여 원가 경쟁력을 극대화\n2. 기업의 실질적인 수익 구조 개선을 목적으로 한다.",
-    curriculum: [
-    { unit: '활동기준원가(ABC)의 기초와 도입 배경', content: '전통적 원가계산의 한계 / ABC의 개념 / 제조간접비의 정교한 배부' },
-    { unit: '현장 활동 분석 및 원가 동인(Cost Driver) 설정', content: '활동 분석(Activity Analysis) / 원가 동인(Cost Driver) 선정 / 데이터 수집 실무' },
-    { unit: '표준원가계산(Standard Costing)', content: '표준의 설정 / 원가차이분석(Variance Analysis) / 책임회계의 기초' },
-    { unit: '적시생산시스템(JIT) 도입을 통한 재고 원가 혁신', content: 'JIT의 원리 / 재고 유지 비용의 절감 / 생산 리드타임(L/T) 단축' },
-    { unit: '카이젠 원가계산(Kaizen Costing)과 지속적 원가 절감', content: '카이젠 원가 vs 표준 원가 / 현장 중심의 원가 절감 / 원가 절감 목표 배분' }
-    ]
-  },
-  { cat: "리더십 > 신입사원", title: "중소기업 신규입사자 온보딩 교육", hours: 6, fee: 400000,
-    target: "중소기업 신규입사자(과장 이하 전 직군), 입사 후 OJT를 수료한 직원",
-    goal: "1. 조직 구성원으로서의 경영이해·업무수행·대인관계·자기계발·업무기초 5대 역량을 체계적으로 함양\n2. 보고·연락·상담(호·연·상) 원칙을 이해하고 실전 두괄식 보고와 비즈니스 이메일을 작성할 수 있다\n3. 셀프리더십과 팔로워십을 바탕으로 주도적·협력적 업무 자세를 실천할 수 있다",
-    curriculum: [
-    { unit: '오리엔테이션 & 아이스브레이킹', content: '교육 오리엔테이션 / 아이스브레이킹 & 팀 빌딩 / 교육 기대 사항 공유' },
-    { unit: '경영의 이해(조직문화·경영분석)', content: '회사 경영철학과 비전·미션·핵심가치 / 조직 구조와 각 부서 역할 이해 / 경영환경 분석 기초(SWOT)' },
-    { unit: '업무수행 역량(판단력·열정·창의성)', content: '업무 판단력과 우선순위 설정 / 열정적 직업인 마인드셋 / 창의적 문제해결과 아이디어 발상' },
-    { unit: '조직 커뮤니케이션(대인관계·소통)', content: '조직 내 커뮤니케이션 4방향 / 세대 간 소통과 경청의 기술 / 갈등 관리와 건강한 관계 형성' },
-    { unit: '보고·연락·상담 실전', content: '두괄식 보고와 보고서 작성 원칙 / 연락의 타이밍과 이메일·메신저 예절 / 상담 요청과 비즈니스 대화 기술' },
-    { unit: '자기계발과 셀프리더십', content: '자기이해와 강점 발견 / 셀프리더십과 적극적 행동 / 비전 수립과 SMART 목표 관리' }
-    ]
-  },
-  { cat: "리더십 > 공통", title: "승격자를 위한 특급 노하우", hours: 16, fee: 600000,
-    target: "202X년 상반기 직급 승격(예정)자 전원 - 신임 관리자, 중추적 실무자, 차세대 리더",
-    goal: "1. 승격에 따른 역할 변화를 인식하고 새로운 직책에 맞는 주도적 태도를 갖춘다.\n2. 디자인 씽킹 프로세스를 통해 실무 문제를 창의적으로 해결하는 관점을 습득한다.\n3. 게이미피케이션 활동을 통해 협력적 소통의 중요성을 체득하고 팀 시너지를 극대화한다.",
-    curriculum: [
-    { unit: 'Identity Shift: 리더의 새로운 항해', content: '승격의 의미와 기대 역할 변화 / 성과 창출을 위한 3대 핵심 역할 / 승진자 리더십 마인드셋' },
-    { unit: 'Creative Solution: 디자인 씽킹 실습', content: '변화 환경과 혁신의 필요성 / 디자인 씽킹 이해 / 문제 재정의 실습 및 창의적 해결 아이디어 도출' },
-    { unit: 'Collaboration Game: 신뢰와 소통의 기술', content: '게이미피케이션 - 제한된 정보 속의 협력 / 정보 비대칭 해소 및 역할 최적화 / 현업 적용 아이디어 도출' },
-    { unit: '분석적 사고와 전략적 기획', content: '본질 중심의 사고법 / 현장 기반 분석과 판단 / 실행 중심의 전략적 기획 역량' },
-    { unit: '성과목표 설정과 관리', content: '성과관리의 본질과 리더의 역할 / 효과적인 목표 설정과 정렬 / 일상 속 성과 관리 실천법' },
-    { unit: '성과면담과 피드백', content: '성장을 이끄는 피드백 스킬 / 성과면담 구조와 준비 요령 / 실전 면담 시뮬레이션' }
-    ]
-  },
-  { cat: "DX/AI > 생성형AI", title: "AI와 함께 하는 업무 활용 실전 비기", hours: 6, fee: 500000,
-    target: "AI를 활용하여 업무 생산성을 높이고 싶은 구성원",
-    goal: "1. 생성형 AI 기술의 이해와 다양한 AI 도구 활용 방법을 학습하여 업무 생산성과 창의성을 향상\n2. 문서 작성, 기획, 콘텐츠 제작 등 다양한 업무 영역에서 AI를 활용하여 업무 효율을 높임",
-    curriculum: [
-    { unit: '생성형 AI 이해', content: '생성형 AI의 개념 및 기술 특징 / ChatGPT·Gemini 등 주요 생성형 AI 도구 소개 / AI 활용 시 주의사항 및 윤리 기준' },
-    { unit: '생성형 AI 활용 기초', content: 'ChatGPT 기본 사용 방법 / 효과적인 질문 작성 방법 / 프롬프트 작성 기본 구조' },
-    { unit: 'AI 기반 문서 작성', content: 'AI 기반 보고서·기획서·제안서 구조 작성 / 업무 이메일 작성 자동화 / 회의 내용 요약 및 정리' },
-    { unit: 'AI 업무 자동화', content: '반복 업무 자동화 개념 / 데이터 요약 및 정리 자동화 / FAQ 문서 작성 자동화' },
-    { unit: 'AI 콘텐츠 제작', content: '이미지 생성 AI 활용 방법 / Canva AI 기능 활용 콘텐츠 제작 / AI 기반 발표자료 제작' },
-    { unit: 'AI 활용 전략', content: '생성형 AI 업무 적용 방법 / 조직 내 AI 활용 방법 / AI 시대 직무 변화 이해' }
-    ]
-  },
-  { cat: "리더십 > 신입사원", title: "신입사원 역량강화 일 잘하는 직장인", hours: 8, fee: 550000,
-    target: "신입사원 및 입사 1~2년차 사원",
-    goal: "1. 학생에서 직장인으로의 관점을 전환하고 조직 내 역할을 인식한다.\n2. 신뢰를 축적하는 직업인의 태도와 원칙을 체득한다.\n3. 업무 파악, 우선순위 설정, 보고의 기본 구조를 습득한다.\n4. 자기 주도적 성장 계획을 수립하고 실행 의지를 다진다.",
-    curriculum: [
-    { unit: '직장인으로의 관점 전환', content: '학생 마인드 vs 직장인 마인드의 구조적 차이 / 조직의 구조와 일하는 방식의 이해 / 회사가 신입사원에게 기대하는 것' },
-    { unit: '신뢰 축적의 원리와 직업인의 태도', content: '나를 하나의 브랜드로 바라보는 관점 전환 / 시간의 밀도와 신뢰가 쌓이는 구조 / 기대치 관리와 책임감의 표현' },
-    { unit: '일머리를 키우는 업무 습관', content: '업무 파악과 우선순위 설정 / 보고의 기본 구조와 실전 적용 / 실수 대응과 피드백 수용의 자세' },
-    { unit: '성장하는 직장인의 자기관리', content: '업무 기록 습관과 자기 매뉴얼 구축 / 조직 내 성장 기회를 포착하는 방법 / 1년차 성장 로드맵 수립' }
-    ]
-  },
-  { cat: "DX/AI > 생성형AI", title: "AI 시대 업무 역량강화 생성AI 실무 적용", hours: 8, fee: 550000,
-    target: "전 직급 실무자, AI 도구를 업무에 활용하고자 하는 구성원",
-    goal: "1. AI의 기본 개념과 업무 활용 원리를 이해한다.\n2. AI를 활용하여 실제 업무(보고서, 기획, 분석)의 생산성을 높일 수 있다.\n3. AI 시대 실무자에게 필요한 프롬프트 설계와 결과 검증 역량을 체득한다.",
-    curriculum: [
-    { unit: 'AI 리터러시와 업무 활용 기초', content: 'AI 시대의 업무 환경 변화 / 생성AI의 작동 원리 이해 / AI 활용의 핵심: 프롬프트 기초' },
-    { unit: 'AI 실무 활용', content: '보고서·기획서 작성 활용 / 데이터 분석과 요약 활용 / 커뮤니케이션 업무 활용' },
-    { unit: 'AI 기반 업무 프로세스 혁신', content: '나만의 AI 업무 워크플로우 설계 / AI 활용 실전 프로젝트 / AI 활용 업무 개선 계획서 작성 및 발표' }
-    ]
-  },
-  { cat: "직무 > 기획", title: "분석적 사고와 전략적 기획", hours: 8, fee: 550000,
-    target: "대리급~과장급 실무자 및 차세대 리더, 업무 기획력과 분석적 사고력 강화가 필요한 구성원",
-    goal: "1. 복잡한 상황에서 본질을 파악하고 핵심 질문을 도출하는 사고력을 강화한다.\n2. 제한된 정보 속에서 근거 있는 판단을 내리는 분석 역량을 체득한다.\n3. 실행 가능한 수준의 전략적 기획을 수립하고 구조화할 수 있다.",
-    curriculum: [
-    { unit: '본질 중심의 사고법', content: '사고방식의 전환 / 핵심을 포착하는 사고 훈련 / 올바른 질문의 힘 / 케이스 기반 핵심 질문 도출 워크숍' },
-    { unit: '현장 기반 분석과 판단', content: '근거 있는 판단의 기술 / 우선순위 설정과 의사결정 / 전략적 사고의 6가지 원칙' },
-    { unit: '실행 중심의 전략적 기획', content: '결론 중심의 기획 구조화 / 실행 가능한 수준의 기획 / So What? 테스트로 기획 검증하기 / 팀별 케이스 기획 발표 및 피드백' }
-    ]
-  },
-  { cat: "리더십 > 커뮤니케이션", title: "MBTI를 활용한 팀 커뮤니케이션", hours: 4, fee: 400000,
-    target: "전 직급(팀 단위 참여 권장), 팀 내 소통 개선 및 협업 강화가 필요한 조직",
-    goal: "1. MBTI를 통해 자신의 소통 성향과 강점·약점을 객관적으로 인식한다.\n2. 상대 유형별 효과적인 소통 전략을 수립하고 적용할 수 있다.\n3. 유형 다양성을 팀 시너지로 전환하는 협업 역량을 체득한다.",
-    curriculum: [
-    { unit: 'MBTI 이해와 자기 인식', content: 'MBTI의 이해와 활용 원칙 / 나의 유형 탐색 / 선호 지표별 특성 이해(E/I·S/N·T/F·J/P)' },
-    { unit: '유형별 소통 전략', content: '유형별 소통 특성과 갈등 패턴 / 상대 유형에 맞는 소통법 / 업무 상황별 유형 활용' },
-    { unit: '팀 시너지 워크숍', content: '우리 팀 유형 맵 분석 / 팀 소통 규칙 수립 / 팀 소통 규칙 발표 및 상호 피드백' }
-    ]
-  },
-  { cat: "리더십 > 커뮤니케이션", title: "세대공감 조직 커뮤니케이션", hours: 4, fee: 400000,
-    target: "전 직급(팀장급 관리자 및 실무자), 세대 간 소통 갈등 해소 및 조직 내 협업 강화가 필요한 조직",
-    goal: "1. 세대별 가치관과 일에 대한 관점 차이를 구조적으로 이해한다.\n2. 세대 간 갈등의 원인을 분석하고 조직 성과에 미치는 영향을 인식한다.\n3. 세대를 넘는 소통 전략을 수립하고 세대공감 조직문화를 만들어갈 수 있다.",
-    curriculum: [
-    { unit: '세대 간 인식 차이와 갈등 구조', content: '세대별 가치관과 일에 대한 관점 / 같은 상황, 다른 해석 - 세대 간 오해의 구조 / 갈등이 발생하는 지점과 조직 성과에 미치는 영향' },
-    { unit: '세대를 넘는 소통 전략과 조직문화 만들기', content: '세대별 소통 특성과 선호 방식 / 리더와 실무자, 각자의 소통 전환 포인트 / 세대 다양성을 팀 강점으로 전환하는 방법' }
-    ]
-  },
-  { cat: "리더십 > 공통", title: "코칭형 리더십 : 1:1 미팅과 피드백", hours: 8, fee: 550000,
-    target: "팀장급 관리자 및 리더 후보자, 구성원 육성과 팀 성과 향상을 위한 리더십 전환이 필요한 관리자",
-    goal: "1. 지시형 리더십에서 코칭형 리더십으로의 전환 필요성을 인식한다.\n2. 1:1 미팅을 설계하고 효과적으로 운영할 수 있다.\n3. 구성원의 성장과 몰입을 이끄는 피드백 스킬을 체득한다.",
-    curriculum: [
-    { unit: '코칭형 리더십의 이해', content: '리더십 패러다임의 변화 / 코칭형 리더의 핵심 역량 / 질문하는 리더, 경청하는 리더' },
-    { unit: '1:1 미팅과 성과 대화', content: '1:1 미팅의 설계와 운영 / 성과 대화의 기술 / 구성원 유형별 대화법' },
-    { unit: '피드백과 동기부여', content: '성장을 이끄는 피드백 스킬 / 코칭형 리더십 실전 종합 연습 / 1:1 미팅 롤플레이' }
-    ]
-  },
-  { cat: "직무 > 보고서", title: "업무보고서 작성과 논리적 사고", hours: 8, fee: 550000,
-    target: "사원~대리급 실무자, 보고서 작성 역량 강화가 필요한 구성원",
-    goal: "1. 논리적 사고를 기반으로 보고서의 핵심 메시지를 구조화할 수 있다.\n2. 읽는 사람 관점에서 설득력 있는 보고서를 작성할 수 있다.\n3. 실전 보고서 작성과 피드백을 통해 즉시 활용 가능한 작성 역량을 체득한다.",
-    curriculum: [
-    { unit: '논리적 사고와 보고 구조화', content: '일 잘하는 사람의 보고 습관 / 논리적 사고의 기본기(So What? / Why So?) / MECE하게 정리하는 방법 / 보고서 구조화 기법' },
-    { unit: '설득력 있는 보고서 작성법', content: '보고서 유형별 작성 포인트 / 시각화와 표현의 기술 / 숫자로 말하는 보고서 / Before/After 보고서 개선 연습' },
-    { unit: '보고서 실습과 피드백', content: '실전 보고서 작성(AI 활용) / 동료 리뷰를 통한 1차 개선 / 보고서 발표 및 피드백 세션' }
-    ]
-  },
-  { cat: "직무 > 성과관리", title: "성과관리 및 인사평가 컨설팅", hours: 8, fee: 550000,
-    target: "경영진, 인사/교육 담당자, 성과관리·인사평가 체계의 신규 구축 또는 개선이 필요한 조직",
-    goal: "1. 우리 회사의 성과관리·인사평가 현황을 객관적으로 진단할 수 있다.\n2. 공정성과 수용성을 갖춘 인사평가제도를 설계할 수 있다.\n3. 성과관리 체계 개선을 위한 실행 로드맵을 수립할 수 있다.",
-    curriculum: [
-    { unit: '성과관리 체계 진단', content: '성과관리의 본질과 트렌드 / 우리 회사 성과관리 현황 진단 / 진단 결과 분석과 핵심 이슈 도출' },
-    { unit: '인사평가제도 설계', content: '평가제도 설계의 원칙 / 평가 항목·기준·프로세스 설계 / 평가 결과 활용과 보상 연계' },
-    { unit: '실행 로드맵 수립', content: '단계별 실행 로드맵 설계 / 변화관리와 정착 전략 / 실행 계획 발표 및 상호 피드백' }
-    ]
-  },
-  { cat: "직무 > 현장 관리", title: "현장 관리감독자 역량개발 교육", hours: 7, fee: 500000,
-    target: "현장 관리 감독자(조장, 반장, 직장, 주임, 선임기사, 계장, 파트장, 라인장) 및 후보자",
-    goal: "1. 환경변화에 따른 새로운 현장관리자의 역할을 인식함.\n2. 주어진 목표의 달성과 성과를 관리할 수 있는 능력을 습득함.\n3. 조직 내 상호관계에서 효과적인 대화 기술을 활용할 수 있음.",
-    curriculum: [
-    { unit: '현장관리자의 역할과 성과관리', content: '현장관리자에게 기대되는 역할 / 현장의 성과창출(공정분석의 중요성과 PDCA 역량 체험) / 현장의 개선활동' },
-    { unit: '효과적인 상호작용', content: '상호작용의 기본원칙과 욕구에 대한 이해 / 상호작용의 단계별 접근법 / 근무분위기를 돋우는 촉진자의 역할' },
-    { unit: '현장관리와 리더십 발휘', content: '전통적인 통제중심의 관리와 새로운 리더십 / 두 가지 파워(Position Power vs Human Power) / 리더십 발휘 계획 수립' }
-    ]
-  },
-  { cat: "직무 > 현장 관리 ", title: "제조현장 문제해결 역량개발 교육", hours: 14, fee: 600000,
-    target: "현장감독자, 품질혁신분야 사원, 설비운전 및 유지보수 담당자",
-    goal: "1. 각종 현장문제에 대하여 효과적인 해결과 접근방법을 제시함.\n2. 트러블을 신속하고 시행착오를 최소화하며 해결하도록 이끔.\n3. 고질적인 문제의 원인을 찾고 새로운 문제의 방지대책을 수립함.",
-    curriculum: [
-    { unit: '현장문제 해결 개요', content: '현장과 현장문제에 대한 이해 / 문제의 3가지 유형(발생형/탐색형/설정형) / 트러블 슈팅의 순서' },
-    { unit: '현장문제의 명확화', content: '트러블의 명확화 / 트러블의 분리 / 해결 우선순위 선정' },
-    { unit: '근본원인 찾기', content: '문제해결 기본 프로세스 / 구별점과 변화, 원인추정과 원인 최종 확정 / 재발생/만성형 문제의 해결' },
-    { unit: '근무현장의 상황파악과 실무적용', content: '해결할 문제의 우선순위 정하기 / 현업 실무적용 / 상사와의 협의를 통한 추진력 확보' },
-    { unit: '대책수립과 예방조치', content: '대책의 3가지 유형(잠정/시정/적응대책) / 예방 조치하기 / 현장 적용계획 정리' }
-    ]
-  },
-  { cat: "DX/AI > 생성형AI", title: "칼퇴를 부르는 AI 실무 : 생성형 AI 완전정복", hours: 14, fee: 650000,
-    target: "중소기업 재직자 전 직무(총무·인사, 영업·마케팅, 구매·물류, 고객지원, 기획·홍보 담당자), 비코딩 실무자",
-    goal: "1. AI 기술 변화의 속도와 방향을 거시적으로 이해하고 중소기업 실무자로서 AI 시대 대응 방향 설정\n2. PROMPT 프레임워크를 활용하여 원하는 결과물을 즉시 생성하는 프롬프트를 직접 설계\n3. 본인 직무에 맞는 AI 업무 루틴 SOP를 직접 설계하고 교육 종료 즉시 현업에 적용",
-    curriculum: [
-    { unit: 'AI 변화의 거시적 이해', content: '기술 가속도와 AI 패러다임의 이해 / 2026 AI 최신 트렌드: LLM에서 AI 에이전트까지 / Human × AI: 성과를 증폭하는 협업 전략' },
-    { unit: '생성형 AI 원리와 프롬프트의 힘', content: 'LLM의 작동 원리와 환각(Hallucination) 대처법 / PROMPT 5요소 프레임워크 / 내 업무 전용 프롬프트 라이브러리 구축' },
-    { unit: 'AI를 나의 업무 파트너로', content: '보고서·기획서·제안서 AI 초안 생성 / 이메일·공문·회의록 자동 작성 / SNS·홍보·채용공고 콘텐츠 제작' },
-    { unit: 'AI와 함께 매일 칼퇴: 나만의 AI 업무 루틴 완성', content: '직무 반복 업무 목록화 및 AI 전환 가능 업무 분류 / 개인 맞춤형 AI 업무 루틴 설계 워크숍 / 나만의 AI 업무 SOP 초안 작성 및 발표' }
-    ]
-  },
-  { cat: "직무 > 인사/노무", title: "채용에서 퇴직까지 : 인사담당자 HR A to Z", hours: 14, fee: 650000,
-    target: "중소기업 인사·총무·경영지원 담당자(경력 1~10년), 인사 업무를 처음 맡은 신규 담당자",
-    goal: "1. 인사관리의 체계를 이해하고 중소기업 규모에 맞는 인사 운영 방향을 설정\n2. 핵심 인사노무 행정 업무를 노동법에 맞게 정확히 처리\n3. 직무분석을 기반으로 공정한 성과관리 체계 수립\n4. AI 도구를 활용하여 인사 문서 작성·관리 업무를 효율화",
-    curriculum: [
-    { unit: '중소기업 HR의 큰 그림', content: '인사관리의 6대 기능(채용·배치·교육·평가·보상·이직) / 중소기업에 맞는 인사전략 방향 설정 / 직급·직책 체계 설계 및 운영' },
-    { unit: '핵심 인사노무 행정 업무', content: '채용·근로계약·근로시간 적법 처리 / 급여 구성·최저임금·퇴직금 계산 실무 / 인사 핵심 문서 AI 자동화' },
-    { unit: '직무분석과 경력 이동·승진 체계 설계', content: '직무분석 기법과 직무기술서 작성 실습 / 경력 이동·승진 체계 설계 / 성과관리 목표 설정과 평가 체계' },
-    { unit: '교육훈련 체계와 중소기업 복지제도 설계', content: '연간 교육훈련 계획 수립 / 법정 의무교육 관리 / 중소기업 복리후생 제도 설계 / 인사노무 리스크 자가 진단' }
-    ]
-  },
-  { cat: "직무 > 인사/노무", title: "외국인 근로자 관리 실무", hours: 14, fee: 650000,
-    target: "외국인 근로자를 고용 중이거나 고용 예정인 중소기업 재직자, 현장 관리자, 인사·총무 담당자",
-    goal: "1. 외국인 근로자의 심리적 특성과 주요 송출국별 문화적 특성을 이해하고 문화 차이를 배려한 소통·지도 방식을 적용\n2. 한국 직장 문화와 생활에 효과적으로 적응하도록 온보딩 전략과 학습 지도 방법을 설계·실행\n3. 정착 단계별 지원 방법을 수립하고 통합적인 지원 체계를 현장에 구축",
-    curriculum: [
-    { unit: '외국인 근로자의 심리·문화적 특성 이해', content: '외국인 근로자의 심리적 특성 5가지 / 문화 충격(Culture Shock) 4단계 / 주요 송출국별 문화적 특성 비교 / AI 활용 다국어 작업 지시서 제작 실습' },
-    { unit: '스트레스 이해·관리와 애로사항 대응', content: '외국인 근로자 스트레스의 6대 유형 / 스트레스 관리 방법 / 다국어 소통 도구 활용 애로사항 예방 자료 제작' },
-    { unit: '현장 관리자가 할 수 있는 다문화 상담', content: '다문화 감수성과 다문화 상담의 이해 / 상담 기법 4가지(경청·공감·명료화·자원연결) / 실제 애로사항 사례별 상담 롤플레이 실습' },
-    { unit: '정착 단계별 지원과 기관 연계 전략', content: '정착 5단계 모델과 위기 신호 / 사업장 맞춤 정착 지원 로드맵 설계 / 분야별 외국인 근로자 지원기관 연계 방법' }
-    ]
-  },
-  { cat: "직무 > 인사/노무", title: "노무관리 종합 진단개선", hours: 14, fee: 650000,
-    target: "인사/노무관리자, 현장 관리자, 임원",
-    goal: "1. 고용노동부 사업장 근로감독 확대에 대비한 예방적 진단개선\n2. 급변하는 노동관계법과 판례 변화에 대응한 적법한 노무관리\n3. 고용노동부 및 노동위원회 사건 등 분쟁 예방과 갈등관리\n4. 개별적 근로관계 전반에 대한 인사노무관리 역량 강화",
-    curriculum: [
-    { unit: '노동환경 변화와 기업의 과제', content: '최근 주요 법령·판례 변화 / 인사관리와 노무관리 관계 / 사업장 근로감독 프로세스 및 사후 조치' },
-    { unit: '근로관계법 기본 및 취업규칙', content: '법원의 충돌과 해결 / 근로관계법 기본 / 취업규칙 작성·변경 실무 쟁점' },
-    { unit: '채용관리·근로시간·임금관리', content: '채용절차공정화법 체크리스트 / 채용내정과 수습 / 근로시간과 유연근무제 / 임금제도 개요 및 포괄임금제 / 퇴직급여 쟁점' },
-    { unit: '인사권 행사와 퇴직·비정규직 관리', content: '인사권 행사(인사이동·징계) 분쟁 사례 / 퇴직관리 / 노동위원회 구제제도 실무 / 비정규직 관리 쟁점' },
-    { unit: '기타 실무 쟁점', content: '직장 내 괴롭힘 / 모성보호제도 / 저성과자 관리 / 연령차별금지와 임금피크제' }
-    ]
-  },
-  { cat: "리더십 > 공통", title: "팀의 성장을 설계하고 성과로 증명하라", hours: 16, fee: 850000,
-    target: "팀장, 팀장 후보자, 차세대 리더",
-    goal: "1. 실무전문성을 바탕으로 팀 업무를 주도하며 팀 성과 촉진을 위해 팀업무와 구성원을 균형적으로 관리하는 초급관리자로서 역할을 이해한다.\n2. 팀 성장단계를 파악하고 이에 따른 리더십/관리 활동을 구상할 수 있다.\n3. 팀원의 업무성과 향상을 위한 리더의 업무/성과관리 방법을 습득한다.",
-    curriculum: [
-    { unit: '팀장의 역할 변화, 최근 리더십 이슈', content: '팀 리더의 역할 인식 / 최근 국내기업의 팀 리더십 이슈와 트렌드' },
-    { unit: '팀 성장단계에 따른 팀 관리', content: '팀 성과와 팀 역량 이해 / 팀 성장단계와 팀 관리 리더십 / Team Performance Model' },
-    { unit: '팀 워크 촉진(1): 관심과 배려', content: '팀원 이해와 정서적 관계 형성 / 관심과 배려를 통한 정서적 지원 / 팀원 이해를 위한 질문 리스트 만들기' },
-    { unit: '팀 워크 촉진(2): 갈등관리', content: '갈등에 대한 올바른 이해 / 갈등관리 유형별 특징과 주의점 / 갈등관리 커뮤니케이션' },
-    { unit: '팀 성과/업무관리', content: '성과/목표관리 필요성, 팀/개인 목표설정 방법 / 업무 진척도관리 및 피드백 스킬(STAR-AR, AAR) / 리더의 업무수행 관리' }
-    ]
-  },
-  { cat: "리더십 > 공통", title: "성과를 디자인하는 리더", hours: 16, fee: 850000,
-    target: "팀장, 팀장 후보자, 차세대 리더",
-    goal: "1. 성과촉진을 위한 팀 리더의 역할과 성과관리 리더십을 이해함.\n2. 목표 설정 방법 및 지도 Knowhow를 습득함.\n3. 중간 진척도 관리 및 팀원 코칭, 평가 스킬을 학습함.",
-    curriculum: [
-    { unit: '성과/목표관리 필요성', content: '성과/목표 관리에 대한 직장인들의 생각 / 성과관리의 핵심 사이클 / 리더의 5가지 역할' },
-    { unit: '목표설정 방법/목표수립 워크샵', content: '\'일 잘한다\'의 개념 전환 / Alignment와 Cascading / 정량·정성목표 설정방법 / 목표 수준과 합의' },
-    { unit: '성과 촉진을 위한 리더의 업무관리', content: 'Direct–Support–Reflection / 명확한 업무지시 방법 / 업무관리의 8대 초점' },
-    { unit: '중간점검과 진척도 관리, 팀원 코칭', content: '중간점검과 진척도 관리 / 코칭/피드백 스킬(GROW 면담모델·SBIE 피드백 모델)' },
-    { unit: '평가와 피드백/Value up', content: '성과평가 공정성과 오류 유형 / 평가면담/피드백 스킬 / 평가결과의 수용성을 높이는 방법 3가지' }
-    ]
-  },
-  { cat: "직무 > 문제해결", title: "실전 문제해결 솔루션", hours: 8, fee: 550000,
-    target: "현업 문제해결을 필요로 하는 모든 직급, 핵심인재, 차세대 리더",
-    goal: "1. 우리 조직 업무현장에서의 개선과제(문제) 도출 및 과제(문제) 정의 요령을 습득함.\n2. 논리적/분석적 사고를 이해하고 개선과제(문제) 및 원인분석을 위한 다양한 Tool을 학습함.\n3. 해결안 도출 및 실행계획 수립에 활용되는 Tool을 학습함.",
-    curriculum: [
-    { unit: '개선활동과 문제해결', content: '문제해결 프로세스 이해 / 개선과제(문제) 해결을 위한 3대 기본사고 / 개선과제(문제)의 3가지 유형' },
-    { unit: '문제 명확화, 문제 정의', content: '진짜 문제란? 문제 정의 / 문제 발견을 위한 3가지 법칙 / 문제도출 5가지 Framework 이해' },
-    { unit: '논리적/분석적 사고와 원인 분석', content: 'Logic Tree(What, Why, How)와 MECE 이해 / Cause Effect Diagram / 5Whys / 가설 설정 및 검증' },
-    { unit: '해결안 도출/실행계획 수립', content: '해결안 선정(준거평정법, Dotting Tech.) / Brain Storming·SCAMPER / Risk 예측 및 실행계획 수립(Gantt Chart)' }
-    ]
-  },
-  { cat: "직무 > 문제해결", title: "ACE 사원의 스마트한 업무 실행/관리", hours: 8, fee: 550000,
-    target: "스마트하게 일하는 방식의 습득을 필요로 하는 모든 실무자",
-    goal: "1. 상사의 업무지시 파악 및 명확한 업무수명의 중요성과 노하우를 습득함.\n2. 체계적 업무계획 수립 업무 및 추진과정에서의 이해관계자 관리/문제해결 기법 등을 학습함.\n3. 업무 종결 시 관리해야 할 주요 Checkpoints를 파악하고 보고문서 작성 및 효과적 보고방법을 이해함.",
-    curriculum: [
-    { unit: '업무 컨셉 명확화/과제 이해하기', content: '스마트 워크와 업무지시 이해하기 / 상사의 업무지시 파악하기 / 업무(과제) 개요서 작성하기' },
-    { unit: '업무 추진계획 수립하기', content: '업무관리의 8대 초점(범위·리스크·일정·이해관계자·비용·품질·인력·조달) / 업무 계획수립 프로세스 / WBS 작성' },
-    { unit: '업무 실행/문제해결 하기', content: '업무 실행 중간점검 / Logic Tree와 MECE 이해 / 문제의 원인분석 / 해결 대안 도출/선정' },
-    { unit: '업무성과 보고하기', content: '효과적 구두보고 스킬 / 보고서 작성법 / 문서유형별 작성방법 / 보고서 작성 Tip' }
-    ]
-  },
-  { cat: "리더십 > 공통", title: "승격자 통합 역량 과정", hours: 8, fee: 550000,
-    target: "202X년 상반기 직급 승격(예정)자 전원 - 신임 관리자, 중추적 실무자, 차세대 리더",
-    goal: "1. 승격에 따른 역할 변화를 인식하고 새로운 직책에 맞는 주도적 태도를 갖춘다.\n2. 디자인 씽킹 프로세스를 통해 실무 문제를 창의적으로 해결하는 관점을 습득한다.\n3. 게이미피케이션 활동을 통해 협력적 소통의 중요성을 체득하고 팀 시너지를 극대화한다.",
-    curriculum: [
-    { unit: 'Identity Shift: 리더의 새로운 항해', content: '승격의 의미와 기대 역할 변화 / 성과 창출을 위한 3대 핵심 역할 / 승진자 리더십 마인드셋' },
-    { unit: 'Creative Solution: 디자인 씽킹 실습', content: '변화 환경과 혁신의 필요성 / 디자인 씽킹 이해 / 문제 재정의 실습 및 창의적 해결 아이디어 도출' },
-    { unit: 'Collaboration Game: 신뢰와 소통의 기술', content: '게이미피케이션 - 제한된 정보 속의 협력 / 정보 비대칭 해소 및 역할 최적화 / 현업 적용 아이디어 도출' }
-    ]
-  },
-  { cat: "리더십 > 공통", title: "강점리더십", hours: 4, fee: 400000,
-    target: "팀원의 강점을 육성해야 하는 리더, 나의 강점을 진단하고 업무에 활용하고 싶은 실무자",
-    goal: "1. 강점 인식 및 활용의 중요성을 이해한다.\n2. 나의 강점을 진단하고 강점의 특징을 안다.\n3. 잡크래프팅을 위한 강점 적용 방법을 확인하고 활용 계획을 세운다.",
-    curriculum: [
-    { unit: '강점 인식 및 재능 발견', content: '강점의 중요성과 사례 / 뇌과학과 재능의 관계 / 자기 재능 탐색 / 도출된 재능의 핵심 키워드 정리' },
-    { unit: '강점 발견', content: '팀역할 이론과 강점 / 강점검사 후 강점 역할 이해 / 팀원의 강점 역할 탐색 / 팀에 기여할 수 있는 강점 역할 찾기' },
-    { unit: '태도 보완', content: '강점을 개발하는데 도움을 주는 태도 / 태도 그래프 해석하기 / 팀에서 태도 성숙하게 관리하기' },
-    { unit: '목표하기', content: '퍼스널 브랜딩 문장 만들기 / 업무 적용 및 성장 계획 작성하기 / 강점 기반의 중장기 커리어 성장 로드맵 수립' }
-    ]
-  },
-  { cat: "리더십 > 커뮤니케이션", title: "성장을 이끄는 대화의 기술", hours: 4, fee: 400000,
-    target: "성과 성장을 견인하고 싶은 팀 리더, 경청과 질문 역량이 필요한 중간 관리자",
-    goal: "1. 명령과 지시 중심의 소통 방식에서 벗어나 코칭의 원리를 이해하고 코칭형 리더로 변화하기 위한 기초 체력을 기른다.\n2. 강력한 질문과 경청 등 핵심 코칭 스킬을 습득하여 구성원의 잠재력을 끌어내는 대화 역량을 확보한다.",
-    curriculum: [
-    { unit: '코칭의 이해와 마인드셋', content: '지시형 리더 vs 코칭형 리더 / 코칭의 철학과 3대 원칙 / 코칭 리더십의 필요성 탐색' },
-    { unit: '코칭 핵심 스킬 기술', content: '마음을 여는 강력한 경청 / 사고를 확장하는 질문 기술 / 성장을 유도하는 피드백(SBI 모델) / 공감 및 질문 연습' },
-    { unit: '실천 코칭 프로세스', content: 'GROW 모델의 이해 / 목표 설정(G) 및 현실 파악(R) / 대안 탐색(O) 및 실행 의지(W) / 사례별 코칭 롤플레이 실습' },
-    { unit: '코칭의 협업 적용', content: '일상 속 5분 코칭 전략 / 나의 코칭 리더십 선언문 작성' }
-    ]
-  },
-  { cat: "리더십 > 공통", title: "같이 일하고 싶은 팀장", hours: 8, fee: 550000,
-    target: "팀장, 임원 등 리더 계층",
-    goal: "1. 심리적 안정감을 기반으로 팀 몰입도를 높이는 리더십 역량 습득\n2. 신뢰 형성과 커뮤니케이션을 통한 팀 성과 창출 방법 체득\n3. 팀 운영의 갈등·성과·동기 문제를 해결하는 실전 리더십 확보",
-    curriculum: [
-    { unit: '팀장 리더십 기초와 역할 인식', content: '리더와 리더십의 정의 / 팀원이 함께 일하고 싶은 팀장의 조건 / 나의 리더십 스타일 진단' },
-    { unit: '심리적 안정감을 주는 리더', content: '심리적 안전감을 만드는 리더 행동 / 팀원이 불안해지는 리더의 특징 / 신뢰를 만드는 팀 운영 방식' },
-    { unit: '팀원을 성장시키는 리더', content: '팀원을 움직이게 하는 리더의 기술 / 피드백과 동기부여 전략 / 팀원의 성장 단계별 코칭 방법' },
-    { unit: '현장 리더십 이슈 해결', content: '팀장 실무 이슈 해결 / 팀원 불만 및 갈등 상황 대응 / 리더십 발휘 전략' }
-    ]
-  },
-  { cat: "리더십 > 공통", title: "어쩌다 중간 관리자", hours: 8, fee: 550000,
-    target: "조직의 중간관리자(대리~차장)",
-    goal: "1. 중간관리자의 구조적 역할과 딜레마 이해\n2. 상사 설득 및 보고 역량 강화\n3. 후배 동기부여 및 코칭 스킬 습득\n4. 갈등 상황에서 조직 균형을 유지하는 실행 전략 확보",
-    curriculum: [
-    { unit: '중간관리자 역할과 책임', content: '중간관리자의 구조적 딜레마 이해 / 전달자가 아닌 조정자·번역자·연결자로서의 역할' },
-    { unit: '중간관리자의 팔로워십', content: '상사를 움직이는 팔로워십 / 전략적 팔로워의 4가지 역할 / 위를 설득하는 커뮤니케이션' },
-    { unit: '후배 동기 부여와 코칭', content: '후배를 움직이는 동기 작동 전략 / 유형별 동기 스위치 / 코칭 기반 커뮤니케이션' },
-    { unit: '갈등관리', content: '중간관리자의 갈등관리 전략 / 갈등을 키우지 않는 완충·조정 기술 / 권한 없이 영향력 발휘하기' }
-    ]
-  },
-  { cat: "직무 > 보고서", title: "일잘러의 보고서 작성법", hours: 8, fee: 550000,
-    target: "실무자",
-    goal: "1. 쉽게 이해되는 비즈니스 보고서 작성 역량 확보\n2. 논리적 구조(MECE) 기반 보고서 설계 능력 강화\n3. 명확하고 간결한 문장 표현 및 가독성 향상\n4. 생성형 AI를 활용한 보고서 작성으로 효율성 증대",
-    curriculum: [
-    { unit: '보고서 작성 기본 원칙', content: '좋은 보고서의 기준 이해 / 보고서가 읽히지 않는 이유 / 일잘러의 보고서 작성 체크리스트' },
-    { unit: '보고서 내용 구성', content: '보고서 구조 설계 방법(요구사항 해석) / MECE 기반 논리 구성 / 논리 흐름 설계 및 메시지 구조화' },
-    { unit: '명확하고 간결한 보고서 작성', content: '직독성·간결성·명확성 중심 표현 방식 / 좋은 문장과 나쁜 문장의 차이 / 도식화·표·인포그래픽 활용법' },
-    { unit: '보고서 점검 및 AI활용', content: '보고서 완성도 향상 전략 / 오류 점검 및 완성도 검증 방법 / 생성형 AI를 활용한 보고서 작성 및 개선 방법' }
-    ]
-  },
-  { cat: "DX/AI > 생성형AI", title: "워크스마트 : 생성형 AI 활용법", hours: 8, fee: 550000,
-    target: "실무자",
-    goal: "1. 생성형 AI의 원리와 한계를 이해하고 업무 활용\n2. 프롬프트 설계 역량을 통해 원하는 결과를 효과적으로 도출\n3. 문서 작성, 리서치, 기획, 의사결정 등 주요 업무에 생성형 AI 적용\n4. 조직 내 보안·윤리 기준을 준수하며 안전하게 AI 활용",
-    curriculum: [
-    { unit: '생성형 AI 이해와 프롬프트 기초', content: '생성형 AI의 원리와 한계 / 좋은 프롬프트의 구조와 원칙 / 역할 부여·맥락 제공·출력 형식 지정' },
-    { unit: '보고서 구조 설계 방법', content: '보고서 Decoding 방법(요구사항 해석) / 보고서 유형별 구성 방식 / MECE 기반 논리 구성' },
-    { unit: '명확하고 간결한 보고서 작성', content: '직독성·간결성·명확성 중심 표현 방식 / 가독성을 높이는 구조화 방법 / 도식화·표·인포그래픽 활용법' },
-    { unit: 'AI를 활용한 보고서 완성', content: '보고서 완성도 향상 전략 / 생성형 AI를 활용한 보고서 작성 및 개선 방법 / 조직 내 AI 보안·윤리 기준 준수' }
-    ]
-  },
-  { cat: "DX/AI > 팀관리", title: "중소기업 팀장급을 위한 AI통합 리더십 과정", hours: 8, fee: 650000,
-    target: "실무자",
-    goal: "1. 급변하는 산업환경에 기민하게 대응하는 변화 관리 역량 발휘\n2. 데이터에 기반한 실질적이고 공정한 팀 성과 창출\n3. 팀 내 심리적 안정감 구축 및 구성원의 자발적 몰입을 견인",
-    curriculum: [
-    { unit: '뇌과학과 리더십 강점', content: '뇌과학이 알려주는 리더의 멘탈 관리 / AI가 뽑아주는 리더십 강점 리포트 / 나에게 어울리는 관리방법 / 나만의 리더십 정체성' },
-    { unit: 'AX시대, 리더십의 새로운 변화', content: 'DX에서 AX로, 리더십의 새로운 지평 / 우리 팀의 변화 방향성 설정과 변화관리 / 변화 커뮤니케이션 전략과 변화 코칭' },
-    { unit: '구성원들이 YES 하는 성과관리', content: '성과목표 설정의 비법 / 공정한 성과관리를 위한 리더의 원칙 / 성과몰입을 높이는 리더의 면담과 피드백 스킬' },
-    { unit: '함께하는 조직 문화와 GROW 코칭 모델', content: '조직문화 진단 및 개선을 위한 리더의 일 / 구성원들의 성장 지원 / GROW모델 기반 코칭 프롬프트 엔지니어링' }
-    ]
-  },
-        ];
+  { cat: "리더십 > 공통", title: "리더십 에센스 Fast Track", hours: 12, fee: 600000, target: "팀장 후보자, 팀장 승진자 및 팀장", goal: "1. 경영환경의 변화에 따른 리더십의 진화, 구성원이 팀에서 느끼는 안정성(관계 공정성)\n2. 새로운 업무 도전에 대한 지지와 지원, 구성원의 성향에 맞춘 동기부여 전략\n3. 갈등의 순기능을 유지하고 역기능 방지(갈등관리), 팀의 행동 원칙 정립을 통한 일체성 확립", curriculum: [{unit: '리더의 모습', content: '새로운 환경이 원하는 리더의 모습 / VUCA 시대 대응법 / 러닝 커브가 빠른 인재 육성'},{unit: '정서적 공감', content: '정서적 공감을 통한 팀빌딩 / 관심·배려를 통한 정서적 지원 / 관계성 진단 / 정서적 소통을 위한 질문 만들기'},{unit: '임파워먼트', content: '임파워링을 통한 자율성과 책임 수준의 확대 / 임파워링 과제의 범위와 내용 / 차별적 임파워링 방법'},{unit: '동기부여를 통한 몰입', content: '저성과자 다루기 / 동기부여 문제 판단을 위한 질문 / 6가지 근원적 동기요인'},{unit: '갈등관리 커뮤니케이션', content: 'Nonviolent Communication Skill / 문제의 소유를 분리하다'},{unit: '액션플랜 수립', content: '팀원과 함께 하는 Team Rule(팀의 행동원칙) 정립'}] },
+  { cat: "리더십 > 공통", title: "리더십 스킬업 - 36.5°C 리더십", hours: 8, fee: 650000, target: "팀장 후보자, 팀장 승진자 및 팀장", goal: "1. 리더와 구성원의 관계에 대한 이해\n2. MZ세대의 업무몰입과 관계 촉진\n3. 팀 커뮤니케이션 최적화", curriculum: [{unit: '팀장의 역할과 함정', content: '리더의 필요역량과 리더십 스타일 진단 / 리더의 시각과 관성의 함정'},{unit: '리더의 고민', content: '관계와 소통 / 갈등의 종류(과업·가치·관계 갈등) / 오해의 사다리를 내려오다'},{unit: '리더와 조직', content: '조직 소통 현황 진단 / 나는 꼰대인가? / 요즘 세대와 소통하는 방법'},{unit: '신뢰받는 리더', content: '말 잘 듣는 리더 / 말 가짐을 아는 리더 / 표현하는 리더'},{unit: '변화하는 리더', content: 'Action Plan 수립 / 리더 프로필 만들기'}] },
+  { cat: "리더십 > 공통", title: "중간관리자 리더십(Connection Leadership)", hours: 8, fee: 450000, target: "과장, 차장급 직원", goal: "1. 조직의 상부와 구성원을 연결하는 중간 관리자 역량강화\n2. 팀의 업무수행 과정을 관찰하고 탐색\n3. 후배 성장을 위한 피드백 코칭", curriculum: [{unit: '환경의 변화', content: '경영환경·조직 전략의 변화 / 초연결 사회 이해'},{unit: '연결자(Top Down)', content: 'Cascading Sponsorship 발휘하기 / Why-How-Wow 기법'},{unit: '연결자(Bottom Up)', content: '구성원 의견 수렴 / 이슈셀링 전략 / 상부에 정확히 전달하는 전략'},{unit: 'Followership', content: '모범형 Followership 전략 / 상사의 머리에 꽈리를 틀어라'},{unit: 'Feedback', content: '조언과 잔소리의 차이 / 효과적인 결과 피드백 구성'}] },
+  { cat: "리더십 > 성과관리", title: "성과창출 리더십 역량과 스킬 배양을 위한 효과적 관리기법", hours: 8, fee: 450000, target: "성과관리에 관심있는 리더와 구성원", goal: "1. 효과적인 성과창출을 위한 리더와 구성원의 역할과 성과 관리의 핵심요소 파악\n2. 목표와 KPI설정, 실행 및 평가까지 관리 프로세스 각 단계별 관리기법 체득\n3. 성과목표 수립·실행·평가 단계에서의 동기부여 방법 내재화", curriculum: [{unit: '성과관리의 개요', content: '기업경영과 성과관리의 연관성 / 효과적 성과창출을 위한 리더의 역할'},{unit: '성과목표 수립', content: '조직 비전·전략과 성과목표의 연계 / 핵심성공요인과 핵심성과지표 / 성과 동기부여 2가지 유형'},{unit: '강점의 발휘와 활용', content: '목표 실행 관리 / 코칭스킬(경청·질문·인정·칭찬)'},{unit: '성과평가', content: '성과평가 프로세스와 척도 설정법 / 평가면담 준비 / 저성과자 유형별 관리방안'}] },
+  { cat: "리더십 > 공통", title: "중간관리자 역할 수행과 마인드셋", hours: 8, fee: 450000, target: "대리~과장급, 중간관리자, 조직내 중간 계층의 직급", goal: "1. 팀 액티비티와 피드백을 통해 팀 성과를 위한 중간관리자로서의 역할 정립\n2. 중간관리자로서 자기 성장의 동기유발을 통해 변화관리를 주도", curriculum: [{unit: '중간관리자 역할 공감', content: '조직내 중간관리자가 겪는 이슈와 어려움 / Keystone으로서의 인식'},{unit: '브릿지 리더십', content: '기대 역할과 수행역량의 갭 / 브릿지 리더의 역할과 책임'},{unit: '우호적 상사관계', content: '상사 의존반경모델 점검 / 상사 업무 스타일에 따른 업무수행 꿀팁'},{unit: '후배 성과촉진', content: '인정받는 선배가 되는 방법 / 후배의 업무성과 지원하기'},{unit: '자기 변화관리', content: '린치핀 되기 / 존재감의 축 형성 / 나다움 찾기'}] },
+  { cat: "직무 > 보고서", title: "한 번에 통하는 One Page 보고서 작성", hours: 12, fee: 500000, target: "신입사원~사원, 대리, 과장급 등 문서작성이 필요한 누구나", goal: "1. 문서작성의 기본원칙을 이해하고 다양한 목적의 문서를 작성하기 위한 기본 지식 습득\n2. 문서에 의한 커뮤니케이션의 의의, 문서의 중요성, 종류 및 양식 학습\n3. 1page 보고서의 설득력 높은 보고스토리 구성법 및 보고방법 습득", curriculum: [{unit: '기획의 핵심요소와 기획프로세스 이해', content: '기획과 기획력 정의 / 기획의 5단계 핵심 프레임'},{unit: '논리적인 기획보고서 작성', content: 'Logic Tree, MECE를 활용한 논리적 문서작성 / 기획보고서 작성 전 사전 준비'},{unit: '1page 보고서 작성실습', content: '킬링 포인트 작성 실습과 코칭 피드백 / 비즈니스 문서 글쓰기 핵심과 인포그래픽'},{unit: '문서작성 능력 강화', content: '논리적인 문장 전개 방법 / 문서의 종류에 따른 적절한 작성 / 공문서 구성과 일반사항 점검'}] },
+  { cat: "DX/AI > 빅데이터 분석", title: "빅데이터 분석을 통한 기획력 향상", hours: 24, fee: 920000, target: "기획 및 전략수립과 개선안 도출을 위해 기획력을 향상시키고자 하는 희망자", goal: "1. 합리적이고 체계적인 기획을 위한 기본적인 기획 스킬 습득\n2. 빅데이터 분석을 위한 10가지의 기획 인사이트 도출방법과 분석방법 습득 및 기획으로 변환하는 방법 습득", curriculum: [{unit: '빅데이터 개념 및 기획 활용사례', content: '빅데이터를 이용해 기획에 활용하는 방법 / 빅데이터를 활용한 기획 사례'},{unit: '성공하는 기획을 위한 마인드셋', content: '기획의 4가지 측면(창조성·논리성·수단성·현실성) / 좋은 기획서의 기본조건'},{unit: '빅데이터 분석을 통한 기획 인사이트 도출', content: '빅데이터 수집 및 분석 절차 / 주요 기획 목적에 따른 분석 및 인사이트 도출 실습'},{unit: 'R/Rstudio 활용한 빅데이터 분석', content: 'R/Rstudio 기본 활용법 / 데이터 전처리 / 탐색적 데이터 분석 / 시각화'}] },
+  { cat: "DX/AI > 생성형 AI", title: "생성형 AI로 업무 효율화와 창의력 UP", hours: 8, fee: 500000, target: "전사원 및 팀장급", goal: "1. 생성형 AI의 개요와 활용방법에 대한 이해\n2. 생성형 AI를 비즈니스에 적용할 수 있는 인사이트 습득\n3. 생성형 AI와의 협업을 통해 비즈니스를 확장하고 업무능력 향상", curriculum: [{unit: '생성형 AI의 개요와 활용', content: '주요 생성형 AI 플랫폼 소개 및 활용방법 / 인간과 AI의 협업'},{unit: '생성형 AI를 활용한 제품 아이디어 도출', content: 'AI 기반 브레인스토밍 / 시장분석 및 트렌드 예측 / 마케팅 전략'},{unit: '생성형 AI를 활용한 비즈니스', content: '아이디어 구체화 / 비즈니스 실무 / 제품 디자인 및 프로토타입 제작'},{unit: 'AI의 윤리적 문제', content: '책임감 있는 생성형 AI 활용을 위한 윤리적 원칙 및 가이드라인'}] },
+  { cat: "DX/AI > 생성형 AI", title: "생성AI로 세상을 바꾸다", hours: 8, fee: 500000, target: "전사원 및 팀장급", goal: "1. 생성형 AI의 핵심 개념과 기술에 대한 이해\n2. 프롬프트 기본 사용법 습득을 통한 생성형 AI활용능력 향상\n3. 다양한 비즈니스 분야에 생성형 AI를 접목하여 혁신을 이끄는 전략 수립", curriculum: [{unit: '생성형 AI, 세상을 바꾸는 혁신기술', content: '생성형 AI의 핵심 기술과 이해 / 국내외 생성형 AI 도입현황과 성공사례 분석'},{unit: '프롬프트 마스터하기', content: '프롬프트 개념 및 중요성 / 프롬프트 엔지니어링 미니체험'},{unit: '생성형 AI, 비즈니스의 새로운 지평', content: '생성형 AI 도구소개 및 활용법 / 비즈니스 아이디어 구현'},{unit: 'AI의 윤리적 문제', content: '책임감 있는 생성형 AI 활용을 위한 윤리적 원칙 및 가이드라인'}] },
+  { cat: "DX/AI > 생성형 AI", title: "AI 활용 능력 향상과 업무, 일상에 적용", hours: 4, fee: 250000, target: "전사원 및 팀장급", goal: "1. AI활용능력 향상의 필요성을 이해할 수 있다.\n2. 현재 업무와 관련하여 적절한 AI를 업무에 적용할 수 있다.", curriculum: [{unit: 'AI활용능력', content: 'AI 시대에서 필요한 역량 / 사례로 접근하는 AI 활용능력의 가치'},{unit: 'AI를 활용한 업무', content: '반복 작업·문서작성·자료수집 효율 높이기'},{unit: 'AI를 활용한 일상', content: '질문으로 검색하기 / 개인 학습에 활용하기 / 소통에 활용하기'},{unit: 'AI 지식 향상', content: '다양한 AI 정보 습득 / 업무 활용 인사이트 획득'},{unit: 'AI의 윤리적 문제', content: '책임감 있는 생성형 AI 활용을 위한 윤리적 원칙 및 가이드라인'}] },
+  { cat: "리더십 > 팀빌딩", title: "버크만 팀빌딩 - 인정과 이해를 통한 팀 활성화", hours: 5, fee: 350000, target: "팀내 소통오류와 갈등을 해소하고 싶은 직장인 누구나", goal: "1. 버크만 팀빌딩을 통해 팀원들의 성향과 업무 스타일 파악\n2. 팀원 간 인정과 이해를 통해 팀 업무를 활성화\n3. 오해와 갈등을 방지하며 팀원간의 원활한 소통법 만들기", curriculum: [{unit: '버크만 MAP', content: '버크만 진단 핵심 개념 / 버크만 성격지도 해석 / 팀리더와 구성원 특성 비교'},{unit: '흥미와 가치관', content: '흥미 분석을 통한 동기부여 방식과 관점 비교'},{unit: '평소행동과 강점', content: '대인관계에서 각자의 강점행동 발견 / 빛과 그림자 비교'},{unit: '욕구와 스트레스 행동', content: '컬러별 숨은 욕구 파악 / 욕구 불충족시 스트레스 행동 대응방법'},{unit: '조직지향점', content: '업무방식의 차이점 인식 / 다양한 업무스타일과 조직 내 시너지 효과'}] },
+  { cat: "DX/AI > 생성형 AI", title: "업무능력 향상을 위한 생성형 AI활용법", hours: 12, fee: 600000, target: "생성형 AI의 핵심 기능을 이해하고 AI툴 활용법을 학습하고자 임직원", goal: "1. 생성형 AI의 핵심 기능을 이해할 수 있다.\n2. AI툴 활용법을 익혀 실무에 적용할 수 있다.", curriculum: [{unit: '생성형 AI의 정의', content: '생성형 AI의 개념·종류·생성원리 / 다양한 업무상황에서의 활용사례'},{unit: 'ChatGPT, Gemini, Perplexity 특징비교', content: '주요 생성형 AI도구들의 특징과 장단점 비교/분석'},{unit: 'Claude, Wrtn, Clova-X 특징비교', content: '주요 생성형 AI도구들의 특징과 장단점 비교/분석'},{unit: '실무활용법', content: '회의록 자동 작성 / 보고서 자동 작성 / PPT·이미지·영상·앱 개발 AI 도구'},{unit: 'AI의 윤리적 문제', content: '책임감 있는 생성형 AI 활용을 위한 윤리적 원칙 및 가이드라인'}] },
+  { cat: "DX/AI > AI자격증", title: "생성형 AI 업무활용과 AICE Basic 자격 대비 과정", hours: 16, fee: 600000, target: "AI활용이 필요한 중소기업 재직자, AI비전공자", goal: "1. 생성형 AI의 개념과 활용 사례를 이해한다.\n2. AI 도구를 활용한 업무 자동화를 수행할 수 있다.\n3. AI 기반의 데이터 활용 습득 능력을 향상시킬 수 있다.", curriculum: [{unit: 'AI와 생성형 AI의 이해', content: 'AI의 기본개념과 발전과정 / 생성형 AI 도구 종류 및 비교'},{unit: '생성형 AI 도구 활용', content: '프롬프트 기본원리 / 효과적인 질문 작성 방법'},{unit: 'AI기반 문서 작성', content: 'AI를 활용한 보고서 작성 / 기획서 초안 자동화 / 이메일·문서 작성 자동화'},{unit: 'AI 활용 데이터 분석', content: '데이터의 이해 및 유형 / AI를 활용한 데이터 요약 / 데이터 기반 의사결정'},{unit: 'AI 업무 자동화', content: '반복되는 업무 자동화 / 문서 자동생성 / 일정관리 및 업무 자동화'},{unit: 'AICE Basic 문제유형', content: '시험구조 이해 / 주요출제영역 분석 / 문제 유형별 풀이전략 및 예상문제풀이'}] },
+  { cat: "DX/AI > AI자격증", title: "데이터 기반 생성형 AI 활용과 AICE Associate 과정", hours: 24, fee: 920000, target: "파이썬 활용 가능자, AI활용 업무를 수행하는 중소기업 실무자, 데이터 분석 및 자동화에 관심있는 직원", goal: "1. AI데이터활용의 개념을 이해할 수 있다.\n2. 생성형 AI를 활용한 데이터 분석을 수행할 수 있다.\n3. AI기반으로 업무 자동화를 구현할 수 있다.", curriculum: [{unit: 'AI기술 이해', content: 'AI기술 개요 / 머신러닝과 딥러닝 이해'},{unit: '데이터 이해', content: '데이터의 종류와 구조 / 데이터 수집방법 및 활용사례'},{unit: '생성형 AI심화', content: '프롬프트 엔지니어링 개념 / 프롬프트 설계 전략과 다양한 AI도구 활용'},{unit: '데이터 분석 기초', content: '데이터 정제 방법 / 데이터 분석 기초 실습 / 데이터 요약 및 시각화'},{unit: 'AI기반 데이터 분석과 업무 자동화', content: 'AI활용 데이터 분석 / 데이터 인사이트 도출 / 업무 프로세스 자동화'},{unit: 'AICE Associate 시험 유형분석', content: '시험출제 영역 분석 / 문제유형 이해 및 핵심개념 정리 / 유형별 문제 풀이 전략'}] },
+  { cat: "직무 > 법무", title: "계약서 제대로 알고 쓰자", hours: 6, fee: 250000, target: "중소기업 및 기관의 법무/영업/구매/관리/총무/기획 등 계약서 업무담당 실무자", goal: "1. 계약담당자가 꼭 알아야 할 주요 계약조항에 대해 분석하고 정리할 수 있다.\n2. 표준계약서를 실무에서 활용하는 방식을 이해하고 설명할 수 있다.", curriculum: [{unit: '계약총론', content: '계약서 작성과 검토의 요령 / 계약의 구속력과 탈출 / MOU의 법적 구속력 / 구두계약의 효력 / 내용증명의 활용 / 관할 특약의 중요성'},{unit: '계약각론', content: '계약기간·위약금·손해배상·해제·해지 조항 / 책임제한·수익배분·납품·검수 조항 / 표준계약서 활용 및 실무적용 노하우'}] },
+  { cat: "직무 > 채권관리", title: "AI를 활용한 부실채권예방과 회수방법", hours: 7, fee: 320000, target: "중소기업의 채권, 영업관리, 법무, 회계, 자금, 총무, 경영지원, 여신관리부서 등 채권관리 관련 실무자 등", goal: "1. 채권관리 업무의 전체 흐름을 이해하고, 부실을 사전에 예방하는 체계를 갖출 수 있다.\n2. 현장에서 반복되는 핵심 이슈를 사례기반으로 학습하며, 실제 업무에 활용 할 수 있는 업무노하우를 전수합니다.", curriculum: [{unit: 'AI활용 신용조사와 부실화 징후 파악', content: '신용정보라인의 활용법 / AI를 활용한 재무분석 / AI를 활용한 비재무적 요인조사 / 부실화 징후 체크리스트'},{unit: 'AI와 인터넷정보 활용한 임의회수', content: '심리기법을 활용한 채권회수 기법 / AI와 인터넷 정보활용 독촉(내용증명) / AI를 활용한 채권양도'},{unit: 'AI를 활용한 가압류 방법', content: '강제회수의 흐름 / AI를 활용한 채권 가압류 / 채권 가압류 결정과 집행'},{unit: 'AI를 활용한 집행권원 획득', content: '집행권원의 획득방법 / AI를 활용한 지급명령 / 지급명령의 확정과 효력'},{unit: 'AI를 활용한 강제집행 실무', content: '부동산 경매(배당절차) / 유체동산 강제집행의 활용 / AI를 활용한 채권압류 및 추심명령과 전부명령'}] },
+  { cat: "직무 > 법무", title: "기업법무 실무자를 위한 사건유형별 대응전략", hours: 6, fee: 250000, target: "중소기업 및 기관의 법무/영업/구매/관리/총무/기획 등 계약서 업무담당 실무자", goal: "1. 중소기업에서 주로 발생하는 법률분쟁 사건과 관련하여 법리와 판례분석을 통해 해결책 제시\n2. 기업에서 발생하는 주요 사건유형별 사례를 통해 각 사건유형별 대응전략 및 종합적 분쟁해결 노하우 제시", curriculum: [{unit: '계약서의 중요성', content: '계약서 작성 및 검토의 기본기 / 계약의 주체 및 목적 / MOU와의 관계'},{unit: '물품구매의 법률관계', content: '목적물의 특정 / 계약기간·납품·하자담보책임·손해배상·위약금 / 계약의 해제·해지'},{unit: '주요분쟁 사례별 대응전략', content: '동업투자·채권추심·저작권·상표·부정경쟁·노무·임금·부동산·공사·세무·하도급·주주총회·윤리경영·형사 관련 분쟁 대응전략'}] },
+  { cat: "DX/AI > 생성형 AI", title: "생성형 AI시대의 경영전략", hours: 6, fee: 250000, target: "전략/기획/경영혁신 담당 임직원", goal: "1. AI기술 변화에 대응하는 경영전략 수립능력을 확보할 수 있다.\n2. 기업의 AI 도입 및 활용방향을 설계할 수 있다.", curriculum: [{unit: 'AI시대의 산업변화', content: 'AI기술의 발전과 산업구조의 변화 / 글로벌 기업의 AI전략 사례 / 산업별 AI도입 트렌드'},{unit: 'AI기반 비즈니스 혁신전략', content: 'AI를 활용한 새로운 비즈니스 모델 / 데이터 기반 경영전략 / AI기반 서비스 혁신 사례'},{unit: '생성형 AI의 경영활용', content: '경영 의사결정 지원 AI활용 / 시장분석 및 전략 수립 / 생성형 AI활용 사례'},{unit: 'AI도입전략과 조직변화', content: '기업의 AI도입 단계 / 조직구조 변화 / AI인재 전략 / AI거버넌스'},{unit: 'AI를 활용한 경영전략 설계', content: '기업의 AI도입 전략 설계 / 조직별 AI활용 방안 / AI프로젝트 기획'}] },
+  { cat: "리더십 > 신입사원", title: "신입사원의 비즈니스 마인드 강화와 문제해결", hours: 8, fee: 400000, target: "신규입사자, 사원, 경력입사자", goal: "1. 조직 구성원으로서 가져야 할 조직몰입과 업무몰입을 내재화\n2. 문제해결에 필요한 사고력을 강화\n3. 조직 구성원으로서 문제를 다루는 방법 확인", curriculum: [{unit: '성공적 직장생활을 위한 가치', content: '로열티에 기초한 상생의 팔로워십 / 퍼스널 브랜딩을 위한 1년차 목표 설정'},{unit: '직업인으로 조직에서 만나는 문제와 문제해결', content: '문제해결 프로세스와 사고 / 문제의 개념과 종류 / 창의적 사고를 통한 대안개발'},{unit: '업무 우선순위를 활용한 문제해결', content: '조직의 협업과 소통의 중요성 / 집단지성의 중요성'},{unit: '변화관리 촉진자, 열정플러스', content: '일터에서의 성공의 개념 / 나의 팔로워십 유형 진단 및 Do & Dont'}] },
+  { cat: "리더십 > 핵심인재", title: "핵심인재 로열티 강화", hours: 4, fee: 250000, target: "신규입사자, 사원, 경력입사자", goal: "1. 신입 직원으로서 로열티를 강화할 수 있다.\n2. 상호이해와 존중의 중요성을 이해하고 혁신과 브랜딩을 통한 소속감을 강화할 수 있다.", curriculum: [{unit: '로열티 획득의 필요성', content: '고객 로열티와 직원 로열티의 개념 / 고객 로열티와 직원 로열티의 상관관계 / 성장의 선순환 이해'},{unit: '브랜딩', content: '파타고니아 사례를 통한 브랜딩의 중요성 / 핵심인재로서의 퍼스널 브랜딩'},{unit: '열정 플러스', content: '성공의 개념 재정립 / 작은 성공의 개념과 중요성 / 조직의 협업과 소통의 중요성 체험'},{unit: '혁신 플러스', content: '개인과 조직의 동반 성장을 위한 동기부여 / 자기 혁신을 위한 주도적 행동 스위치 만들기'}] },
+  { cat: "리더십 > 계층별", title: "계층별 필수교육(사원~주임)", hours: 8, fee: 400000, target: "신규입사자, 사원~주임/주니어", goal: "1. 조직 목표달성을 위한 Linker의 관계관리 역량을 강화하여 현업에 활용할 수 있다.\n2. 자신의 문제와 조직 문제의 영향력을 이해하고, 자신의 성장개발을 통한 조직성과 달성원리를 이해할 수 있다.", curriculum: [{unit: 'VUCA시대 Linker의 관계소통', content: 'Linker의 자질과 역량 / VUCA시대 Linker의 sense making / 목적의 중요성 인식 / 자기욕구와 가치관 점검'},{unit: 'Linker의 긍정적 영향력', content: '나의 관계성 이해 / 이타적리더와 목적경영 / 나의 학습습관 점검 / 자신의 영향력에 대한 이해'}] },
+  { cat: "리더십 > 계층별", title: "계층별 필수교육(주임~대리)", hours: 8, fee: 400000, target: "주임~대리/주니어", goal: "1. 단독과업수행이 가능한 대리역량이 조직에 필요한 이유를 이해하고 신뢰를 높이는 문제해결력을 실행할 수 있다.\n2. 협업을 전략적으로 수행하기 위한 필요역량과 기존 관습을 분리하여 전략적으로 협업하는 방법을 실천할 수 있다.", curriculum: [{unit: '신뢰와 문제해결', content: '조직내 대리가 안정성을 구성하는 요인 / 신뢰와 정의의 이익 구분 / 과업의 문제해결력 높이기'},{unit: '성장과 협업', content: '협업의 성과와 저해요소 / 협업에 필요한 핵심요소 / 공감 페르소나 / 협업을 강화하는 핵심 질문 만들기'}] },
+  { cat: "리더십 > 계층별", title: "계층별 필수교육(과장)", hours: 8, fee: 400000, target: "과장급", goal: "1. 조직 목표달성을 위한 Linker의 전략적 역할을 수립할 수 있다.\n2. 부서원 조직비전 몰입과 과업이 조직 성과 연계될 수 있게 하는 동기부여 전략을 수립할 수 있다.\n3. 고성과 조직을 위한 성과촉진의 방법 및 문제 해결력을 높일 수 있다.", curriculum: [{unit: 'VUCA시대 Linker의 성과 몰입', content: 'Linker의 목표정의 / 회사의 비전과 연계하는 자기목표 검증요인 / 역할목적서 작성과 공유'},{unit: '성과달성을 위한 Linker의 동기부여', content: '고성과 조직에 대한 이해와 성과촉진 / 협업에 필요한 핵심요소 / 사고확장을 위한 핵심성공요인 예측'}] },
+  { cat: "리더십 > 계층별", title: "계층별 필수교육(차장)", hours: 8, fee: 400000, target: "차장급", goal: "1. 조직관리에 필요한 리더의 역할과 변화의 비전을 수립할 수 있다.\n2. 팀 비전촉진을 위한 리더의 성과관리 노하우를 발휘할 수 있다.\n3. 비전과 업무를 일치시키고 임파워링 할 수 있다.", curriculum: [{unit: '중간리더의 전략과 일', content: '조직 내 목표와 역할 / 변화관리 / 비전의 주요요소에 대한 이해와 비전몰입 전략'},{unit: '비전수립과 비전촉진의 일', content: '의사결정단계 간소화 / 과업주도성의 중요성 / 부서원 관찰 인터뷰 및 Follow up 스킬'}] },
+  { cat: "리더십 > 계층별", title: "계층별 필수교육(부장)", hours: 8, fee: 400000, target: "부장급", goal: "1. 조직의 관리자로서 사업 비전을 공유하고 달성하기 위한 방법을 모색할 수 있다.\n2. 사업 부서의 전략 몰입에 대한 복잡성을 증가시키는 4S를 분석할 수 있다.\n3. 혁신적인 조직문화를 구축할 수 있다.", curriculum: [{unit: '리더의 전략과 일', content: 'VUCA시대의 리더의 역할 / 조직관리 리더십 / 목표 실행 전략 공유와 피드백 / 부장의 변화관리'},{unit: '조직변화를 위한 리더의 모델링', content: '혁신적 조직문화 구축 / 이타주의적 리더의 역할과 행동 / 영감을 주는 리더의 정체성 스토리'}] },
+  { cat: "직무 > 영업/마케팅", title: "중소기업 마케팅 전략", hours: 16, fee: 620000, target: "중소기업 마케팅 담당자, 영업담당자", goal: "1. 중소기업에 적합한 마케팅 전략을 수립하고 활용할 수 있는 능력을 함양한다.\n2. 중소기업이 제한된 자원으로 효과적인 마케팅 전략을 수립하고 실행할 수 있도록 한다.", curriculum: [{unit: '중소기업의 마케팅 환경에 대한 이해', content: '마케팅 전략 프레임워크 / 시장환경 분석 / 고객 세분화'},{unit: '시장분석 및 고객전략', content: '시장분석 방법 / 주요 고객군 / 고객의 특징과 니즈파악 / 경쟁사 분석 / 고객 페르소나 설계'},{unit: '디지털 마케팅 전략', content: '온라인 마케팅 전략 / 콘텐츠 마케팅 전략 / SNS마케팅 전략 / 마케팅 채널 전략 설계'},{unit: '마케팅 실행과 성과관리', content: '마케팅 실행전략 및 계획 / 마케팅 KPI 설정 / 데이터 기반 마케팅 / 성과측정과 마케팅 개선 전략'}] },
+  { cat: "직무 > 영업/마케팅", title: "마음을 사로잡는 프레젠테이션", hours: 16, fee: 620000, target: "중소기업 마케팅 담당자, 영업담당자 및 실무자", goal: "1. 다수의 수주 경험을 가진 전문 프레젠터를 통해 실전 PT스킬을 학습할 수 있다.\n2. 개개인의 제안서와 프레젠테이션 스킬에 대한 컨설팅을 통해 전문성을 높일 수 있다.\n3. 실제 사례를 학습에 활용하여 실전 PT능력을 키울 수 있다.", curriculum: [{unit: 'PT의 핵심과 준비', content: '프레젠테이션 이해와 핵심포인트 / 성공적 PT를 위한 준비'},{unit: '구조와 스킬', content: '핵심 메시지 구조화 / 스토리텔링'},{unit: '스피치 기법', content: '효과적인 스피치 기법 / 설득력을 높이는 스피치 기법 / 키맨을 사로잡는 PT화법'},{unit: '비주얼 PT', content: '멀티미디어의 활용 테크닉 / 시각자료 활용 / 프레젠테이션 통합 체크리스트'},{unit: '실습 및 피드백', content: '발표실습 / 과정마무리 및 종합 피드백'}] },
+  { cat: "직무 > 세무/회계", title: "실무에 바로 써먹는 회계와 세무지식", hours: 8, fee: 450000, target: "전사원 및 세무담당자", goal: "1. 기업운영에 필수적인 회계/세무관련 지식을 습득하고 이를 실무에 적용할 수 있다.\n2. 비용관리 및 이익개선 능력을 확보하고 재무제표를 읽고 의사결정에 활용할 수 있다.", curriculum: [{unit: '회계 기초와 재무제표 이해', content: '회계의 기본개념 / 재무제표 3종 이해(손익계산서·재무상태표·현금흐름표) / 손익분기점 개념과 현금흐름 관리'},{unit: '비용관리와 수익성 개선전략', content: '고정비 vs 변동비 / 원가구조 분석 / 이익률 개선전략 / 가격전략'},{unit: '세무기초와 세금구조 이해', content: '기업이 내는 주요 세금(부가가치세·법인세·소득세) / 세금 신고의 흐름 / 세무 리스크 유형'},{unit: '절세 전략과 세무 리스크 관리', content: '합법적 절세 전략 / 세무조사 대응 / 증빙관리'}] },
+  { cat: "리더십 > 공통", title: "핵심만 쏙! 리더십 스킬업 36.5°C 리더십", hours: 4, fee: 600000, target: "팀장 후보자, 팀장 승진자 및 팀장", goal: "1. 리더와 구성원의 관계에 대한 이해\n2. MZ세대의 업무몰입과 관계 촉진\n3. 팀 커뮤니케이션 최적화", curriculum: [{unit: '팀장의 역할과 함정', content: '리더의 필요역량과 리더십 스타일 진단 / 리더의 시각과 관성의 함정'},{unit: '리더의 고민', content: '관계와 소통 / 갈등의 종류 / 오해의 사다리를 내려오다'},{unit: '신뢰받는 리더', content: '말 잘 듣는 리더 / 말 가짐을 아는 리더 / 표현하는 리더'},{unit: '변화하는 리더', content: 'Action Plan 수립 / 리더 프로필 만들기'}] },
+  { cat: "DX/AI > 생성형AI", title: "핵심만 쏙! 생성형 AI활용법", hours: 6, fee: 600000, target: "생성형 AI의 핵심 기능을 이해하고 AI툴 활용법을 학습하고자 임직원", goal: "1. 생성형 AI의 핵심 기능을 이해할 수 있다.\n2. AI툴 활용법을 익혀 실무에 적용할 수 있다.", curriculum: [{unit: 'ChatGPT, Gemini, Perplexity 특징비교', content: '주요 생성형 AI도구들의 특징과 장단점 비교/분석'},{unit: 'Claude, Wrtn, Clova-X 특징비교', content: '주요 생성형 AI도구들의 특징과 장단점 비교/분석'},{unit: '실무활용법', content: '회의록 자동 작성 / 보고서 자동 작성 / PPT·이미지·영상·앱 개발 AI 도구'},{unit: 'AI의 윤리적 문제', content: '책임감 있는 생성형 AI 활용을 위한 윤리적 원칙 및 가이드라인'}] },
+  { cat: "리더십 > 공통", title: "리더십 역량개발(고급) 영향력과 비전 리더십", hours: 7, fee: 450000, target: "관리자직 수행경력이 오래된 직책자 및 수석부장, 후배 관리자를 이끄는 위치에 있는 관리자", goal: "1. 비전추구에서 성과창출까지의 연계성을 도모하는 방법을 파악함.\n2. 조직내에서 후배 관리자들을 이끄는 리더십을 함양함.\n3. 강한 조직·고성과 조직·효율적 조직을 만들기 위한 변화추진 방안 마련함.", curriculum: [{unit: '고급 관리자 역할과 역량', content: '고급 관리자에게 기대되는 역할 정리 / 핵심역량 진단 / 영향력 발휘와 의사결정 능력'},{unit: '소통의 기술로 갈등해결하기', content: '구성원의 이해와 존중 / 행동의 도식에 의거한 욕구·태도 파악 / 대인 문제해결과 소통 스킬'},{unit: '구성원들을 한방향으로 이끄는 리더십', content: '비전 리더십 체험 / 자신만의 리더십 발휘 전략과 lessons learned 공유'}] },
+  { cat: "리더십 > 공통", title: "리더십 역량개발(중급) 코칭과 소통", hours: 7, fee: 450000, target: "중소기업에 재직중인 과장, 차장, 부장 직급 관리자", goal: "1. 중급 관리자의 필수 리더십 역량인 코칭, 성과관리, 변화관리 역량의 향상\n2. 직급별 리더십 파이프라인의 한 축을 형성하여 조직성과 창출에 기여함.\n3. 소통과 팀워크 스킬 함양으로 중급관리자의 역할을 훌륭히 수행하게 함.", curriculum: [{unit: '코칭기반의 성과관리와 변화추진', content: '코칭 스킬과 프로세스 이해 / 성과로 말하기 / 변화 이끌기 / 회의의 생산적 진행스킬'},{unit: '협업을 통한 소통의 기술', content: '성과창출 관리의 도구들 체험 / PDCA 방식의 업무진행 / 실행과정과 결과를 효율적으로 관리하는 소통 스킬'},{unit: '조율과 합의로 팀워크 향상하기', content: '합의를 통한 갈등해결 / 세대간 조율로 팀워크 향상하기'}] },
+  { cat: "리더십 > 공통", title: "리더십 역량개발(초급) 자기관리", hours: 7, fee: 450000, target: "중소기업에 재직중인 과장, 차장, 부장 직급 관리자", goal: "1. 변화 시대가 요구하는 관리자의 조건과 역할을 재인식함.\n2. 조직이 필요로 정립하고 방법을 습득함.\n3. 끊임없는 자기개발과 리더십 발휘를 위한 실천방법을 이해함.", curriculum: [{unit: '셀프리더의 자기관리', content: '팔로워의 셀프리더십 / 강점관리 / 자기주도적 도전 / 성공적 경력관리를 위한 Action Plan'},{unit: '소통으로 갈등관리 하기', content: '업무 메시지 명확히 주고받기 / 감정 메시지 잘 주고받기'},{unit: '팀활성화로 윈윈하기', content: '팀 활성화를 위한 요소 / Best 팀 vs Worst 팀 / 팀 활성화 계획 수립'}] },
+  { cat: "DX/AI > 기획/전략", title: "전략 기획과 실행 역량개발: AI와 로지컬 씽킹", hours: 14, fee: 650000, target: "중소기업 전략·기획·사업·영업·마케팅 부서 담당자 및 예비 팀장급", goal: "1. 전략적 사고 프레임워크(MECE, Logic Tree, 피라미드, SCQ) 이해·적용\n2. 3C·SWOT·PESTLE 환경 분석으로 문제 구조화\n3. 생성형 AI(ChatGPT·Claude·Gemini 등)를 기획 전 단계에 활용하여 기획 효율 극대화", curriculum: [{unit: '기획의 이해와 마인드셋', content: '기획의 본질과 AI 시대의 변화 / 전략적 벤치마킹과 인사이트 도출 / AI를 활용한 산업군 최신 트렌드 서칭'},{unit: '전략적 사고: MECE & Logic Tree', content: 'MECE 원칙을 활용한 논리적 구조화 / AI 협업형 로직 트리 설계 / 피라미드 구조와 SCQ 기법'},{unit: '기획 프로세스 및 환경 분석', content: '8단계 기획 프로세스 / 3C·PESTLE·SWOT 분석 / 5Why 및 Fishbone 기법 / Pay-off Matrix'},{unit: '실전! One-Page 기획서 완성', content: '논리적 설득을 위한 One-Page 구조화 / AI 워크플로우 기반 최종 결과물 완성 / 팀별 발표 및 피드백'}] },
+  { cat: "직무 > 구매", title: "구매관리기본(실전편)", hours: 16, fee: 600000, target: "구매 및 협력업체 관리 담당자, 협상 및 계약·원가절감을 원하는 분", goal: "1. 구매관련 전반적인 구매 프로세스 과정을 습득하고 업무능력 배양.\n2. 구매직무에 관련된 핵심 요소를 이해하고 기초 사례중심의 교육을 통한 현업 대응력 증대.\n3. 구매담당자의 기초적인 역량향상과 구매윤리의식 증대.", curriculum: [{unit: '구매 환경의 변화', content: '기업경영과 구매관리의 연계 / 구매인의 역할과 기능 확대 / SCM의 효율적 운영 방법'},{unit: '구매담당자의 역할', content: '구매윤리 의식을 바탕으로 한 기초 지식 / 원가분석 방법 / QCD 기본 업무 강화'},{unit: '구매프로세스 이해(Ⅰ)', content: '구매원가의 개념 및 원가의 중요성 / 재료비·노무비·제조경비 개념 이해 / 자재 및 재고관리'},{unit: '구매프로세스 이해(Ⅱ)', content: '납기 중요성 및 리스크 관리 / 구매협상 및 계약관리 / 협력사 소싱 및 발굴 방법'}] },
+  { cat: "DX/AI > 생성형 AI", title: "일잘러의 AI 무기 장착하기: 리서치 자동화", hours: 14, fee: 650000, target: "보고서·기획서·제안서 등 비즈니스 문서 작성이 잦은 실무자, 사원·대리·과장급", goal: "1. 보고 관점 전환: 문서와 구두보고를 상사의 판단과 의사결정을 돕는 도구로 명확히 인식\n2. AI 실무 적용: 생성형 AI를 활용해 자료 조사 및 문서 초안 작성 시간을 단축\n3. 핵심 요약 기술: TNOREO 구조 및 구름-비-우산 기법을 활용한 30초 내외의 간결한 구두보고로 변환", curriculum: [{unit: 'AI 기반 문서 전략 및 구조 설계', content: '보고 관점 전환과 AI 워크플로우 / Why-What-How-If 기반 논리 설계 / Perplexity를 활용한 자료 조사 자동화'},{unit: 'AI를 활용한 고품질 문서 완성 및 시각화', content: '일잘러의 문장 작성법과 AI 교정 / 한눈에 들어오는 데이터 시각화 / 원페이지 보고서 완성'},{unit: '핵심 요약 구두보고 및 채널 전략', content: '상황별 소통 채널 및 보고 전략 / TNOREO 기반 30초 핵심 보고 / 30초·60초·2분 버전 스피치 실습'},{unit: '상황별 대응 및 상사 맞춤형 실전 보고', content: '중간·문제·긴급 상황별 보고 실무 / 상사 성향 분석 및 맞춤형 롤플레이'}] },
+  { cat: "직무 > 영업/마케팅", title: "프로의 제안서 작성과 PT 스킬업", hours: 7, fee: 500000, target: "제안서 작성·보고·프레젠테이션 업무를 수행하는 재직자 및 실무자", goal: "1. 제안서의 구조와 평가 기준을 이해하고 논리적인 스토리라인을 설계할 수 있다.\n2. 핵심 메시지와 근거를 기반으로 설득력 있는 제안서 문서를 작성할 수 있다.\n3. 슬라이드 구성과 발표 전달 스킬을 활용하여 제안 내용을 효과적으로 PT할 수 있다.", curriculum: [{unit: '제안 전략과 설득 구조 이해', content: '제안서의 이해와 설득 구조 / 고객 니즈 분석과 제안 전략 수립 / 제안서 구조와 논리 흐름 설계'},{unit: '실무 제안서 작성 전략', content: '설득형 제안서 작성 기법 / 데이터와 근거 기반 설득 전략 / 시각적 요소 활용 방법'},{unit: '프레젠테이션 전략과 슬라이드 구성', content: '발표 전략과 설득 구조 / 스토리텔링 기반 발표 전략 / PPT 슬라이드 설계 전략'},{unit: '프레젠테이션 전달 스킬', content: '발표 표현 스킬 / 질의응답 대응 전략 / 돌발 상황 대처 방법'},{unit: '프레젠테이션 실습 및 피드백', content: '미니 프레젠테이션 실습 / 발표 녹화 및 자가 피드백 / 개인별 개선 전략 수립'}] },
+  { cat: "직무 > 구매", title: "원가 계산 및 분석실무", hours: 18, fee: 700000, target: "재무/회계/기획/생산/제조/구매/영업/마케팅 부서 담당자 및 경영진", goal: "1. 원가의 기초 개념을 이해하고 실무에 바로 적용\n2. 요소별 원가계산·부문별 원가계산·제품별 원가계산 방법 습득\n3. CVP 분석 등 원가 자료를 바탕으로 한 손익분석 및 관리기법 습득", curriculum: [{unit: '원가의 기초 개념 및 분류', content: '원가관리회계와 재무회계의 차이 / 재료비·노무비·제조경비 / 변동비·고정비·준변동비 / 제조원가명세서 구조'},{unit: '요소별 원가계산(재료비/노무비/제조경비)', content: '직접·간접재료비 구분 / 재고자산 평가 방법 / 당기총제조원가와 당기제품제조원가 도출'},{unit: '부문별 원가계산과 제조간접비 배부', content: '제조부문과 보조부문의 이해 / 직접·단계·상호배부법 비교 / 제조간접비 배부차이 분석'},{unit: '제품별 원가계산', content: '개별원가계산(Job-Order Costing) / 종합원가계산(Process Costing) / 완성품환산량의 개념'},{unit: '원가-조업도-이익(CVP) 분석 기초', content: '공헌이익의 이해 / 손익분기점(BEP) 계산 / 안전한계와 영업레버리지도(DOL) 기초'}] },
+  { cat: "직무 > 구매", title: "견적 원가계산 및 절감", hours: 14, fee: 650000, target: "영업/마케팅, 구매/조달, 생산기술/R&D, 원가/기획 부서 담당자", goal: "1. 제품을 만드는 데 투입되는 원가 요소를 측정하고 계산하는 방법 습득\n2. 원가행태 구분을 통해 견적의 유연성을 확보\n3. 가치공학(VE/VA)과 목표원가계산을 통한 원가절감 방법 습득", curriculum: [{unit: '요소별 원가계산(재료비/노무비/제조경비)', content: '직접·간접 비용 구분 / 재고자산 평가 방법 / 당기총제조원가와 당기제품제조원가 도출'},{unit: '원가행태(Cost Behavior) 구분과 견적 적용', content: '변동비·고정비·준변동비 분석 / 고정비 배부 전략'},{unit: '견적 원가의 이해와 산출 프로세스', content: '사전원가와 사후원가 / 견적서의 기본 구조 / 고객의 견적 요청서 분석'},{unit: '가치공학(VE/VA)과 목표원가계산', content: 'VE/VA의 이해 / 목표원가 관리(Target Costing) 개념'},{unit: '이익 창출을 위한 가격 결정 전략', content: '원가 가산 방식 vs 시장 기준 방식 / 판관비 배부 및 적정 이윤 산정 기법'},{unit: '전부원가계산 vs 변동원가계산의 비교', content: '고정제조간접비 포함 여부에 따른 이익 왜곡 현상 이해 및 방지'}] },
+  { cat: "직무 > PM", title: "프로젝트 일정관리 기본 과정", hours: 14, fee: 650000, target: "프로젝트 관리자(PM), 프로젝트 리더(PL), 일정 관리 및 공정 관리 담당자", goal: "1. 프로젝트 일정관리의 개념과 중요성을 이해하고 역할을 설명할 수 있다.\n2. WBS를 기반으로 활동을 정의하고 일정 네트워크를 구성할 수 있다.\n3. 임계경로(Critical Path) 분석과 일정 압축 기법을 활용하여 프로젝트 일정을 최적화할 수 있다.", curriculum: [{unit: '프로젝트 일정관리 개요 및 프레임워크', content: 'Triple Constraint (범위·일정·비용) / 일정관리 프로세스 6단계 / 일정관리 산출물'},{unit: 'WBS 기반 일정관리', content: 'WBS 개념과 작성 원칙 / 작업패키지 정의 / WBS → Activity 전환'},{unit: '활동 정의 및 순서 결정', content: 'Activity List / Milestone / 선후행 관계 / 프로젝트 활동 네트워크 생성'},{unit: '활동 기간 산정 및 일정개발 기법', content: '3점 추정 / PERT 계산 / Critical Path Method / 일정 단축 전략(Fast Tracking·Crashing)'},{unit: '일정의 감시 및 통제', content: 'Earned Value Management / SPI / 일정 변경관리 / WBS·Activity·Gantt Chart 종합 실습'}] },
+  { cat: "직무 > 개발", title: "임베디드 프로그래밍-8-bit AVR 코딩", hours: 16, fee: 650000, target: "마이크로컨트롤러·임베디드 시스템 입문/초급 개발자, AI를 하드웨어 제어에 접목하고 싶은 개발자", goal: "1. 8-bit AVR(ATmega 계열)의 GPIO, 타이머, PWM, ADC, UART를 C 언어로 직접 제어할 수 있는 역량 습득\n2. 펌웨어를 코딩·디버깅하는 기본 능력을 기른다.\n3. AI-in-the-loop 제어 구조를 설계·구현하는 것을 목표로 한다.", curriculum: [{unit: 'AVR 기본 입출력 이해', content: 'ATmega328P/128 구조 이해 / 레지스터·비트 연산 복습 / DDRx/PORTx/PINx 동작 원리 / 데이터시트 읽기'},{unit: '디지털 출력·입력 실습', content: 'LED 켜기·끄기·토글 / 내부 풀업 스위치 입력 처리 / 노이즈·채터링 대응'},{unit: '타이머·PWM·ADC 기초', content: '타이머 모드 설정과 주기 계산 / PWM 정을 통한 밝기 제어 / ADC 설정 및 센서 값 읽기'},{unit: 'UART 통신과 PC 연동', content: 'UART 보드레이트·프레임 포맷 설정 / 송수신 인터럽트 루틴 설계 / 명령어 기반 제어'},{unit: 'Python 제어 스크립트 작성', content: 'Python pyserial로 포트 제어 / AVR 응답 파싱 및 상태 표시'},{unit: '생성형 AI 기반 제어 및 종합 프로젝트', content: '자연어 → 제어 명령 매핑 / AI-in-the-loop 통합 제어 구현 / 종합 프로젝트 설계·구현·발표'}] },
+  { cat: "DX/AI > 프로젝트관리", title: "AI시대 PM의 필수역량", hours: 14, fee: 650000, target: "AI 활용 역량을 강화하고 싶은 중소기업 재직자, 업무 생산성을 높이고 싶은 기업 실무자", goal: "1. 생성형 AI의 개념과 활용 방법을 이해하고 업무에 적용할 수 있다.\n2. ChatGPT, Gemini 등 생성형 AI 도구를 활용하여 문서 작성, 정보 탐색, 콘텐츠 제작 등 업무 생산성을 향상시킬 수 있다.\n3. AI 기반 협업 도구와 디지털 업무 환경을 활용하여 조직 내 협업과 업무 효율화를 실현할 수 있다.", curriculum: [{unit: 'AI 이해 역량(AI Literacy)', content: 'AI 시대 업무 변화와 생성형 AI 이해 / 주요 생성형 AI 도구 소개 / ChatGPT 기본 사용 방법 실습'},{unit: 'AI 활용 역량(AI Productivity)', content: '프롬프트 설계와 생성형 AI 업무 활용 / AI를 활용한 실무 문서 작성 / 회의록·업무 보고서 초안 생성'},{unit: 'AI 정보 탐색 역량(AI Research)', content: 'AI 기반 정보 탐색과 자료 수집 / NotebookLM을 활용한 문서 기반 지식 정리'},{unit: 'AI 콘텐츠 제작 역량(AI Creation)', content: 'Gamma를 활용한 프레젠테이션 제작 / Canva·NanoBanana를 활용한 시각자료 및 콘텐츠 제작'},{unit: 'AI 협업 및 스마트워크 역량', content: '클로바노트를 활용한 회의 녹음 및 자동 요약 / 구글 드라이브·캘린더·챗을 활용한 스마트워크 환경 구축'}] },
+  { cat: "직무 > 현장관리", title: "제조현장 원가절감 추진실무", hours: 14, fee: 650000, target: "현장 개선 리더, 생산 및 공정기술, 원가 및 회계 부서, 현장 관리자", goal: "1. 낭비요소와 비부가가치 활동을 제거하고 JIT 및 카이젠(Kaizen) 기법을 적용하여 원가 경쟁력을 극대화\n2. 기업의 실질적인 수익 구조 개선을 목적으로 한다.", curriculum: [{unit: '활동기준원가(ABC)의 기초와 도입 배경', content: '전통적 원가계산의 한계 / ABC의 개념 / 제조간접비의 정교한 배부'},{unit: '현장 활동 분석 및 원가 동인(Cost Driver) 설정', content: '활동 분석(Activity Analysis) / 원가 동인(Cost Driver) 선정 / 데이터 수집 실무'},{unit: '표준원가계산(Standard Costing)', content: '표준의 설정 / 원가차이분석(Variance Analysis) / 책임회계의 기초'},{unit: '적시생산시스템(JIT) 도입을 통한 재고 원가 혁신', content: 'JIT의 원리 / 재고 유지 비용의 절감 / 생산 리드타임(L/T) 단축'},{unit: '카이젠 원가계산(Kaizen Costing)과 지속적 원가 절감', content: '카이젠 원가 vs 표준 원가 / 현장 중심의 원가 절감 / 원가 절감 목표 배분'}] },
+  { cat: "리더십 > 신입사원", title: "중소기업 신규입사자 온보딩 교육", hours: 6, fee: 400000, target: "중소기업 신규입사자(과장 이하 전 직군), 입사 후 OJT를 수료한 직원", goal: "1. 조직 구성원으로서의 경영이해·업무수행·대인관계·자기계발·업무기초 5대 역량을 체계적으로 함양\n2. 보고·연락·상담(호·연·상) 원칙을 이해하고 실전 두괄식 보고와 비즈니스 이메일을 작성할 수 있다\n3. 셀프리더십과 팔로워십을 바탕으로 주도적·협력적 업무 자세를 실천할 수 있다", curriculum: [{unit: '오리엔테이션 & 아이스브레이킹', content: '교육 오리엔테이션 / 아이스브레이킹 & 팀 빌딩 / 교육 기대 사항 공유'},{unit: '경영의 이해(조직문화·경영분석)', content: '회사 경영철학과 비전·미션·핵심가치 / 조직 구조와 각 부서 역할 이해 / 경영환경 분석 기초(SWOT)'},{unit: '업무수행 역량(판단력·열정·창의성)', content: '업무 판단력과 우선순위 설정 / 열정적 직업인 마인드셋 / 창의적 문제해결과 아이디어 발상'},{unit: '조직 커뮤니케이션(대인관계·소통)', content: '조직 내 커뮤니케이션 4방향 / 세대 간 소통과 경청의 기술 / 갈등 관리와 건강한 관계 형성'},{unit: '보고·연락·상담 실전', content: '두괄식 보고와 보고서 작성 원칙 / 연락의 타이밍과 이메일·메신저 예절 / 상담 요청과 비즈니스 대화 기술'},{unit: '자기계발과 셀프리더십', content: '자기이해와 강점 발견 / 셀프리더십과 적극적 행동 / 비전 수립과 SMART 목표 관리'}] },
+  { cat: "리더십 > 공통", title: "승격자를 위한 특급 노하우", hours: 16, fee: 600000, target: "202X년 상반기 직급 승격(예정)자 전원 - 신임 관리자, 중추적 실무자, 차세대 리더", goal: "1. 승격에 따른 역할 변화를 인식하고 새로운 직책에 맞는 주도적 태도를 갖춘다.\n2. 디자인 씽킹 프로세스를 통해 실무 문제를 창의적으로 해결하는 관점을 습득한다.\n3. 게이미피케이션 활동을 통해 협력적 소통의 중요성을 체득하고 팀 시너지를 극대화한다.", curriculum: [{unit: 'Identity Shift: 리더의 새로운 항해', content: '승격의 의미와 기대 역할 변화 / 성과 창출을 위한 3대 핵심 역할 / 승진자 리더십 마인드셋'},{unit: 'Creative Solution: 디자인 씽킹 실습', content: '변화 환경과 혁신의 필요성 / 디자인 씽킹 이해 / 문제 재정의 실습 및 창의적 해결 아이디어 도출'},{unit: 'Collaboration Game: 신뢰와 소통의 기술', content: '게이미피케이션 - 제한된 정보 속의 협력 / 정보 비대칭 해소 및 역할 최적화 / 현업 적용 아이디어 도출'},{unit: '분석적 사고와 전략적 기획', content: '본질 중심의 사고법 / 현장 기반 분석과 판단 / 실행 중심의 전략적 기획 역량'},{unit: '성과목표 설정과 관리', content: '성과관리의 본질과 리더의 역할 / 효과적인 목표 설정과 정렬 / 일상 속 성과 관리 실천법'},{unit: '성과면담과 피드백', content: '성장을 이끄는 피드백 스킬 / 성과면담 구조와 준비 요령 / 실전 면담 시뮬레이션'}] },
+  { cat: "DX/AI > 생성형AI", title: "AI와 함께 하는 업무 활용 실전 비기", hours: 6, fee: 500000, target: "AI를 활용하여 업무 생산성을 높이고 싶은 구성원", goal: "1. 생성형 AI 기술의 이해와 다양한 AI 도구 활용 방법을 학습하여 업무 생산성과 창의성을 향상\n2. 문서 작성, 기획, 콘텐츠 제작 등 다양한 업무 영역에서 AI를 활용하여 업무 효율을 높임", curriculum: [{unit: '생성형 AI 이해', content: '생성형 AI의 개념 및 기술 특징 / ChatGPT·Gemini 등 주요 생성형 AI 도구 소개 / AI 활용 시 주의사항 및 윤리 기준'},{unit: '생성형 AI 활용 기초', content: 'ChatGPT 기본 사용 방법 / 효과적인 질문 작성 방법 / 프롬프트 작성 기본 구조'},{unit: 'AI 기반 문서 작성', content: 'AI 기반 보고서·기획서·제안서 구조 작성 / 업무 이메일 작성 자동화 / 회의 내용 요약 및 정리'},{unit: 'AI 업무 자동화', content: '반복 업무 자동화 개념 / 데이터 요약 및 정리 자동화 / FAQ 문서 작성 자동화'},{unit: 'AI 콘텐츠 제작', content: '이미지 생성 AI 활용 방법 / Canva AI 기능 활용 콘텐츠 제작 / AI 기반 발표자료 제작'},{unit: 'AI 활용 전략', content: '생성형 AI 업무 적용 방법 / 조직 내 AI 활용 방법 / AI 시대 직무 변화 이해'}] },
+  { cat: "리더십 > 신입사원", title: "신입사원 역량강화 일 잘하는 직장인", hours: 8, fee: 550000, target: "신입사원 및 입사 1~2년차 사원", goal: "1. 학생에서 직장인으로의 관점을 전환하고 조직 내 역할을 인식한다.\n2. 신뢰를 축적하는 직업인의 태도와 원칙을 체득한다.\n3. 업무 파악, 우선순위 설정, 보고의 기본 구조를 습득한다.\n4. 자기 주도적 성장 계획을 수립하고 실행 의지를 다진다.", curriculum: [{unit: '직장인으로의 관점 전환', content: '학생 마인드 vs 직장인 마인드의 구조적 차이 / 조직의 구조와 일하는 방식의 이해 / 회사가 신입사원에게 기대하는 것'},{unit: '신뢰 축적의 원리와 직업인의 태도', content: '나를 하나의 브랜드로 바라보는 관점 전환 / 시간의 밀도와 신뢰가 쌓이는 구조 / 기대치 관리와 책임감의 표현'},{unit: '일머리를 키우는 업무 습관', content: '업무 파악과 우선순위 설정 / 보고의 기본 구조와 실전 적용 / 실수 대응과 피드백 수용의 자세'},{unit: '성장하는 직장인의 자기관리', content: '업무 기록 습관과 자기 매뉴얼 구축 / 조직 내 성장 기회를 포착하는 방법 / 1년차 성장 로드맵 수립'}] },
+  { cat: "DX/AI > 생성형AI", title: "AI 시대 업무 역량강화 생성AI 실무 적용", hours: 8, fee: 550000, target: "전 직급 실무자, AI 도구를 업무에 활용하고자 하는 구성원", goal: "1. AI의 기본 개념과 업무 활용 원리를 이해한다.\n2. AI를 활용하여 실제 업무(보고서, 기획, 분석)의 생산성을 높일 수 있다.\n3. AI 시대 실무자에게 필요한 프롬프트 설계와 결과 검증 역량을 체득한다.", curriculum: [{unit: 'AI 리터러시와 업무 활용 기초', content: 'AI 시대의 업무 변화와 생성AI의 작동 원리 이해 / AI 활용의 핵심: 프롬프트 기초'},{unit: 'AI 실무 활용', content: '보고서·기획서 작성 활용 / 데이터 분석과 요약 활용 / 커뮤니케이션 업무 활용'},{unit: 'AI 기반 업무 프로세스 혁신', content: '나만의 AI 업무 워크플로우 설계 / AI 활용 실전 프로젝트 / AI 활용 업무 개선 계획서 작성 및 발표'}] },
+  { cat: "직무 > 기획", title: "분석적 사고와 전략적 기획", hours: 8, fee: 550000, target: "대리급~과장급 실무자 및 차세대 리더, 업무 기획력과 분석적 사고력 강화가 필요한 구성원", goal: "1. 복잡한 상황에서 본질을 파악하고 핵심 질문 도출하는 사고력을 강화한다.\n2. 제한된 정보 속에서 근거 있는 판단을 내리는 분석 역량을 체득한다.\n3. 실행 가능한 수준의 전략적 기획을 수립하고 구조화할 수 있다.", curriculum: [{unit: '본질 중심의 사고법', content: '사고방식의 전환 / 핵심을 포착하는 사고 훈련 / 올바른 질문의 힘 / 케이스 기반 핵심 질문 도출 워크숍'},{unit: '현장 기반 분석과 판단', content: '근거 있는 판단의 기술 / 우선순위 설정과 의사결정 / 전략적 사고의 6가지 원칙'},{unit: '실행 중심의 전략적 기획', content: '결론 중심의 기획 구조화 / 실행 가능한 수준의 기획 / So What? 테스트로 기획 검증하기 / 팀별 케이스 기획 발표 및 피드백'}] },
+  { cat: "리더십 > 커뮤니케이션", title: "MBTI를 활용한 팀 커뮤니케이션", hours: 4, fee: 400000, target: "전 직급(팀 단위 참여 권장), 팀 내 소통 개선 및 협업 강화가 필요한 조직", goal: "1. MBTI를 통해 자신의 소통 성향과 강점·약점을 객관적으로 인식한다.\n2. 상대 유형별 효과적인 소통 전략을 수립하고 적용할 수 있다.\n3. 유형 다양성을 팀 시너지로 전환하는 협업 역량을 체득한다.", curriculum: [{unit: 'MBTI 이해와 자기 인식', content: 'MBTI의 이해와 활용 원칙 / 나의 유형 탐색 / 선호 지표별 특성 이해(E/I·S/N·T/F·J/P)'},{unit: '유형별 소통 전략', content: '유형별 소통 특성과 갈등 패턴 / 상대 유형에 맞는 소통법 / 업무 상황별 유형 활용'},{unit: '팀 시너지 워크숍', content: '우리 팀 유형 맵 분석 / 팀 소통 규칙 수립 / 팀 소통 규칙 발표 및 상호 피드백'}] },
+  { cat: "리더십 > 커뮤니케이션", title: "세대공감 조직 커뮤니케이션", hours: 4, fee: 400000, target: "전 직급(팀장급 관리자 및 실무자), 세대 간 소통 갈등 해소 및 조직 내 협업 강화가 필요한 조직", goal: "1. 세대별 가치관과 일에 대한 관점 차이를 구조적으로 이해한다.\n2. 세대 간 갈등의 원인을 분석하고 조직 성과에 미치는 영향을 인식한다.\n3. 세대를 넘는 소통 전략을 수립하고 세대공감 조직문화를 만들어갈 수 있다.", curriculum: [{unit: '세대 간 인식 차이와 갈등 구조', content: '세대별 가치관과 일에 대한 관점 / 같은 상황, 다른 해석 - 세대 간 오해의 구조 / 갈등이 발생하는 지점과 조직 성과에 미치는 영향'},{unit: '세대를 넘는 소통 전략과 조직문화 만들기', content: '세대별 소통 특성과 선호 방식 / 리더와 실무자, 각자의 소통 전환 포인트 / 세대 다양성을 팀 강점으로 전환하는 방법'}] },
+  { cat: "리더십 > 공통", title: "코칭형 리더십 : 1:1 미팅과 피드백", hours: 8, fee: 550000, target: "팀장급 관리자 및 리더 후보자, 구성원 육성과 팀 성과 향상을 위한 리더십 전환이 필요한 관리자", goal: "1. 지시형 리더십에서 코칭형 리더십으로의 전환 필요성을 인식한다.\n2. 1:1 미팅을 설계하고 효과적으로 운영할 수 있다.\n3. 구성원의 성장과 몰입을 이끄는 피드백 스킬을 체득한다.", curriculum: [{unit: '코칭형 리더십의 이해', content: '리더십 패러다임의 변화 / 코칭형 리더의 핵심 역량 / 질문하는 리더, 경청하는 리더'},{unit: '1:1 미팅과 성과 대화', content: '1:1 미팅의 설계와 운영 / 성과 대화의 기술 / 구성원 유형별 대화법'},{unit: '피드백과 동기부여', content: '성장을 이끄는 피드백 스킬 / 코칭형 리더십 실전 종합 연습 / 1:1 미팅 롤플레이'}] },
+  { cat: "직무 > 보고서", title: "업무보고서 작성과 논리적 사고", hours: 8, fee: 550000, target: "사원~대리급 실무자, 보고서 작성 역량 강화가 필요한 구성원", goal: "1. 논리적 사고를 기반으로 보고서의 핵심 메시지를 구조화할 수 있다.\n2. 읽는 사람 관점에서 설득력 있는 보고서를 작성할 수 있다.\n3. 실전 보고서 작성과 피드백을 통해 즉시 활용 가능한 작성 역량을 체득한다.", curriculum: [{unit: '논리적 사고와 보고 구조화', content: '일 잘하는 사람의 보고 습관 / 논리적 사고의 기본기(So What? / Why So?) / MECE하게 정리하는 방법 / 보고서 구조화 기법'},{unit: '설득력 있는 보고서 작성법', content: '보고서 유형별 작성 포인트 / 시각화와 표현의 기술 / 숫자로 말하는 보고서 / Before/After 보고서 개선 연습'},{unit: '보고서 실습과 피드백', content: '실전 보고서 작성(AI 활용) / 동료 리뷰를 통한 1차 개선 / 보고서 발표 및 피드백 세션'}] },
+  { cat: "직무 > 성과관리", title: "성과관리 및 인사평가 컨설팅", hours: 8, fee: 550000, target: "경영진, 인사/교육 담당자, 성과관리·인사평가 체계의 신규 구축 또는 개선이 필요한 조직", goal: "1. 우리 회사의 성과관리·인사평가 현황을 객관적으로 진단할 수 있다.\n2. 공정성과 수용성을 갖춘 인사평가제도를 설계할 수 있다.\n3. 성과관리 체계 개선을 위한 실행 로드맵을 수립할 수 있다.", curriculum: [{unit: '성과관리 체계 진단', content: '성과관리의 본질과 트렌드 / 우리 회사 성과관리 현황 진단 / 진단 결과 분석과 핵심 이슈 도출'},{unit: '인사평가제도 설계', content: '평가제도 설계의 원칙 / 평가 항목·기준·프로세스 설계 / 평가 결과 활용과 보상 연계'},{unit: '실행 로드맵 수립', content: '단계별 실행 로드맵 설계 / 변화관리와 정착 전략 / 실행 계획 발표 및 상호 피드백'}] },
+  { cat: "직무 > 현장 관리", title: "현장 관리감독자 역량개발 교육", hours: 7, fee: 500000, target: "현장 관리 감독자(조장, 반장, 직장, 주임, 선임기사, 계장, 파트장, 라인장) 및 후보자", goal: "1. 환경변화에 따른 새로운 현장관리자의 역할을 인식함.\n2. 주어진 목표의 달성과 성과를 관리할 수 있는 능력을 습득함.\n3. 조직 내 상호관계에서 효과적인 대화 기술을 활용할 수 있음.", curriculum: [{unit: '현장관리자의 역할과 성과관리', content: '현장관리자에게 기대되는 역할 / 현장의 성과창출(공정분석의 중요성과 PDCA 역량 체험) / 현장의 개선활동'},{unit: '효과적인 상호작용', content: '상호작용의 기본원칙과 욕구에 대한 이해 / 상호작용의 단계별 접근법 / 근무분위기를 돋우는 촉진자의 역할'},{unit: '현장관리와 리더십 발휘', content: '전통적인 통제중심의 관리와 새로운 리더십 / 두 가지 파워(Position Power vs Human Power) / 리더십 발휘 계획 수립'}] },
+  { cat: "직무 > 현장 관리 ", title: "제조현장 문제해결 역량개발 교육", hours: 14, fee: 600000, target: "현장감독자, 품질혁신분야 사원, 설비운전 및 유지보수 담당자", goal: "1. 각종 현장문제에 대하여 효과적인 해결과 접근방법을 제시함.\n2. 트러블을 신속하고 시행착오를 최소화하며 해결하도록 이끔.\n3. 고질적인 문제의 원인을 찾고 새로운 문제의 방지대책을 수립함.", curriculum: [{unit: '현장문제 해결 개요', content: '현장과 현장문제에 대한 이해 / 문제의 3가지 유형(발생형/탐색형/설정형) / 트러블 슈팅의 순서'},{unit: '현장문제의 명확화', content: '트러블의 명확화 / 트러블의 분리 / 해결 우선순위 선정'},{unit: '근본원인 찾기', content: '문제해결 기본 프로세스 / 구별점과 변화, 원인추정과 원인 최종 확정 / 재발생/만성형 문제의 해결'},{unit: '근무현장의 상황파악과 실무적용', content: '해결할 문제의 우선순위 정하기 / 현업 실무적용 / 상사와의 협의를 통한 추진력 확보'},{unit: '대책수립과 예방조치', content: '대책의 3가지 유형(잠정/시정/적응대책) / 예방 조치하기 / 현장 적용계획 정리'}] },
+  { cat: "DX/AI > 생성형AI", title: "칼퇴를 부르는 AI 실무 : 생성형 AI 완전정복", hours: 14, fee: 650000, target: "중소기업 재직자 전 직무(총무·인사, 영업·마케팅, 구매·물류, 고객지원, 기획·홍보 담당자), 비코딩 실무자", goal: "1. AI 기술 변화의 속도와 방향을 거시적으로 이해하고 중소기업 실무자로서 AI 시대 대응 방향 설정\n2. PROMPT 프레임워크를 활용하여 원하는 결과물을 즉시 생성하는 프롬프트를 직접 설계\n3. 본인 직무에 맞는 AI 업무 루틴 SOP를 직접 설계하고 교육 종료 즉시 현업에 적용", curriculum: [{unit: 'AI 변화의 거시적 이해', content: '기술 가속도와 AI 패러다임의 이해 / 2026 AI 최신 트렌드: LLM에서 AI 에이전트까지 / Human × AI: 성과를 증폭하는 협업 전략'},{unit: '생성형 AI 원리와 프롬프트의 힘', content: 'LLM의 작동 원리와 환각(Hallucination) 대처법 / PROMPT 5요소 프레임워크 / 내 업무 전용 프롬프트 라이브러 구축'},{unit: 'AI를 나의 업무 파트너로', content: '보고서·기획서·제안서 AI 초안 생성 / 이메일·공문·회의록 자동 작성 / SNS·홍보·채용공고 콘텐츠 제작'},{unit: 'AI와 함께 매일 칼퇴: 나만의 AI 업무 루틴 완성', content: '직무 반복 업무 목록화 및 AI 전환 가능 업무 분류 / 개인 맞춤형 AI 업무 루틴 설계 워크숍 / 나만의 AI 업무 SOP 초안 작성 및 발표'}] },
+  { cat: "직무 > 인사/노무", title: "채용에서 퇴직까지 : 인사담당자 HR A to Z", hours: 14, fee: 650000, target: "중소기업 인사·총무·경영지원 담당자(경력 1~10년), 인사 업무를 처음 맡은 신규 담당자", goal: "1. 인사관리의 체계를 이해하고 중소기업 규모에 맞는 인사 운영 방향을 설정\n2. 핵심 인사노무 행정 업무를 노동법에 맞게 정확히 처리\n3. 직무분석을 기반으로 공정한 성과관리 체계 수립\n4. AI 도구를 활용하여 인사 문서 작성·관리 업무를 효율화", curriculum: [{unit: '중소기업 HR의 큰 그림', content: '인사관리의 6대 기능(채용·배치·교육·평가·보상·이직) / 중소기업에 맞는 인사전략 방향 설정 / 직급·직책 체계 설계 및 운영'},{unit: '핵심 인사노무 행정 업무', content: '채용·근로계약·근로시간 적법 처리 / 급여 구성·최저임금·퇴직금 계산 실무 / 인사 핵심 문서 AI 자동화'},{unit: '직무분석과 경력 이동·승진 체계 설계', content: '직무분석 기법과 직무기술서 작성 실습 / 경력 이동·승진 체계 설계 / 성과관리 목표 설정과 평가 체계'},{unit: '교육훈련 체계와 중소기업 복지제도 설계', content: '연간 교육훈련 계획 수립 / 법정 의무교육 관리 / 중소기업 복리후생 제도 설계 / 인사노무 리스크 자가 진단'}] },
+  { cat: "직무 > 인사/노무", title: "외국인 근로자 관리 실무", hours: 14, fee: 650000, target: "외국인 근로자를 고용 중이거나 고용 예정인 중소기업 재직자, 현장 관리자, 인사·총무 담당자", goal: "1. 외국인 근로자의 심리적 특성과 주요 송출국별 문화적 특성을 이해하고 문화 차이를 배려한 소통·지도 방식을 적용\n2. 한국 직장 문화와 생활에 효과적으로 적응하도록 온보딩 전략과 학습 지도 방법을 설계·실행\n3. 정착 단계별 지원 방법을 수립하고 통합적인 지원 체계를 현장에 구축", curriculum: [{unit: '외국인 근로자의 심리·문화적 특성 이해', content: '외국인 근로자의 심리적 특성 5가지 / 문화 충격(Culture Shock) 4단계 / 주요 송출국별 문화적 특성 비교 / AI 활용 다국어 작업 지시서 제작 실습'},{unit: '스트레스 이해·관리와 애로사항 대응', content: '외국인 근로자 스트레스의 6대 유형 / 스트레스 관리 방법 / 다국어 소통 도구 활용 애로사항 예방 자료 제작'},{unit: '현장 관리자가 할 수 있는 다문화 상담', content: '다문화 감수성과 다문화 상담의 이해 / 상담 기법 4가지(경청·공감·명료화·자원연결) / 실제 애로사항 사례별 상담 롤플레이 실습'},{unit: '정착 단계별 지원과 기관 연계 전략', content: '정착 5단계 모델과 위기 신호 / 사업장 맞춤 정착 지원 로드맵 설계 / 분야별 외국인 근로자 지원기관 연계 방법'}] },
+  { cat: "직무 > 인사/노무", title: "노무관리 종합 진단개선", hours: 14, fee: 650000, target: "인사/노무관리자, 현장 관리자, 임원", goal: "1. 고용노동부 사업장 근로감독 확대에 대비한 예방적 진단개선\n2. 급변하는 노동관계법과 판례 변화에 대응한 적법한 노무관리\n3. 고용노동부 및 노동위원회 사건 등 분쟁 예방과 갈등관리\n4. 개별적 근로관계 전반에 대한 인사노무관리 역량 강화", curriculum: [{unit: '노동환경 변화와 기업의 과제', content: '최근 주요 법령·판례 변화 / 인사관리와 노무관리 관계 / 사업장 근로감독 프로세스 및 사후 조치'},{unit: '근로관계법 기본 및 취업규칙', content: '법원의 충돌과 해결 / 근로관계법 기본 / 취업규칙 작성·변경 실무 쟁점'},{unit: '채용관리·근로시간·임금관리', content: '채용절차공정화법 체크리스트 / 채용내정과 수습 / 근로시간과 유연근무제 / 임금제도 개요 및 포괄임금제 / 퇴직급여 쟁점'},{unit: '인사권 행사와 퇴직·비정규직 관리', content: '인사권 행사(인사이동·징계) 분쟁 사례 / 퇴직관리 / 노동위원회 구제제도 실무 / 비정규직 관리 쟁점'},{unit: '기타 실무 쟁점', content: '직장 내 괴롭힘 / 모성보호제도 / 저성과자 관리 / 연령차별금지와 임금피크제'}] },
+  { cat: "리더십 > 공통", title: "팀의 성장을 설계하고 성과로 증명하라", hours: 16, fee: 850000, target: "팀장, 팀장 후보자, 차세대 리더", goal: "1. 실무전문성을 바탕으로 팀 업무를 주도하며 팀 성과 촉진을 위해 팀업무와 구성원을 균형적으로 관리하는 초급관리자로서 역할을 이해한다.\n2. 팀 성장단계를 파악하고 이에 따른 리더십/관리 활동을 구상할 수 있다.\n3. 팀원의 업무성과 향상을 위한 리더의 업무/성과관리 방법을 습득한다.", curriculum: [{unit: '팀장의 역할 변화, 최근 리더십 이슈', content: '팀 리더의 역할 인식 / 최근 국내기업의 팀 리더십 이슈와 트렌드'},{unit: '팀 성장단계에 따른 팀 관리', content: '팀 성과와 팀 역량 이해 / 팀 성장단계와 팀 관리 리더십 / Team Performance Model'},{unit: '팀 워크 촉진(1): 관심과 배려', content: '팀원 이해와 정서적 관계 형성 / 관심과 배려를 통한 정서적 지원 / 팀원 이해를 위한 질문 리스트 만들기'},{unit: '팀 워크 촉진(2): 갈등관리', content: '갈등에 대한 올바른 이해 / 갈등관리 유형별 특징과 주의점 / 갈등관리 커뮤니케이션'},{unit: '팀 성과/업무관리', content: '성과/목표관리 필요성, 팀/개인 목표설정 방법 / 업무 진척도관리 및 피드백 스킬(STAR-AR, AAR) / 리더의 업무수행 관리'}] },
+  { cat: "리더십 > 공통", title: "성과를 디자인하는 리더", hours: 16, fee: 850000, target: "팀장, 팀장 후보자, 차세대 리더", goal: "1. 성과촉진을 위한 팀 리더의 역할과 성과관리 리더십을 이해함.\n2. 목표 설정 방법 및 지도 Knowhow를 습득함.\n3. 중간 진척도 관리 및 팀원 코칭, 평가 스킬을 학습함.", curriculum: [{unit: '성과/목표관리 필요성', content: '성과/목표 관리에 대한 직장인들의 생각 / 성과관리의 핵심 사이클 / 리더의 5가지 역할'},{unit: '목표설정 방법/목표수립 워크샵', content: '\'일 잘한다\'의 개념 전환 / Alignment와 Cascading / 정량·정성목표 설정방법 / 목표 수준과 합의'},{unit: '성과 촉진을 위한 리더의 업무관리', content: 'Direct–Support–Reflection / 명확한 업무지시 방법 / 업무관리의 8대 초점'},{unit: '중간점검과 진척도 관리, 팀원 코칭', content: '중간점검과 진척도 관리 / 코칭/피드백 스킬(GROW 면담모델·SBIE 피드백 모델)'},{unit: '평가와 피드백/Value up', content: '성과평가 공정성과 오류 유형 / 평가면담/피드백 스킬 / 평가결과의 수용성을 높이는 방법 3가지'}] },
+  { cat: "직무 > 문제해결", title: "실전 문제해결 솔루션", hours: 8, fee: 550000, target: "현업 문제해결을 필요로 하는 모든 직급, 핵심인재, 차세대 리더", goal: "1. 우리 조직 업무현장에서의 개선과제(문제) 도출 및 과제(문제) 정의 요령을 습득함.\n2. 논리적/분석적 사고를 이해하고 개선과제(문제) 및 원인분석을 위한 다양한 Tool을 학습함.\n3. 해결안 도출 및 실행계획 수립에 활용되는 Tool을 학습함.", curriculum: [{unit: '개선활동과 문제해결', content: '문제해결 프로세스 이해 / 개선과제(문제) 해결을 위한 3대 기본사고 / 개선과제(문제)의 3가지 유형'},{unit: '문제 명확화, 문제 정의', content: '진짜 문제란? 문제 정의 / 문제 발견을 위한 3가지 법칙 / 문제도출 5가지 Framework 이해'},{unit: '논리적/분석적 사고와 원인 분석', content: 'Logic Tree(What, Why, How)와 MECE 이해 / Cause Effect Diagram / 5Whys / 가설 설정 및 검증'},{unit: '해결안 도출/실행계획 수립', content: '해결안 선정(준거평정법, Dotting Tech.) / Brain Storming·SCAMPER / Risk 예측 및 실행계획 수립(Gantt Chart)'}] },
+  { cat: "직무 > 문제해결", title: "ACE 사원의 스마트한 업무 실행/관리", hours: 8, fee: 550000, target: "스마트하게 일하는 방식의 습득을 필요로 하는 모든 실무자", goal: "1. 상사의 업무지시 파악 및 명확한 업무수명의 중요성과 노하우를 습득함.\n2. 체계적 업무계획 수립 업무 및 추진과정에서의 이해관계자 관리/문제해결 기법 등을 학습함.\n3. 업무 종결 시 관리해야 할 주요 Checkpoints를 파악하고 보고문서 작성 및 효과적 보고방법을 이해함.", curriculum: [{unit: '업무 컨셉 명확화/과제 이해하기', content: '스마트 워크와 업무지시 이해하기 / 상사의 업무지시 파악하기 / 업무(과제) 개요서 작성하기'},{unit: '업무 추진계획 수립하기', content: '업무관리의 8대 초점(범위·리스크·일정·이해관계자·비용·품질·인력·조달) / 업무 계획수립 프로세스 / WBS 작성'},{unit: '업무 실행/문제해결 하기', content: '업무 실행 중간점검 / Logic Tree와 MECE 이해 / 문제의 원인분석 / 해결 대안 도출/선정'},{unit: '업무성과 보고하기', content: '효과적 구두보고 스킬 / 보고서 작성법 / 문서유형별 작성방법 / 보고서 작성 Tip'}] },
+  { cat: "리더십 > 공통", title: "승격자 통합 역량 과정", hours: 8, fee: 550000, target: "202X년 상반기 직급 승격(예정)자 전원 - 신임 관리자, 중추적 실무자, 차세대 리더", goal: "1. 승격에 따른 역할 변화를 인식하고 새로운 직책에 맞는 주도적 태도를 갖춘다.\n2. 디자인 씽킹 프로세스를 통해 실무 문제를 창의적으로 해결하는 관점을 습득한다.\n3. 게이미피케이션 활동을 통해 협력적 소통의 중요성을 체득하고 팀 시너지를 극대화한다.", curriculum: [{unit: 'Identity Shift: 리더의 새로운 항해', content: '승격의 의미와 기대 역할 변화 / 성과 창출을 위한 3대 핵심 역할 / 승진자 리더십 마인드셋'},{unit: 'Creative Solution: 디자인 씽킹 실습', content: '변화 환경과 혁신의 필요성 / 디자인 씽킹 이해 / 문제 재정의 실습 및 창의적 해결 아이디어 도출'},{unit: 'Collaboration Game: 신뢰와 소통의 기술', content: '게이미피케이션 - 제한된 정보 속의 협력 / 정보 비대칭 해소 및 역할 최적화 / 현업 적용 아이디어 도출'}] },
+  { cat: "리더십 > 공통", title: "강점리더십", hours: 4, fee: 400000, target: "팀원의 강점을 육성해야 하는 리더, 나의 강점을 진단하고 업무에 활용하고 싶은 실무자", goal: "1. 강점 인식 및 활용의 중요성을 이해한다.\n2. 나의 강점을 진단하고 강점의 특징을 안다.\n3. 잡크래프팅을 위한 강점 적용 방법을 확인하고 활용 계획을 세운다.", curriculum: [{unit: '강점 인식 및 재능 발견', content: '강점의 중요성과 사례 / 뇌과학과 재능의 관계 / 자기 재능 탐색 / 도출된 재능의 핵심 키워드 정리'},{unit: '강점 발견', content: '팀역할 이론과 강점 / 강점검사 후 강점 역할 이해 / 팀원의 강점 역할 탐색 / 팀에 기여할 수 있는 강점 역할 찾기'},{unit: '태도 보완', content: '강점을 개발하는데 도움을 주는 태도 / 태도 그래프 해석하기 / 팀에서 태도 성숙하게 관리하기'},{unit: '목표하기', content: '퍼스널 브랜딩 문장 만들기 / 업무 적용 및 성장 계획 작성하기 / 강점 기반의 중장기 커리어 성장 로드맵 수립'}] },
+  { cat: "리더십 > 커뮤니케이션", title: "성장을 이끄는 대화의 기술", hours: 4, fee: 400000, target: "성과 성장을 견인하고 싶은 팀 리더, 경청과 질문 역량이 필요한 중간 관리자", goal: "1. 명령과 지시 중심의 소통 방식에서 벗어나 코칭의 원리를 이해하고 코칭형 리더로 변화하기 위한 기초 체력을 기른다.\n2. 강력한 질문과 경청 등 핵심 코칭 스킬을 습득하여 구성원의 잠재력을 끌어내는 대화 역량을 확보한다.", curriculum: [{unit: '코칭의 이해와 마인드셋', content: '지시형 리더 vs 코칭형 리더 / 코칭의 철학과 3대 원칙 / 코칭 리더십의 필요성 탐색'},{unit: '코칭 핵심 스킬 기술', content: '마음을 여는 강력한 경청 / 사고를 확장하는 질문 기술 / 성장을 유도하는 피드백(SBI 모델) / 공감 및 질문 연습'},{unit: '실천 코칭 프로세스', content: 'GROW 모델의 이해 / 목표 설정(G) 및 현실 파악(R) / 대안 탐색(O) 및 실행 의지(W) / 사례별 코칭 롤플레이 실습'},{unit: '코칭의 협업 적용', content: '일상 속 5분 코칭 전략 / 나의 코칭 리더십 선언문 작성'}] },
+  { cat: "리더십 > 공통", title: "같이 일하고 싶은 팀장", hours: 8, fee: 550000, target: "팀장, 임원 등 리더 계층", goal: "1. 심리적 안정감을 기반으로 팀 몰입도를 높이는 리더십 역량 습득\n2. 신뢰 형성과 커뮤니케이션을 통한 팀 성과 창출 방법 체득\n3. 팀 운영의 갈등·성과·동기 문제를 해결하는 실전 리더십 확보", curriculum: [{unit: '팀장 리더십 기초와 역할 인식', content: '리더와 리더십의 정의 / 팀원이 함께 일하고 싶은 팀장의 조건 / 나의 리더십 스타일 진단'},{unit: '심리적 안정감을 주는 리더', content: '심리적 안전감을 만드는 리더 행동 / 팀원이 불안해지는 리더의 특징 / 신뢰를 만드는 팀 운영 방식'},{unit: '팀원을 성장시키는 리더', content: '팀원을 움직이게 하는 리더의 기술 / 피드백과 동기부여 전략 / 팀원의 성장 단계별 코칭 방법'},{unit: '현장 리더십 이슈 해결', content: '팀장 실무 이슈 해결 / 팀원 불만 및 갈등 상황 대응 / 리더십 발휘 전략'}] },
+  { cat: "리더십 > 공통", title: "어쩌다 중간 관리자", hours: 8, fee: 550000, target: "조직의 중간관리자(대리~차장)", goal: "1. 중간관리자의 구조적 역할과 딜레마 이해\n2. 상사 설득 및 보고 역량 강화\n3. 후배 동기부여 및 코칭 스킬 습득\n4. 갈등 상황에서 조직 균형을 유지하는 실행 전략 확보", curriculum: [{unit: '중간관리자 역할과 책임', content: '중간관리자의 구조적 딜레마 이해 / 전달자가 아닌 조정자·번역자·연결자로서의 역할'},{unit: '중간관리자의 팔로워십', content: '상사를 움직이는 팔로워십 / 전략적 팔로워의 4가지 역할 / 위를 설득하는 커뮤니케이션'},{unit: '후배 동기 부여와 코칭', content: '후배를 움직이는 동기 작동 전략 / 유형별 동기 스위치 / 코칭 기반 커뮤니케이션'},{unit: '갈등관리', content: '중간관리자의 갈등관리 전략 / 갈등을 키우지 않는 완충·조정 기술 / 권한 없이 영향력 발휘하기'}] },
+  { cat: "직무 > 보고서", title: "일잘러의 보고서 작성법", hours: 8, fee: 550000, target: "실무자", goal: "1. 쉽게 이해되는 비즈니스 보고서 작성 역량 확보\n2. 논리적 구조(MECE) 기반 보고서 설계 능력 강화\n3. 명확하고 간결 단 문장 표현 및 가독성 향상\n4. 생성형 AI를 활용한 보고서 작성으로 효율성 증대", curriculum: [{unit: '보고서 작성 기본 원칙', content: '좋은 보고서의 기준 이해 / 보고서가 읽히지 않는 이유 / 일잘러의 보고서 작성 체크리스트'},{unit: '보고서 내용 구성', content: '보고서 구조 설계 방법(요구사항 해석) / MECE 기반 논리 구성 / 논리 흐름 설계 및 메시지 구조화'},{unit: '명확하고 간결한 보고서 작성', content: '직독성·간결성·명확성 중심 표현 방식 / 좋은 문장과 나쁜 문장의 차이 / 도식화·표·인포그래픽 활용법'},{unit: '보고서 점검 및 AI활용', content: '보고서 완성도 향상 전략 / 오류 점검 및 완성도 검증 방법 / 생성형 AI를 활용한 보고서 작성 및 개선 방법'}] },
+  { cat: "DX/AI > 생성형AI", title: "워크스마트 : 생성형 AI 활용법", hours: 8, fee: 550000, target: "실무자", goal: "1. 생성형 AI의 원리와 한계를 이해하고 업무 활용\n2. 프롬프트 설계 역량을 통해 원하는 결과를 효과적으로 도출\n3. 문서 작성, 리서치, 기획, 의사결정 등 주요 업무에 생성형 AI 적용\n4. 조직 내 보안·윤리 기준을 준수하며 안전하게 AI 활용", curriculum: [{unit: '생성형 AI 이해와 프롬프트 기초', content: '생성형 AI의 원리와 한계 / 좋은 프롬프트의 구조와 원칙 / 역할 부여·맥락 제공·출력 형식 지정'},{unit: '보고서 구조 설계 방법', content: '보고서 Decoding 방법(요구사항 해석) / 보고서 유형별 구성 방식 / MECE 기반 논리 구성'},{unit: '명확하고 간결한 보고서 작성', content: '직독성·간결성·명확성 중심 표현 방식 / 가독성을 높이는 구조화 방법 / 도식화·표·인포그래픽 활용법'},{unit: 'AI를 활용한 보고서 완성', content: '보고서 완성도 향상 전략 / 생성형 AI를 활용한 보고서 작성 및 개선 방법 / 조직 내 AI 보안·윤리 기준 준수'}] },
+  { cat: "DX/AI > 팀관리", title: "중소기업 팀장급을 위한 AI통합 리더십 과정", hours: 8, fee: 650000, target: "실무자", goal: "1. 급변하는 산업환경에 기민하게 대응하는 변화 관리 역량 발휘\n2. 데이터에 기반한 실질적이고 공정한 팀 성과 창출\n3. 팀 내 심리적 안정감 구축 및 구성원의 자발적 몰입을 견인", curriculum: [{unit: '뇌과학과 리더십 강점', content: '뇌과학이 알려주는 리더의 멘탈 관리 / AI가 뽑아주는 리더십 강점 리포트 / 나에게 어울리는 관리방법 / 나만의 리더십 정체성'},{unit: 'AX시대, 리더십의 새로운 변화', content: 'DX에서 AX로, 리더십의 새로운 지평 / 우리 팀의 변화 방향성 설정과 변화관리 / 변화 커뮤니케이션 전략과 변화 코칭'},{unit: '구성원들이 YES 하는 성과관리', content: '성과목표 설정의 비법 / 공정한 성과관리를 위한 리더의 원칙 / 성과몰입을 높이는 리더의 면담과 피드백 스킬'},{unit: '함께하는 조직 문화와 GROW 코칭 모델', content: '조직문화 진단 및 개선을 위한 리더의 일 / 구성원들의 성장 지원 / GROW모델 기반 코칭 프롬프트 엔지니어링'}] }
+];
 
-        // 분류(cat) 기준으로 배열 정렬
         rawData.sort((a, b) => a.cat.localeCompare(b.cat));
-        
+
+        // 비용(금액) 입력 시 자동으로 3자리 콤마 포맷팅 해주는 이벤트 리스너 추가
+        document.addEventListener('DOMContentLoaded', () => {
+            const adminTotalCostEl = document.getElementById('adminTotalCost');
+            if(adminTotalCostEl) {
+                adminTotalCostEl.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/,/g, '').replace(/[^0-9]/g, '');
+                    if(value) {
+                        e.target.value = Number(value).toLocaleString('ko-KR');
+                    } else {
+                        e.target.value = '';
+                    }
+                });
+            }
+        });
+
         function filterByTab(tabName, clickedBtn) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
             if (clickedBtn) clickedBtn.classList.add('tab-active');
-            const filtered = tabName === 'all' ? rawData : rawData.filter(c => c.cat === tabName);
+            const filtered = tabName === 'all' ? rawData : rawData.filter(c => c.cat.includes(tabName));
+            
             document.querySelector("#courseTable tbody").innerHTML = filtered.map((c, i) => {
                 const hasDetail = c.curriculum && c.curriculum.length > 0;
-                const rowId = `detail-${i}-${c.title.replace(/[\s\(\)\/]/g,'')}`;
+                const originalIndex = rawData.findIndex(item => item.title === c.title);
+                const rowId = `detail-${originalIndex}-${c.title.replace(/[\s\(\)\/]/g,'')}`;
                 const btnId = `btn-${rowId}`;
                 const curriculumHtml = hasDetail ? c.curriculum.map(m => `
                     <div class="mb-3">
@@ -1232,7 +801,10 @@
                                             </div>
                                         </div>
                                         <div class="flex justify-end mt-5 pt-4 border-t border-slate-700">
-                                            <button onclick="openModal('${c.title.replace(/'/g, "\\\'")}')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition">
+                                            <button id="btnReturnSurvey-${rowId}" onclick="returnToSurveyResult()" class="hidden bg-purple-600 hover:bg-purple-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition mr-3 shadow-md">
+                                                ⬅ 진단 결과로 돌아가기
+                                            </button>
+                                            <button onclick="openModal('${c.title.replace(/'/g, "\\\'")}')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition shadow-md">
                                                 📋 과정 신청하기
                                             </button>
                                         </div>
@@ -1244,6 +816,7 @@
                 const detailBtn = hasDetail
                     ? `<button id="${btnId}" onclick="toggleAccordion('${rowId}','${btnId}')" class="px-4 py-1.5 rounded-lg border border-blue-500 text-blue-400 font-bold text-sm hover:bg-blue-600 hover:text-white transition whitespace-nowrap">상세보기</button>`
                     : `<button onclick="openModal()" class="text-blue-500 font-bold underline text-sm">신청</button>`;
+                
                 return `
                 <tr class="hover:bg-slate-700/30 transition border-b border-slate-800">
                   <td class="px-8 py-5 text-slate-500 font-medium">${i+1}</td>
@@ -1294,8 +867,7 @@
             const explorer = document.getElementById('courseExplorer');
             if (isOpen) {
                 explorer.classList.remove('hidden');
-                const allBtn = document.querySelector('.tab-btn');
-                filterByTab('all', allBtn);
+                filterByTab('all', document.querySelector('.tab-btn'));
                 setTimeout(() => explorer.scrollIntoView({ behavior: 'smooth' }), 50);
             } else {
                 explorer.classList.add('hidden');
@@ -1305,84 +877,914 @@
 
         const modal = document.getElementById('contactModal');
         function openModal(courseName) {
-            const nameInput = document.getElementById('modalCourseName');
-            if (nameInput) nameInput.value = courseName || '';
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+            document.getElementById('modalCourseName').value = courseName || '';
+            modal.classList.remove('hidden'); modal.classList.add('flex');
             document.body.style.overflow = 'hidden';
         }
         function closeModal() { modal.classList.add('hidden'); modal.classList.remove('flex'); document.body.style.overflow = ''; }
 
-        function sendEmail(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.textContent = '전송 중...';
-
-            emailjs.sendForm('service_tmzn95r', 'template_6tsqceg', '#contactForm')
-                .then(() => {
-                    alert('상담 신청이 완료되었습니다!\n담당자가 확인 후 연락드리겠습니다.');
-                    closeModal();
-                    document.getElementById('contactForm').reset();
-                })
-                .catch((error) => {
-                    alert('전송에 실패했습니다. 잠시 후 다시 시도해 주세요.\n(' + error.text + ')');
-                })
-                .finally(() => {
-                    btn.disabled = false;
-                    btn.textContent = '상담 신청 완료';
-                });
-        }
-
-        function toggleFaq(btn) {
-            const answer = btn.nextElementSibling;
-            const icon = btn.querySelector('svg');
-            answer.classList.toggle('hidden');
-            icon.style.transform = answer.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
-        }
-
-        /* -------------------------------------------------------------
-           계산기 스크립트 기능 
-        ------------------------------------------------------------- */
         function openCalcModal() {
-            const calcModal = document.getElementById('calcModal');
-            calcModal.classList.remove('hidden');
-            calcModal.classList.add('flex');
+            document.getElementById('calcModal').classList.remove('hidden');
+            document.getElementById('calcModal').classList.add('flex');
             document.body.style.overflow = 'hidden';
-            calculate(); // 모달 열때마다 계산기 초기화
+            calculate();
         }
-
         function closeCalcModal() {
-            const calcModal = document.getElementById('calcModal');
-            calcModal.classList.add('hidden');
-            calcModal.classList.remove('flex');
+            document.getElementById('calcModal').classList.add('hidden');
+            document.getElementById('calcModal').classList.remove('flex');
             document.body.style.overflow = '';
         }
 
         function calculate() {
-            const companySizeSelect = document.getElementById('company_size');
-            const selectedOption = companySizeSelect.options[companySizeSelect.selectedIndex];
+            const sizeSelect = document.getElementById('company_size');
+            const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
+            const rate4 = parseFloat(sizeSelect.value);
+            const rate2 = parseFloat(selectedOption.getAttribute('data-rate'));
             
-            const insuranceRate = parseFloat(companySizeSelect.value); 
-            const cost3 = parseFloat(document.getElementById('cost_3').value) || 0; 
+            const cost = parseFloat(document.getElementById('cost_3').value) || 0;
+            const premium = rate2 * cost;
+            let sub = rate4 * premium;
+            if (sub < 5000000) sub = 5000000;
             
-            const rate2 = parseFloat(selectedOption.getAttribute('data-rate')); 
-
-            const premium5 = rate2 * cost3;
-            const subsidyRaw = insuranceRate * premium5;
-            
-            let resultD18 = subsidyRaw;
-            if (resultD18 < 5000000) {
-                resultD18 = 5000000;
-            }
-
             document.getElementById('rate_2').value = (rate2 * 100) + '%';
-            document.getElementById('rate_4').value = (insuranceRate * 100).toFixed(2) + '%';
-            document.getElementById('premium_5').value = premium5.toLocaleString() + ' 원';
-            document.getElementById('subsidy_raw').value = subsidyRaw.toLocaleString() + ' 원';
-            document.getElementById('result_d18').value = resultD18.toLocaleString() + ' 원';
+            document.getElementById('rate_4').value = (rate4 * 100).toFixed(2) + '%';
+            document.getElementById('premium_5').value = premium.toLocaleString() + ' 원';
+            document.getElementById('result_d18').value = sub.toLocaleString() + ' 원';
         }
 
+        /* -------------------------------------------------------------
+           [신규 추가] 업종별 역량 진단 40문항 데이터 (제조/서비스/사무)
+        ------------------------------------------------------------- */
+        const allSurveyData = {
+            manufacturing: [
+                { category: "직무 및 현장 전문성", matchKeyword: "직무", questions: [
+                    "제조 현장의 공정 품질 이슈를 데이터 기반으로 분석하고 개선하는가?",
+                    "현장 안전 규정을 철저히 준수하고 잠재적 위험 요소를 사전에 제거하는가?",
+                    "불량률 감소를 위한 FMEA 등 예방적 품질 관리 기법을 실행하는가?",
+                    "제조 원가 구조를 이해하고, 불필요한 낭비 요소를 제거하는가?",
+                    "공급망 관리(SCM) 및 자재의 적시 조달 능력을 갖추고 있는가?",
+                    "현장 설비 운영의 효율성을 극대화하기 위한 유지보수 능력이 있는가?",
+                    "기술적인 문제 발생 시 근본 원 파악하고 재발 방지책을 마련하는가?",
+                    "생산 일정과 자원 배분 계획을 최적화하여 운영하고 있는가?",
+                    "표준 작업 지침서(SOP)를 숙지하고 현장에 적용하고 있는가?",
+                    "공정 간의 병목 현상을 파악하고 해결할 수 있는 능력이 있는가?",
+                    "기술 변화에 따른 현장 장비 및 공정 개선을 주도하는가?",
+                    "품질 보증 체계에 대한 이해도가 높은가?"
+                ]},
+                { category: "성과 리더십 및 관리", matchKeyword: "리더십", questions: [
+                    "팀 전체의 KPI와 개인별 핵심 목표를 명확하게 제시하는가?",
+                    "팀원 육성을 위해 구체적이고 건설적인 피드백을 적시에 제공하는가?",
+                    "실무 중심의 업무에서 벗어나, 팀의 성과 관리와 기획에 시간을 할애하는가?",
+                    "구성원 간의 갈등을 건설적으로 해결하고 조정하는가?",
+                    "관리자로서 명확한 정체성과 직급에 맞는 책임을 수행하는가?",
+                    "전략적 사고를 바탕으로 장기적인 팀의 성과 로드맵을 설계하는가?",
+                    "구성원의 강점을 발견하고 이를 업무에 배치하는가?",
+                    "변화하는 비즈니스 환경에 맞춰 팀의 우선순위를 재조정하는가?",
+                    "1:1 면담이나 코칭을 통해 팀원의 업무 고충을 적극적으로 해결하는가?",
+                    "성과가 높은 팀원을 인정하고 보상하는 체계를 활용하는가?",
+                    "팀의 목표와 회사의 상위 목표를 일치시키는(Alignment) 노력을 하는가?",
+                    "위기 상황에서 침착하게 팀을 이끌고 결단력을 발휘하는가?"
+                ]},
+                { category: "디지털 혁신 및 생산성", matchKeyword: "DX/AI", questions: [
+                    "반복적인 행정 업무를 AI 도구 등을 활용하여 자동화하고 있는가?",
+                    "복잡한 현장 데이터를 시각화하여 보고의 효율성을 높이는가?",
+                    "데이터 기반의 의사결정을 위해 통계적 사고를 활용하는가?",
+                    "신규 디지털 기술이나 협업 툴에 대해 수용적이고 학습 의지가 있는가?",
+                    "보고서나 제안서 작성 시 설득력 있는 논리 구조를 활용하는가?",
+                    "로지컬 씽킹을 활용하여 문제를 체계적으로 정의하고 해결하는가?",
+                    "업무 우선순위를 디지털 도구를 활용하여 효율적으로 관리하는가?",
+                    "부서 간 정보 공유를 위한 디지털 플랫폼 활용 능력이 있는가?"
+                ]},
+                { category: "조직문화 및 소통", matchKeyword: "리더십", questions: [
+                    "부서 간 협업 시 상호 존중하며 공동의 성과 추구하는가?",
+                    "다양한 세대의 가치관을 이해하고 수평적인 소통 분위기를 만드는가?",
+                    "변화하는 경영 환경에 대해 유연하게 적응하고 수용하는가?",
+                    "조직의 핵심 가치와 비전을 현업에서 실천하고 있는가?",
+                    "타 부서의 업무 영역과 고충을 충분히 이해하고 존중하는가?",
+                    "조직 내에서 건설적인 비판과 아이디어 제안이 자유로운가?",
+                    "업무 과정에서 발생하는 스트레스를 스스로 관리하고 있는가?",
+                    "팀 내에 성장을 공유하고 배우는 문화가 정착되어 있는가?"
+                ]}
+            ],
+            service: [
+                { category: "직무 및 현장 전문성", matchKeyword: "직무", questions: [
+                    "고객의 니즈와 불만(Pain-point)을 정확히 파악하고 선제적으로 대응하는가?",
+                    "서비스 제공 과정에서 발생하는 고객 불만(VOC)을 신속하고 원만하게 해결하는가?",
+                    "고객 접점(MOT)에서의 서비스 표준 매뉴얼을 숙지하고 일관되게 적용하는가?",
+                    "고객 경험(CX) 향상을 위해 기존의 서비스 프로세스를 점검하고 지속적으로 개선하는가?",
+                    "다양한 유형의 고객을 상대할 때 감정 노동을 효과적으로 관리하고 평정심을 유지하는가?",
+                    "고객의 피드백을 데이터화하여 서비스 품질 향상에 적극적으로 반영하는가?",
+                    "서비스 실패 발생 시, 신속한 보상 및 회복(Service Recovery) 전략을 실행하는가?",
+                    "협력사 및 타 부서와 원활하게 소통하여 고객에게 끊김 없는(Seamless) 서비스를 제공하는가?",
+                    "트렌드 변화에 맞춰 새로운 서비스 아이디어나 부가 가치를 창출하여 제안하는가?",
+                    "고객 개인정보 보호 및 서비스 윤리 규정을 철저히 준수하는가?",
+                    "서비스 품질 측정 지표(NPS, 고객만족도 등)를 이해하고 목표 달성을 위해 노력하는가?",
+                    "자사 상품 및 서비스에 대한 전문적인 지식을 바탕으로 고객에게 최적의 솔루션을 제공하는가?"
+                ]},
+                { category: "성과 리더십 및 관리", matchKeyword: "리더십", questions: [
+                    "접점(MOT) 직원들의 서비스 역량 향상을 위해 현장에서 직접 코칭하고 피드백을 제공하는가?",
+                    "고객 클레임 발생 시, 실무자가 해결하기 어려운 문제를 책임감 있게 이관받아 처리하는가?",
+                    "서비스 현장의 교대근무 및 인력 배치를 효율적으로 운영하여 업무 공백을 최소화하는가?",
+                    "팀원들의 감정 노동으로 인한 스트레스를 파악하고, 이를 완화하기 위한 정서적 지원을 하는가?",
+                    "고객 만족도(CS) 목표를 명확히 제시하고, 이를 달성하기 위한 구체적인 실행 계획을 팀과 공유하는가?",
+                    "서비스 매뉴얼이 현장에 맞게 업데이트되도록 실무자의 의견을 수렴하여 개선하는가?",
+                    "현장에서 우수한 서비스를 제공한 직원을 적극적으로 포상하고 동기를 부여하는가?",
+                    "부서 간(예: 영업-고객센터-지원부서) 갈등 발생 시, 고객 관점에서 원만하게 조율하는가?",
+                    "팀원들이 주도적으로 서비스 개선 아이디어를 낼 수 있도록 자율성을 부여하는가?",
+                    "위기 상황(안전사고, 대규모 클레임 등) 발생 시 매뉴얼에 따라 신속하게 현장을 통제하는가?",
+                    "팀의 서비스 품질 수준을 주기적으로 점검하고, 부족한 영역에 대한 현장 OJT 및 오프라인 직무 교육을 실시하는가?",
+                    "회사의 핵심 서비스 가치를 팀원들이 깊이 이해하고 실천할 수 있도록 비전을 제시하는가?"
+                ]},
+                { category: "디지털 혁신 및 생산성", matchKeyword: "DX/AI", questions: [
+                    "고객 관리 시스템(CRM) 등 디지털 도구를 활용하여 고객 맞춤형 서비스를 제공하는가?",
+                    "키오스크, 챗봇 등 새로운 디지털 서비스 도입 시, 현장 적용을 위한 학습에 적극적인가?",
+                    "고객 데이터를 분석하여 서비스 트렌드나 불만 요인을 선제적으로 파악하는가?",
+                    "서비스 현장의 예약 및 대기열 관리 시스템을 활용하여 운영 효율성을 높이는가?",
+                    "모바일 기기나 태블릿을 활용한 현장 업무 처리 방식에 능숙한가?",
+                    "고객의 개인정보를 취급할 때 보안 규정과 디지털 윤리를 철저히 준수하는가?",
+                    "반복적인 고객 응대나 행정 업무를 자동화 시스템을 통해 효율화하고 있는가?",
+                    "타 부서와의 신속한 소통을 위해 사내 협업 메신저 및 플랫폼을 적극 활용하는가?"
+                ]},
+                { category: "조직문화 및 소통", matchKeyword: "리더십", questions: [
+                    "감정 노동의 고충을 서로 이해하고 공감하는 긍정적인 오프라인 팀 분위기를 조성하는가?",
+                    "서비스 현장에서 발생하는 성공 사례와 노하우를 동료들과 적극적으로 대면 공유하는가?",
+                    "세대 간, 직급 간 차이를 존중하고 수평적이고 열린 소통을 실천하는가?",
+                    "고객의 무리한 요구 등 돌발 상황에서 동료와 협력하여 유연하게 대처하는가?",
+                    "회사의 서비스 철학과 핵심 가치를 본인의 업무 지침으로 삼고 행동하는가?",
+                    "지원 부서(백오피스)의 고충을 이해하고, 상호 존중하는 협업 문화를 만드는가?",
+                    "업무로 인한 스트레스를 해소하고 신체적, 정신적 건강을 스스로 관리하는가?",
+                    "팀 내에 서로의 성장을 응원하고 현장 기반의 집합 학습을 독려하는 문화가 있는가?"
+                ]}
+            ],
+            office: [
+                { category: "직무 및 현장 전문성", matchKeyword: "직무", questions: [
+                    "담당 업무의 목표와 기대 성과를 명확히 이해하고 체계적으로 계획을 수립하는가?",
+                    "업무 프로세스상의 비효율적인 요소를 발견하고 지속적으로 개선하는가?",
+                    "데이터와 근거에 기반하여 객관적이고 논리적으로 기획서 및 보고서를 작성하는가?",
+                    "업무 수행 시 발생하는 리스크를 사전에 예측하고 대비책(Plan B)을 마련하는가?",
+                    "제한된 예산, 시간, 인적 자원을 효율적으로 배분하고 관리하는가?",
+                    "사내외 이해관계자들과의 원활한 소통을 통해 업무 협조를 효과적으로 이끌어내는가?",
+                    "회사의 경영 전략과 부서의 목표를 연계하여 본인의 업무 방향성을 설정하는가?",
+                    "새로운 프로젝트나 과제 부여 시, 주도적으로 자료를 수집하고 해결 방안을 모색하는가?",
+                    "관련 법규, 사내 규정 및 컴플라이언스를 철저히 준수하여 업무를 처리하는가?",
+                    "업무 진행 상황을 상위자 및 관련 부서에 적시에 명확하게 공유(보고/연락/상담)하는가?",
+                    "다양한 대안 중 비용 대비 효과(ROI)를 고려하여 최적의 의사결정을 지원하는가?",
+                    "문서 관리 및 보안 규정을 철저히 준수하며 정보 자산을 안전하게 관리하는가?"
+                ]},
+                { category: "성과 리더십 및 관리", matchKeyword: "리더십", questions: [
+                    "프로젝트의 핵심 목표(KPI)를 명확히 설정하고, 팀원들과 이를 구체적으로 공유하는가?",
+                    "팀원의 직무 역량과 경력 개발을 위해 정기적인 대면 면담과 밀착 코칭을 제공하는가?",
+                    "실무 위주의 업무에서 벗어나, 조직의 중장기적인 성과 관리와 전략 기획에 집중하는가?",
+                    "이해관계자가 많은 복잡한 프로젝트에서 갈등을 건설적으로 해결하고 의견을 조율하는가?",
+                    "팀원에게 업무를 위임할 때 권한과 책임을 명확히 하고 진행 상황을 점검하는가?",
+                    "경영 환경 변화를 분석하여 팀의 우선순위 과제를 민첩하게 재조정하는가?",
+                    "구성원 개개인의 강점을 파악하여 최적의 적재적소에 업무를 배분하는가?",
+                    "실패를 두려워하지 않고 새로운 기획을 시도할 수 있도록 심리적 안전감을 제공하는가?",
+                    "성과 평가 시 객관적인 데이터와 기준을 바탕으로 공정하게 평가하고 피드백하는가?",
+                    "회사의 전사적 비전과 전략 방향성에 맞추어 팀의 사업 계획을 수립하는가?",
+                    "중요하고 긴급한 의사결정 상황에서 데이터 기반으로 신속하게 결단력을 발휘하는가?",
+                    "타 부서 리더들과의 네트워킹 및 오프라인 교류를 통해 전사적 차원의 협업을 이끌어내는가?"
+                ]},
+                { category: "디지털 혁신 및 생산성", matchKeyword: "DX/AI", questions: [
+                    "생성형 AI 등 최신 디지털 기술을 활용하여 기획서 작성 및 자료 조사의 효율성을 높이는가?",
+                    "복잡한 비즈니스 데이터를 시각화(BI 툴 등 활용)하여 경영진의 의사결정을 지원하는가?",
+                    "데이터 분석 결과를 바탕으로 객관적이고 논리적인 사업 제안 및 기획을 수행하는가?",
+                    "ERP, 그룹웨어 등 사내 시스템의 기능을 100% 활용하여 업무 프로세스를 최적화하는가?",
+                    "반복적인 문서 작업이나 데이터 입력 업무를 RPA(업무 자동화) 등을 통해 개선하려 노력하는가?",
+                    "클라우드 기반의 협업 툴(공유 문서, 칸반 보드 등)을 활용하여 부서 간 업무 현황을 공유하는가?",
+                    "디지털 보안 위협(피싱, 정보 유출 등)을 인지하고 사내 보안 가이드라인을 철저히 준수하는가?",
+                    "새로운 IT 솔루션 도입 시, 기존 업무 방식을 유연하게 변경하고 학습하는 데 적극적인가?"
+                ]},
+                { category: "조직문화 및 소통", matchKeyword: "리더십", questions: [
+                    "부서 이기주의(Silo)를 극복하고 전사적 목표 달성을 위해 타 부서와 적극 대면 협력하는가?",
+                    "다양태의 세대의 가치관을 존중하고, 다양성이 인정되는 포용적인 업무 환경을 조성하는가?",
+                    "불확실성이 높은 경영 환경의 변화를 성장의 기회로 인식하고 유연하게 대처하는가?",
+                    "회사의 핵심 가치와 비전을 내재화하여 일상적인 기획 업무에 반영하고 있는가?",
+                    "직급에 얽매이지 않고 회의실 등에서 건설적인 비판과 창의적인 아이디어 제안이 자유로운가?",
+                    "워크 스마트(Work Smart) 문화를 실천하여 불필요한 야근이나 비효율적 회의를 줄이는가?",
+                    "업무 몰입도를 높이기 위해 스스로 동기를 부여하고 멘탈을 관리하는가?",
+                    "사내 집합 교육이나 오프라인 스터디 등을 통해 동료들과 지식을 나누며 학습하는 조직문화를 만드는가?"
+                ]}
+            ]
+        };
+
+        let activeSurveyData = [];
+        let currentMode = 'pre';
+        let currentSurveyStep = -1;
+        let surveyAnswers = {};
+        let radarChartInstance = null;
+        let adminChartInstance = null;
+
+        // -------------------------------------------------------------
+        // 팀장 결과 저장 (Export) 및 병합 (Import) 기능
+        // -------------------------------------------------------------
+        function exportSurveyResult() {
+            const preScores = localStorage.getItem('pre_survey_score');
+            const postScores = localStorage.getItem('post_survey_score');
+            const industry = localStorage.getItem('survey_industry') || 'manufacturing';
+            
+            if (!preScores && !postScores) {
+                alert("저장할 진단 결과가 없습니다.");
+                return;
+            }
+
+            const exportData = {
+                industry: industry,
+                preScores: preScores ? JSON.parse(preScores) : null,
+                postScores: postScores ? JSON.parse(postScores) : null,
+                timestamp: new Date().toISOString()
+            };
+            
+            // 현재 모드(pre 또는 post)에 따라 텍스트 분기 처리
+            const modeText = currentMode === 'pre' ? '사전진단' : '사후진단';
+            
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            
+            // 파일명에 사전진단/사후진단을 명확히 표시
+            a.download = `기업역량진단결과_${modeText}_${industry}_${new Date().getTime()}.json`;
+            
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // 알림창에도 명시
+            alert(`[${modeText}] 결과가 파일로 저장되었습니다. 이 파일을 HR 담당자에게 전달해 주세요.`);
+        }
+
+        function importAndMergeData() {
+            const fileInput = document.getElementById('importFiles');
+            const files = fileInput.files;
+            
+            if (files.length === 0) {
+                alert("취합할 팀장님들의 JSON 파일들을 선택해 주세요. (다중 선택 가능)");
+                return;
+            }
+
+            let mergedPre = { '직무 및 현장 전문성': 0, '성과 리더십 및 관리': 0, '디지털 혁신 및 생산성': 0, '조직문화 및 소통': 0 };
+            let mergedPost = { '직무 및 현장 전문성': 0, '성과 리더십 및 관리': 0, '디지털 혁신 및 생산성': 0, '조직문화 및 소통': 0 };
+            let preCount = 0;
+            let postCount = 0;
+            let industry = '';
+            let processedCount = 0;
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (!industry && data.industry) industry = data.industry;
+
+                        if (data.preScores) {
+                            for (let key in mergedPre) { mergedPre[key] += data.preScores[key] || 0; }
+                            preCount++;
+                        }
+                        if (data.postScores) {
+                            for (let key in mergedPost) { mergedPost[key] += data.postScores[key] || 0; }
+                            postCount++;
+                        }
+                    } catch (err) {
+                        console.error("파일 데이터 읽기 오류:", err);
+                    }
+                    
+                    processedCount++;
+                    
+                    if (processedCount === files.length) {
+                        if (preCount > 0) {
+                            for (let key in mergedPre) { mergedPre[key] = (mergedPre[key] / preCount); }
+                            localStorage.setItem('pre_survey_score', JSON.stringify(mergedPre));
+                        }
+                        if (postCount > 0) {
+                            for (let key in mergedPost) { mergedPost[key] = (mergedPost[key] / postCount); }
+                            localStorage.setItem('post_survey_score', JSON.stringify(mergedPost));
+                        }
+                        if (industry) localStorage.setItem('survey_industry', industry);
+                        
+                        alert(`총 ${files.length}개의 팀장 응답 데이터가 성공적으로 병합되었습니다! (사전진단: ${preCount}건, 사후진단: ${postCount}건)`);
+                        
+                        fileInput.value = ""; 
+                        openAdminModal(); 
+                    }
+                };
+                reader.readAsText(file);
+            });
+        }
+
+        function saveAdminMetrics() {
+            const completionRate = document.getElementById('adminCompletionRate').value;
+            const totalCost = document.getElementById('adminTotalCost').value;
+
+            if (!completionRate || !totalCost) {
+                alert("이수율과 총액을 모두 입력해 주세요.");
+                return;
+            }
+
+            localStorage.setItem('admin_completion_rate', completionRate);
+            localStorage.setItem('admin_total_cost', totalCost);
+            
+            alert("핵심 성과 지표가 반영되었습니다.");
+            openAdminModal(); 
+        }
+
+        function openSurveyModal(mode = 'pre') {
+            if (mode === 'post' && !localStorage.getItem('pre_survey_score')) {
+                alert("사전 진단 데이터가 없습니다. 먼저 사전 역량진단을 완료해 주세요.");
+                return;
+            }
+
+            currentMode = mode;
+            resetSurveyState();
+
+            const titleEl = document.getElementById('surveyModalTitle');
+            const subEl = document.getElementById('surveyModalSubtitle');
+            const headerBg = document.getElementById('surveyHeaderBg');
+            
+            const introTitleEl = document.getElementById('introTitle');
+            const introSubtitleEl = document.getElementById('introSubtitle');
+            const bullet1Title = document.getElementById('bullet1Title');
+            const bullet1Desc = document.getElementById('bullet1Desc');
+            const bullet2Title = document.getElementById('bullet2Title');
+            const bullet2Desc = document.getElementById('bullet2Desc');
+            const bullet3Title = document.getElementById('bullet3Title');
+            const bullet3Desc = document.getElementById('bullet3Desc');
+
+            if (mode === 'pre') {
+                titleEl.textContent = '사전 기업 역량 진단 (교육 전)';
+                subEl.textContent = '교육 참여 전 자사의 현재 역량을 진단합니다. 각 부서의 팀장급 직책자들과 함께 이 진단을 진행한 후 결과를 파일로 저장하여 취합하면 보다 세밀한 역량진단 결과를 받아보실 수 있습니다.';
+                headerBg.className = 'bg-purple-700 p-6 text-white relative text-left shrink-0';
+                document.getElementById('legendPostWrapper').style.display = 'none';
+                
+                introTitleEl.textContent = '역량 진단을 시작하시겠습니까?';
+                introSubtitleEl.textContent = '우리 조직의 현주소를 입체적으로 진단해 보세요.';
+                bullet1Title.textContent = '4대 핵심 영역 심층 분석';
+                bullet1Desc.textContent = '총 40개의 정밀 문항으로 우리 기업의 숨은 잠재력과 페인포인트(Pain Point)를 도출합니다.';
+                bullet2Title.textContent = '맞춤형 오프라인 훈련 제안';
+                bullet2Desc.textContent = '진단 결과를 바탕으로 현업 실무 경쟁력을 극대화할 최적의 현장 교육 솔루션을 매칭해 드립니다.';
+                bullet3Title.textContent = '성과(ROI) 객관적 검증';
+                bullet3Desc.textContent = '교육 수료 후 사후 진단과 연계하여, 실질적인 역량 향상 폭과 개선 성과를 투명하게 증명합니다.';
+            } else {
+                titleEl.textContent = '사후 기업 역량 진단 (교육 수료 후)';
+                subEl.textContent = '교육 수료 후 변화된 역량을 측정하고 성장 폭을 비교합니다.';
+                headerBg.className = 'bg-violet-700 p-6 text-white relative text-left shrink-0';
+                document.getElementById('legendPostWrapper').style.display = 'flex';
+                
+                introTitleEl.textContent = '역량 진단을 시작하시겠습니까?';
+                introSubtitleEl.textContent = '우리 조직의 현주소를 입체적으로 진단해 보세요.';
+                bullet1Title.textContent = '4대 핵심 영역 변화 측정';
+                bullet1Desc.textContent = '사전 진단과 동일한 40개 정밀 문항을 통해 교육 전후의 실질적인 역량 변화를 측정합니다.';
+                bullet2Title.textContent = '실질적 역량 향상도 분석';
+                bullet2Desc.textContent = '사전 진단 결과와 교차 비교하여, 각 영역별 성장 폭과 긍정적인 행동 변화를 입체적으로 분석합니다.';
+                bullet3Title.textContent = '종합 성과(ROI) 리포트 제공';
+                bullet3Desc.textContent = '교육 투자 대비 실무 현장의 개선 성과를 객관적인 수치로 증명하는 종합 리포트를 제공합니다.';
+            }
+
+            document.getElementById('surveyModal').classList.remove('hidden');
+            document.getElementById('surveyModal').classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function returnToSurveyResult() {
+            const preScores = localStorage.getItem('pre_survey_score');
+            const postScores = localStorage.getItem('post_survey_score'); // 사후 점수 확인
+            
+            if (preScores) {
+                // 사후 진단 데이터가 있으면 'post' 모드 유지, 없으면 'pre' 모드
+                currentMode = postScores ? 'post' : 'pre';
+                
+                const titleEl = document.getElementById('surveyModalTitle');
+                const subEl = document.getElementById('surveyModalSubtitle');
+                const headerBg = document.getElementById('surveyHeaderBg');
+                
+                if (currentMode === 'pre') {
+                    titleEl.textContent = '사전 기업 역량 진단 (교육 전)';
+                    subEl.textContent = '교육 참여 전 자사의 현재 역량을 진단합니다.';
+                    headerBg.className = 'bg-purple-700 p-6 text-white relative text-left shrink-0';
+                    document.getElementById('legendPostWrapper').style.display = 'none';
+                } else {
+                    titleEl.textContent = '사후 기업 역량 진단 (교육 수료 후)';
+                    subEl.textContent = '교육 수료 후 변화된 역량을 측정하고 성장 폭을 비교합니다.';
+                    headerBg.className = 'bg-violet-700 p-6 text-white relative text-left shrink-0';
+                    document.getElementById('legendPostWrapper').style.display = 'flex';
+                }
+
+                document.getElementById('surveyModal').classList.remove('hidden');
+                document.getElementById('surveyModal').classList.add('flex');
+                document.body.style.overflow = 'hidden';
+                
+                document.getElementById('surveyIntroBox').classList.add('hidden');
+                document.getElementById('surveyProgressContainer').classList.add('hidden');
+                document.getElementById('surveyQuestionsBox').classList.add('hidden');
+                document.getElementById('surveyFooter').classList.add('hidden');
+                document.getElementById('surveyFooter').classList.remove('flex');
+                
+                document.getElementById('surveyResultBox').classList.remove('hidden');
+                
+                // 현재 모드에 맞는 점수를 전달하여 차트 렌더링
+                renderRadarChart(currentMode === 'post' ? JSON.parse(postScores) : JSON.parse(preScores));
+            } else {
+                openSurveyModal('pre');
+            }
+        }
+
+        function closeSurveyModal() {
+            document.getElementById('surveyModal').classList.add('hidden');
+            document.getElementById('surveyModal').classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+
+        function resetSurveyState() {
+            currentSurveyStep = -1;
+            surveyAnswers = {};
+            document.getElementById('surveyIntroBox').classList.remove('hidden');
+            document.getElementById('surveyProgressContainer').classList.add('hidden');
+            document.getElementById('surveyQuestionsBox').classList.add('hidden');
+            document.getElementById('surveyResultBox').classList.add('hidden');
+            document.getElementById('surveyFooter').classList.add('hidden');
+            document.getElementById('surveyFooter').classList.remove('flex');
+        }
+
+        function startSurvey() {
+            const selectedIndustry = document.querySelector('input[name="industryType"]:checked').value;
+            activeSurveyData = allSurveyData[selectedIndustry];
+
+            document.getElementById('surveyIntroBox').classList.add('hidden');
+            document.getElementById('surveyProgressContainer').classList.remove('hidden');
+            document.getElementById('surveyQuestionsBox').classList.remove('hidden');
+            document.getElementById('surveyFooter').classList.remove('hidden');
+            document.getElementById('surveyFooter').classList.add('flex');
+            
+            currentSurveyStep = 0;
+            renderSurveyStep();
+        }
+
+        function renderSurveyStep() {
+            const stepData = activeSurveyData[currentSurveyStep];
+            document.getElementById('surveyStepTitle').textContent = stepData.category;
+            document.getElementById('surveyStepCount').textContent = `${currentSurveyStep + 1} / 4 단계`;
+            document.getElementById('surveyProgressBar').style.width = `${((currentSurveyStep + 1) / 4) * 100}%`;
+
+            const qBox = document.getElementById('surveyQuestionsBox');
+            qBox.innerHTML = '';
+            
+            stepData.questions.forEach((q, idx) => {
+                const qId = `q_${currentSurveyStep}_${idx}`;
+                qBox.insertAdjacentHTML('beforeend', `
+                    <div class="survey-question-box">
+                        <p class="font-bold text-slate-800 mb-3"><span class="text-purple-600 mr-1">Q.</span>${q}</p>
+                        <div class="survey-radio-group">
+                            ${[1, 2, 3, 4, 5].map(val => `
+                                <input type="radio" name="${qId}" id="${qId}_${val}" value="${val}" class="survey-radio-input" ${surveyAnswers[qId] === val.toString() ? 'checked' : ''} onchange="surveyAnswers['${qId}'] = '${val}'">
+                                <label for="${qId}_${val}" class="survey-radio-label">
+                                    ${val === 1 ? '전혀<br>아니다' : val === 2 ? '그렇지<br>않다' : val === 3 ? '보통<br>이다' : val === 4 ? '대체로<br>그렇다' : '매우<br>그렇다'}
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                `);
+            });
+
+            document.getElementById('surveyContentArea').scrollTop = 0;
+            document.getElementById('btnSurveyPrev').style.display = currentSurveyStep > 0 ? 'block' : 'none';
+            document.getElementById('btnSurveyNext').style.display = currentSurveyStep < 3 ? 'block' : 'none';
+            document.getElementById('btnSurveySubmit').style.display = currentSurveyStep === 3 ? 'block' : 'none';
+        }
+
+        function nextSurveyStep() {
+            const stepData = activeSurveyData[currentSurveyStep];
+            for (let i = 0; i < stepData.questions.length; i++) {
+                if (!surveyAnswers[`q_${currentSurveyStep}_${i}`]) {
+                    alert("모든 문항에 응답해 주세요.");
+                    return;
+                }
+            }
+            currentSurveyStep++;
+            renderSurveyStep();
+        }
+
+        function prevSurveyStep() {
+            if (currentSurveyStep > 0) { currentSurveyStep--; renderSurveyStep(); }
+        }
+
+        function submitSurvey() {
+            const stepData = activeSurveyData[currentSurveyStep];
+            for (let i = 0; i < stepData.questions.length; i++) {
+                if (!surveyAnswers[`q_${currentSurveyStep}_${i}`]) {
+                    alert("모든 문항에 응답해 주세요.");
+                    return;
+                }
+            }
+
+            let scores = {};
+            activeSurveyData.forEach((data, sIdx) => {
+                let sum = 0;
+                for (let i = 0; i < data.questions.length; i++) {
+                    sum += parseInt(surveyAnswers[`q_${sIdx}_${i}`]);
+                }
+                scores[data.category] = (sum / (data.questions.length * 5)) * 100;
+            });
+
+            const selectedIndustry = document.querySelector('input[name="industryType"]:checked').value;
+            localStorage.setItem('survey_industry', selectedIndustry);
+
+            if (currentMode === 'pre') {
+                localStorage.setItem('pre_survey_score', JSON.stringify(scores));
+                localStorage.removeItem('post_survey_score'); 
+                alert("사전 진단 결과가 저장되었습니다! 맞춤 훈련 과정을 추천해 드립니다.");
+            } else {
+                localStorage.setItem('post_survey_score', JSON.stringify(scores));
+                alert("사후 진단 결과가 저장되었습니다! 사전 진단과의 비교 분석을 확인해 보세요.");
+            }
+
+            document.getElementById('surveyProgressContainer').classList.add('hidden');
+            document.getElementById('surveyQuestionsBox').classList.add('hidden');
+            document.getElementById('surveyFooter').classList.add('hidden');
+            document.getElementById('surveyFooter').classList.remove('flex');
+            document.getElementById('surveyResultBox').classList.remove('hidden');
+
+            renderRadarChart(scores);
+        }
+
+        function renderRadarChart(currentScores) {
+            const preScores = JSON.parse(localStorage.getItem('pre_survey_score'));
+            const postScores = JSON.parse(localStorage.getItem('post_survey_score'));
+
+            let labels = activeSurveyData.map(d => d.category);
+            let datasets = [];
+
+            const summaryContainer = document.getElementById('growthSummary');
+            if(summaryContainer) summaryContainer.innerHTML = '';
+
+            const showPre = document.getElementById('legendPre').checked;
+            const postCheckbox = document.getElementById('legendPost');
+            const showPost = postCheckbox ? postCheckbox.checked : true;
+
+            if (preScores) {
+                datasets.push({
+                    label: '사전 진단 (Pre)',
+                    data: labels.map(l => preScores[l].toFixed(1)),
+                    backgroundColor: 'rgba(148, 163, 184, 0.2)', 
+                    borderColor: 'rgba(148, 163, 184, 1)',
+                    pointBackgroundColor: 'rgba(148, 163, 184, 1)',
+                    borderWidth: 2,
+                    hidden: !showPre
+                });
+            }
+
+            if (currentMode === 'post' && postScores) {
+                document.getElementById('legendPostWrapper').style.display = 'flex';
+                datasets.push({
+                    label: '사후 진단 (Post)',
+                    data: labels.map(l => postScores[l].toFixed(1)),
+                    backgroundColor: 'rgba(139, 92, 246, 0.5)', 
+                    borderColor: 'rgba(124, 58, 237, 1)',
+                    pointBackgroundColor: 'rgba(124, 58, 237, 1)',
+                    borderWidth: 3,
+                    hidden: !showPost
+                });
+                
+                document.getElementById('resultBoxHeading').textContent = "📊 사전·사후 역량 성장 비교 결과";
+                document.getElementById('resultBoxSubHeading').textContent = "교육 수강 후의 역량 변화를 수치로 확인하세요.";
+                document.getElementById('recommendationContainer').classList.add('hidden');
+                
+                if(summaryContainer) {
+                    summaryContainer.classList.remove('hidden');
+                    let summaryHtml = '';
+                    labels.forEach(category => {
+                        let pre = preScores[category];
+                        let post = postScores[category];
+                        let diff = (post - pre).toFixed(1);
+                        let diffClass = diff >= 0 ? 'text-blue-600' : 'text-red-500';
+                        let diffSign = diff > 0 ? '+' : '';
+                        
+                        summaryHtml += `
+                            <div class="bg-white p-3 rounded-xl border border-slate-200 flex flex-col justify-center items-center text-center shadow-sm">
+                                <span class="text-xs font-bold text-slate-500 mb-1">${category}</span>
+                                <div class="flex items-baseline space-x-2">
+                                    <span class="text-slate-400 text-sm line-through">${pre.toFixed(0)}</span>
+                                    <span class="text-slate-800 font-bold text-xl">${post.toFixed(0)}</span>
+                                </div>
+                                <span class="${diffClass} text-xs font-black mt-1 bg-slate-50 px-2.5 py-0.5 rounded-full border border-slate-100">
+                                    ${diffSign}${diff}점
+                                </span>
+                            </div>
+                        `;
+                    });
+                    summaryContainer.innerHTML = summaryHtml;
+                }
+            } else {
+                document.getElementById('legendPostWrapper').style.display = 'none';
+                document.getElementById('resultBoxHeading').textContent = "📊 역량 진단 결과";
+                document.getElementById('resultBoxSubHeading').textContent = "진단 결과를 바탕으로 분석된 리포트입니다.";
+                
+                if(summaryContainer) summaryContainer.classList.add('hidden');
+                document.getElementById('recommendationContainer').classList.remove('hidden');
+                
+                const lowestScore = Math.min(...Object.values(currentScores));
+                const weakestCategoryName = Object.keys(currentScores).find(k => currentScores[k] === lowestScore);
+                const weakestCategory = activeSurveyData.find(d => d.category === weakestCategoryName);
+                
+                const matchedCourses = rawData.filter(c => c.cat.includes(weakestCategory.matchKeyword));
+                const shuffled = matchedCourses.sort(() => 0.5 - Math.random());
+                const recommendations = shuffled.slice(0, 4);
+
+                const recBox = document.getElementById('recommendedCourses');
+                recBox.innerHTML = `
+                    <div class="bg-purple-50/60 border border-purple-100 p-4 rounded-xl mb-4 text-slate-700 text-sm leading-relaxed">
+                        <p class="font-bold text-purple-900 mb-1">📋 역량 진단 종합 분석 리포트</p>
+                        본 진단 데이터 분석 결과, 자사는 현재 <strong class="text-purple-700 underline">${weakestCategory.category}</strong> 부문에서 상대적인 취약점이 확인되었습니다. 해당 영역은 현업 실무 경쟁력과 직결되는 핵심 지표로, 체계적인 전문 직무 교육을 통한 보완이 시급합니다. 이에 조직의 실무 역량 제고를 위한 최적의 맞춤형 훈련 과정을 제안합니다.
+                    </div>
+                `;
+                recommendations.forEach(course => {
+                    recBox.innerHTML += `
+                        <div class="border border-slate-200 rounded-xl p-4 hover:border-purple-300 transition flex justify-between items-center bg-white shadow-sm">
+                            <div>
+                                <span class="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded">${course.cat}</span>
+                                <p class="font-bold text-slate-800 mt-2">${course.title}</p>
+                                <p class="text-xs text-slate-500 mt-1">⏱ ${course.hours}시간 | 💰 ${course.fee.toLocaleString()}원</p>
+                            </div>
+                            <button onclick="goToCourseDetail('${course.title.replace(/'/g, "\\\'")}')" class="shrink-0 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold px-4 py-2 rounded-lg transition ml-4 whitespace-nowrap">
+                                상세보기 ➜
+                            </button>
+                        </div>
+                    `;
+                });
+            }
+
+            const ctx = document.getElementById('surveyRadarChart').getContext('2d');
+            if (radarChartInstance) radarChartInstance.destroy();
+            
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: { labels: labels, datasets: datasets },
+                options: { 
+                    scales: { 
+                        r: { 
+                            min: 0, max: 100, stepSize: 20,
+                            angleLines: { color: 'rgba(0,0,0,0.1)' },
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            pointLabels: { font: { size: 11, family: "'Noto Sans KR', sans-serif", weight: 'bold' }, color: '#475569' }
+                        } 
+                    }, 
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.9)', titleFont: { size: 13 }, bodyFont: { size: 14, weight: 'bold' }, padding: 12, cornerRadius: 8 }
+                    },
+                    elements: { line: { tension: 0.3 } } 
+                }
+            });
+        }
+
+        function toggleDataset(index) {
+            if (radarChartInstance) {
+                const meta = radarChartInstance.getDatasetMeta(index);
+                meta.hidden = meta.hidden === null ? !radarChartInstance.data.datasets[index].hidden : null;
+                radarChartInstance.update();
+            }
+        }
+
+        function goToCourseDetail(title) {
+            closeSurveyModal();
+            toggleCourseList(true);
+            
+            const originalIndex = rawData.findIndex(c => c.title === title);
+            if (originalIndex > -1) {
+                const rowId = `detail-${originalIndex}-${title.replace(/[\s\(\)\/]/g,'')}`;
+                const btnId = `btn-${rowId}`;
+                
+                setTimeout(() => {
+                    const body = document.getElementById('body-' + rowId);
+                    if (body && !body.classList.contains('open')) {
+                        toggleAccordion(rowId, btnId);
+                    }
+                    const returnBtn = document.getElementById(`btnReturnSurvey-${rowId}`);
+                    if(returnBtn) returnBtn.classList.remove('hidden');
+
+                    const tr = document.getElementById(rowId);
+                    if (tr && tr.previousElementSibling) {
+                        tr.previousElementSibling.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        tr.previousElementSibling.style.backgroundColor = 'rgba(59, 130, 246, 0.15)';
+                        setTimeout(() => { tr.previousElementSibling.style.backgroundColor = ''; }, 1500);
+                    }
+                }, 300);
+            }
+        }
+
+        function openAdminModal() {
+            document.getElementById('adminModal').classList.remove('hidden');
+            document.getElementById('adminModal').classList.add('flex');
+            document.body.style.overflow = 'hidden';
+
+            document.getElementById('adminCompletionRate').value = localStorage.getItem('admin_completion_rate') || '';
+            document.getElementById('adminTotalCost').value = localStorage.getItem('admin_total_cost') || '';
+
+            const preScores = JSON.parse(localStorage.getItem('pre_survey_score')) || { '직무 및 현장 전문성': 60, '성과 리더십 및 관리': 65, '디지털 혁신 및 생산성': 55, '조직문화 및 소통': 70 };
+            const postScores = JSON.parse(localStorage.getItem('post_survey_score')) || null;
+            const industry = localStorage.getItem('survey_industry') || 'manufacturing';
+
+            let labels = ["직무 및 현장 전문성", "성과 리더십 및 관리", "디지털 혁신 및 생산성", "조직문화 및 소통"];
+            let datasets = [{
+                label: '교육 전 (Pre)',
+                data: labels.map(l => preScores[l]),
+                backgroundColor: 'rgba(148, 163, 184, 0.2)', 
+                borderColor: 'rgba(148, 163, 184, 1)',
+                pointBackgroundColor: 'rgba(148, 163, 184, 1)',
+                borderWidth: 2
+            }];
+
+            if (postScores) {
+                datasets.push({
+                    label: '교육 후 (Post)',
+                    data: labels.map(l => postScores[l]),
+                    backgroundColor: 'rgba(139, 92, 246, 0.5)', 
+                    borderColor: 'rgba(124, 58, 237, 1)',
+                    pointBackgroundColor: 'rgba(124, 58, 237, 1)',
+                    borderWidth: 3
+                });
+                
+                let preSum = Object.values(preScores).reduce((a,b)=>a+b, 0);
+                let postSum = Object.values(postScores).reduce((a,b)=>a+b, 0);
+                let improvement = (((postSum - preSum) / preSum) * 100).toFixed(1);
+                
+                document.getElementById('adminImprovement').textContent = `+${improvement}%`;
+                document.getElementById('adminImprovement').className = "text-3xl font-black text-blue-600 mt-2";
+                
+                const expertComments = {
+                    manufacturing: {
+                        "직무 및 현장 전문성": {
+                            high: "공정 품질 및 원가 관리 부문의 병목현상이 획기적으로 해소되었습니다. 현장 밀착형 실습을 통해 표준 작업(SOP) 준수율이 높아지며 불량률 감소 등 가시적 성과가 기대됩니다.",
+                            mid: "제조 현장의 품질 보증 및 자원 배분 역량이 안정적으로 우상향 중입니다. 현장 안전 및 유지보수 활동에 대한 긍정적 행동 변화가 관찰됩니다.",
+                            zero: "학습된 현장 스킬이 실제 공정 개선으로 전이(Transfer)되지 못한 정체 구간입니다. 조장/반장 중심의 오프라인 OJT를 통한 밀착 점검이 요구됩니다.",
+                            low: "현장 적용 과정에서 기존 관행과 충돌하는 환경적 장애 요인이 발견됩니다. 공정 간 협업 체계에 대한 원인 분석이 시급합니다."
+                        }
+                    },
+                    service: {
+                        "직무 및 현장 전문성": {
+                            high: "고객 접점(MOT)에서의 서비스 품질(NPS) 관리 역량이 비약적으로 도약했습니다. 감정 노동 관리와 클레임 선제 대응 능력이 현장에 완벽히 내재화되었습니다.",
+                            mid: "고객 경험(CX) 개선을 위한 서비스 프로세스 숙련도가 꾸준히 향상되고 있습니다. 현장 매뉴얼 적용 빈도가 높아지며 고객 불만 요인이 감소하는 추세입니다.",
+                            zero: "서비스 실패 회복 및 응대 스킬이 실제 접점 업무에 온전히 반영되지 않고 있습니다. 롤플레이 중심의 대면 코칭이 부가적으로 필요합니다.",
+                            low: "고객 응대 과정에서 스트레스 관리 한계 등 변화 저항이 관찰됩니다. 접점 직원들의 심리적 고충과 현장 환경에 대한 심층 진단이 필요합니다."
+                        }
+                    },
+                    office: {
+                        "직무 및 현장 전문성": {
+                            high: "데이터 기반의 기획서 작성 및 의사결정(ROI) 지원 능력이 획기적으로 향상되었습니다. 복잡한 리스크 관리와 부서 간 협업 프로세스가 실무에 안착했습니다.",
+                            mid: "로지컬 씽킹 및 우선순위 관리 능력이 향상되며 업무 효율성이 우상향하고 있습니다. 기획 및 보고 체계의 긍정적인 체질 개선이 관찰됩니다.",
+                            zero: "학습된 기획 및 관리 기법이 본인의 고유 업무로 전이되는 속도가 정체되어 있습니다. 상위자의 목표 연계(Alignment) 피드백이 추가로 요구됩니다.",
+                            low: "업무 프로세스 개선에 대한 수용성이 낮아 실무 적용에 한계를 보입니다. 부서 내 목표 달성에 대한 동기부여 방식 점검이 필요합니다."
+                        }
+                    }
+                };
+
+                const commonComments = {
+                    "성과 리더십 및 관리": {
+                        high: "중간관리자들이 지시형 통제에서 벗어나 데이터 기반 성과 관리 및 밀착형 대면 코칭 리더십을 체화했습니다. 구성원과의 목표 정렬(Alignment)이 대폭 개선되었습니다.",
+                        mid: "리더 계층의 마인드셋 변화가 시작되며, 구성원과의 대면 성과 면담 및 피드백 품질이 개선되고 있습니다. 리더십 파이프라인이 긍정적으로 형성 중입니다.",
+                        zero: "리더십 스킬이 실제 조직 관리 행동으로 발현되기까지 시간이 소요되고 있습니다. 실천을 유도할 후속 오프라인 그룹 코칭이 필요합니다.",
+                        low: "리더와 구성원 간의 대면 소통 단절 또는 평가 체계 수용성 저하가 우려됩니다. 성과관리 전반에 대한 조직 진단(Diagnosis)을 권장합니다."
+                    },
+                    "디지털 혁신 및 생산성": {
+                        high: "생성형 AI 및 디지털 툴 활용 역량이 비약적으로 도약하여, 반복적인 행정 리소스가 최소화되고 데이터 기반 문제 해결 역량이 실무에 깊게 뿌리내렸습니다.",
+                        mid: "디지털 도구에 대한 심리적 장벽이 낮아지고, 현장 데이터를 활용하려는 시도가 꾸렷하게 증가하며 DX 내재화의 초석이 다져졌습니다.",
+                        zero: "새로운 기술 도입에 대한 변화 피로도(Change Fatigue)가 존재할 가능성이 있습니다. 실무 활용도가 가장 높은 핵심 툴 하나부터 집중 점검해야 합니다.",
+                        low: "디지털 혁신에 대한 강한 변화 저항이 관찰됩니다. 기술적 접근 이전에 DX 필요성에 대한 오프라인 차원의 공감대 형성이 선행되어야 합니다."
+                    },
+                    "조직문화 및 소통": {
+                        high: "세대 간 소통 방식의 다변화와 상호 존중 조직문화 지표가 가파르게 상승했습니다. 심리적 안전감이 확보되어 오프라인 현장에서의 아이디어 제안이 활성화되었습니다.",
+                        mid: "수평적 소통 분위기가 조성되며 부서 간 대면 협업(Cross-functional) 시 발생하는 마찰 비용이 감소하고 있습니다. 긍정적인 조직 개발(OD)의 성과입니다.",
+                        zero: "조직문화 개선 노력이 아직 가시적인 지표 변화로 이어지지 않고 있습니다. 핵심가치 내재화를 위한 지속적인 오프라인 캠페인과 현장 스킨십이 필요합니다.",
+                        low: "부서 이기주의(Silo) 심화 또는 구성원의 번아웃(Burnout) 징후가 우려됩니다. 즉각적인 조직 활성화(Team Building) 개입이 요구되는 시점입니다."
+                    }
+                };
+
+                let maxGrowth = -999;
+                let maxGrowthCat = '';
+                let weakPoint = { cat: '', score: 101 };
+                let detailsHtml = '';
+
+                labels.forEach(cat => {
+                    let pre = preScores[cat];
+                    let post = postScores[cat];
+                    let diff = (post - pre).toFixed(1);
+                    
+                    if (pre < weakPoint.score) {
+                        weakPoint.score = pre;
+                        weakPoint.cat = cat;
+                    }
+
+                    if (post - pre > maxGrowth) {
+                        maxGrowth = post - pre;
+                        maxGrowthCat = cat;
+                    }
+
+                    let diffText = diff > 0 ? `<b class="text-blue-700 font-bold">+${diff}점 향상</b>` : (diff == 0 ? `<span class="text-slate-500">유지</span>` : `<b class="text-red-500 font-bold">${diff}점 하락</b>`);
+                    let commentLevel = diff >= 15 ? "high" : (diff > 0 ? "mid" : (diff == 0 ? "zero" : "low"));
+                    
+                    let comment = "";
+                    if (cat === "직무 및 현장 전문성") {
+                        comment = expertComments[industry][cat][commentLevel];
+                    } else {
+                        comment = commonComments[cat][commentLevel];
+                    }
+                    
+                    detailsHtml += `<li class="mb-4 text-sm"><b class="text-slate-800 underline font-bold">${cat} 부문</b>: 사전 진단 대비 <span class="underline">${diffText}</span>. <br><span class="text-slate-500 mt-1 inline-block">${comment}</span></li>`;
+                });
+
+                let industryName = industry === 'manufacturing' ? '제조업' : (industry === 'service' ? '서비스업' : '사무/기획');
+                
+                let compRate = localStorage.getItem('admin_completion_rate') || '0';
+                let totCost = localStorage.getItem('admin_total_cost') || '0';
+                let kpiText = '';
+                if(compRate !== '0' && totCost !== '0') {
+                    kpiText = `특히, 본 과정은 <b>총 이수율 ${compRate}%</b>를 달성하였으며, <b>총 훈련비용(환급액) ${totCost}원</b> 대비 압도적인 현장 퍼포먼스를 창출하였습니다. `;
+                }
+
+                let dynamicReportHtml = `
+                    <h4 class="text-xl font-black text-slate-900 border-b border-slate-200 pb-3 flex items-center">
+                        <span class="text-purple-600 mr-2">📋</span> [전문가 진단 리포트] ${industryName} 부문 분석
+                    </h4>
+                    <div class="space-y-6 text-sm leading-relaxed mt-5">
+                        <div>
+                            <p class="font-bold text-slate-900 mb-2 text-base">1. 종합 경영 진단 개요 및 총평</p>
+                            <p class="text-slate-600 break-keep">본 리포트는 당사의 <b>[${industryName}]</b> 현장 특성을 반영한 4대 핵심 영역 데이터를 기반으로 작성된 HRD 성과 검증 리포트입니다. 교육 전 가장 큰 페인포인트(Pain Point)였던 <b class="text-red-600">[${weakPoint.cat}]</b> 부문에 대한 오프라인 집합 훈련이 실효성 있게 적용되었는지 정량적 지표를 통해 교차 검증하였습니다.</p>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-900 mb-3 text-base">2. 핵심 영역별 세밀 분석 (Pre vs Post)</p>
+                            <ul class="list-disc pl-5 text-slate-600 space-y-1">
+                                ${detailsHtml}
+                            </ul>
+                        </div>
+                        <div class="bg-blue-50/50 p-5 rounded-2xl border border-blue-100 mt-2">
+                            <p class="font-bold text-blue-900 mb-2 text-base"><span class="text-blue-600 mr-1">💡</span> HR 컨설턴트 종합 제언 (Strategic Insight)</p>
+                            <p class="text-slate-700 leading-relaxed break-keep">
+                                이번 프리미엄 훈련을 통해 조직 내 <b>가장 파괴적인 혁신(Disruptive Innovation)이 일어난 영역은 <span class="text-blue-700 font-black underline">[${maxGrowthCat}] 부문(+${maxGrowth.toFixed(1)}점)</span></b>입니다. <br><br>
+                                ${kpiText}본 교육 과정이 단순 이론을 넘어, 현장 밀착형 실습을 통해 기업 경쟁력 강화로 직결되는 <b>'ROI(투자수익률) 창출형 오프라인 훈련'</b>임을 명확히 시사합니다. 본 리포트를 차년도 핵심인재 육성(Talent Management) 계획 수립 시 핵심 증빙 자료로 적극 활용하시길 권장합니다.
+                            </p>
+                        </div>
+                    </div>
+                `;
+
+                const reportContainer = document.getElementById('adminConsultantReport');
+                reportContainer.innerHTML = dynamicReportHtml;
+                reportContainer.style.display = 'block';
+
+            } else {
+                document.getElementById('adminImprovement').textContent = '사후 진단 대기중';
+                document.getElementById('adminImprovement').className = "text-3xl font-black text-slate-400 mt-2";
+                document.getElementById('adminConsultantReport').style.display = 'none';
+            }
+
+            const ctxAdmin = document.getElementById('adminChart').getContext('2d');
+            if (adminChartInstance) adminChartInstance.destroy();
+            adminChartInstance = new Chart(ctxAdmin, {
+                type: 'radar',
+                data: { labels: labels, datasets: datasets },
+                options: { 
+                    scales: { r: { min: 0, max: 100, stepSize: 20, angleLines: { color: 'rgba(0,0,0,0.1)' }, grid: { color: 'rgba(0,0,0,0.05)' }, pointLabels: { font: { size: 11, family: "'Noto Sans KR', sans-serif", weight: 'bold' }, color: '#475569' } } }, 
+                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } },
+                    elements: { line: { tension: 0.3 } }
+                }
+            });
+        }
+
+        // -------------------------------------------------------------
+        // 이메일 발송 폼 처리 로직
+        // -------------------------------------------------------------
+        function sendEmail(event) {
+            event.preventDefault(); // 화면 새로고침 방지
+            
+            const btn = document.getElementById('submitBtn');
+            const originalText = btn.textContent;
+            btn.textContent = '전송 중...';
+            btn.disabled = true;
+
+            // 실제 EmailJS 연동 시 아래 주석 해제 후 서비스ID/템플릿ID 입력
+            /*
+            emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', event.target)
+                .then(() => {
+                    alert('상담 신청이 완료되었습니다. 담당자가 곧 연락드리겠습니다.');
+                    closeModal();
+                    event.target.reset();
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                }, (error) => {
+                    alert('전송에 실패했습니다. 다시 시도해 주세요.');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                });
+            */
+            
+            // 임시 UI 피드백 (데모용)
+            setTimeout(() => {
+                alert('상담 신청이 정상적으로 접수되었습니다. 담당자가 곧 연락드리겠습니다.');
+                closeModal();
+                event.target.reset();
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 800);
+        }
     </script>
 </body>
 </html>
