@@ -1188,6 +1188,12 @@
             alert("핵심 성과 지표가 반영되었습니다.");
             openAdminModal(); 
         }
+// HR 관리자 모달 닫기 함수
+function closeAdminModal() {
+    document.getElementById('adminModal').classList.add('hidden');
+    document.getElementById('adminModal').classList.remove('flex');
+    document.body.style.overflow = '';
+}
 
         function openSurveyModal(mode = 'pre') {
             if (mode === 'post' && !localStorage.getItem('pre_survey_score')) {
